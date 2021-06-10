@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="description" content="岁月不改她模样" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+     果果的博客
+  </title>
+  <meta name="generator" content="hexo-theme-yilia-plus">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<script src="/js/pace.min.js"></script>
+
+
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      
+<section class="cover">
+    
+      
+      <a class="forkMe" href="https://github.com/gwyxjtu"
+        target="_blank"><img width="149" height="149" src="/images/forkme.png"
+          class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
+    
+  <div class="cover-frame">
+    <div class="bg-box">
+      <img src="/images/cover1.jpg" alt="image frame" />
+    </div>
+    <div class="cover-inner text-center text-white">
+      <h1><a href="/">果果的博客</a></h1>
+      <div id="subtitle-box">
+        
+        <span id="subtitle"></span>
+        
+      </div>
+      <div>
+        
+      </div>
+    </div>
+  </div>
+  <div class="cover-learn-more">
+    <a href="javascript:void(0)" class="anchor"><i class="ri-arrow-down-line"></i></a>
+  </div>
+</section>
+
+<div id="main">
+  <section class="outer">
+  <article class="articles">
+    
+    
+    
+    
+    <article id="post-一个随机禁言引起的问题" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/05/21/%E4%B8%80%E4%B8%AA%E9%9A%8F%E6%9C%BA%E7%A6%81%E8%A8%80%E5%BC%95%E8%B5%B7%E7%9A%84%E9%97%AE%E9%A2%98/"
+    >一个随机禁言引起的算法问题</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/05/21/%E4%B8%80%E4%B8%AA%E9%9A%8F%E6%9C%BA%E7%A6%81%E8%A8%80%E5%BC%95%E8%B5%B7%E7%9A%84%E9%97%AE%E9%A2%98/" class="article-date">
+  <time datetime="2020-05-21T02:30:13.000Z" itemprop="datePublished">2020-05-21</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>小小功能里面最火爆的竟然是禁言套餐，群友疯狂索要禁言套餐，玩起了赌博</p>
+<p><img src="/images/ban_1.png" alt=""></p>
+<p>问题来了，现在的时间是9点，如果老罗每当禁言解禁就去申请，问老罗在十二点之前学习的概率。</p>
+<p>题目总结一下：</p>
+<p>给定三个正整数a,b,c, 当禁言时间大于a时，老罗立刻去学习。b为随即禁言的范围，每次申请禁言，随机范围为[1,b]，取值为整数c为距离十二点的时间。现求老罗在十二点之前能去学习的概率。</p>
+<h2 id="个人思路"><a href="#个人思路" class="headerlink" title="个人思路"></a>个人思路</h2><p>目测是动态规划，因为时间取值是正整数，这就自然的构成了不同的状态(不过如果取值不是整数的话，那就太难算了)。还有一个假设，每一次请求的随机数完全随机，每次请求独立，构成n重伯努利实验。根据这两个假设，写了一个递推式。</p>
+<p><img src="/images/ban_2.png" alt=""></p>
+<p>这里写错了，应该是从i+10开始到i+100，不过思路一样，debug时候改过去了。懒得改了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">study_time,top_time,rest_time = <span class="number">10</span>,<span class="number">100</span>,<span class="number">180</span></span><br><span class="line"><span class="comment"># 小于等于10分钟则学习，禁言封顶100，还剩180分钟到12点。</span></span><br><span class="line">dp = [<span class="number">0</span> <span class="keyword">for</span> i <span class="keyword">in</span> range(rest_time)]</span><br><span class="line">dp[<span class="number">-10</span>:] = [<span class="number">1</span>-study_time/top_time]*<span class="number">10</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(rest_time<span class="number">-10</span><span class="number">-1</span>,<span class="number">-1</span>,<span class="number">-1</span>):</span><br><span class="line">	<span class="keyword">if</span>(<span class="number">180</span>&lt;i+<span class="number">100</span>):</span><br><span class="line">		dp[i] += (i+<span class="number">100</span><span class="number">-180</span><span class="number">-1</span>)/<span class="number">100</span><span class="comment">#超界，不学习的概率是1，加权加上去</span></span><br><span class="line">	<span class="keyword">for</span> j <span class="keyword">in</span> range(i+<span class="number">10</span>,min(i+<span class="number">101</span>,<span class="number">180</span>),<span class="number">1</span>):</span><br><span class="line">		dp[i] += <span class="number">0.01</span>*dp[j]</span><br><span class="line">print(dp)</span><br><span class="line">print(<span class="string">"学习概率"</span>,<span class="number">1</span>-dp[<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
+<p>python代码写了些，算出来结果是33.1%</p>
+<p><img src="/images/ban_3.png" alt=""></p>
+<h2 id="智慧的群友1"><a href="#智慧的群友1" class="headerlink" title="智慧的群友1"></a>智慧的群友1</h2><p>宗濂61某个万能的医生用了个牛逼方法，random来模拟，并且模拟了很多次，一看就是老统计学派概率论了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> raw_tl <span class="keyword">in</span> range(<span class="number">180</span>, <span class="number">10</span>, <span class="number">-1</span>):</span><br><span class="line">    sp = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1000000</span>):</span><br><span class="line">        tl = raw_tl</span><br><span class="line">        <span class="keyword">while</span> tl &gt;= <span class="number">0</span>:</span><br><span class="line">            ct = random.randint(<span class="number">1</span>, <span class="number">100</span>)</span><br><span class="line">            tl = tl-ct</span><br><span class="line">            <span class="keyword">if</span> ct&lt;<span class="number">10</span> <span class="keyword">and</span> tl&gt;<span class="number">0</span>:</span><br><span class="line">                sp += <span class="number">1</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">    print(<span class="string">'%s    %s:%s  %s'</span> % (raw_tl, sp, <span class="number">1000000</span>-sp, sp/<span class="number">10000</span>))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/ban_4.png" alt=""></p>
+<h2 id="智慧的群友2"><a href="#智慧的群友2" class="headerlink" title="智慧的群友2"></a>智慧的群友2</h2><p>能动A某大佬直接就上数学了，概率估算，扔掉后面的余项。</p>
+<p><img src="/images/ban_5.png" alt=""></p>
+<p><img src="/images/ban_6.png" alt=""></p>
+<p>算出也是29%左右</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>群友的方法算出来都是29%左右，我那个递推算出来是33%，差距挺大，不过我找不出问题，希望朱军可以指导我一下，实在是debug不来了。</p>
+<p><img src="/images/ban_7.png" alt=""></p>
+
+      
+      <!-- 打赏 -->
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://gwyxjtu.github.io/2020/05/21/%E4%B8%80%E4%B8%AA%E9%9A%8F%E6%9C%BA%E7%A6%81%E8%A8%80%E5%BC%95%E8%B5%B7%E7%9A%84%E9%97%AE%E9%A2%98/" data-id="ckpqb9cz50012uwv22s038ntr"
+        class="article-share-link">分享</a>
+        
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" rel="tag">动态规划</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-两个一般性矩阵互相相似的条件" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/05/18/%E4%B8%A4%E4%B8%AA%E4%B8%80%E8%88%AC%E6%80%A7%E7%9F%A9%E9%98%B5%E4%BA%92%E7%9B%B8%E7%9B%B8%E4%BC%BC%E7%9A%84%E6%9D%A1%E4%BB%B6/"
+    >两个一般性矩阵互相相似的条件</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/05/18/%E4%B8%A4%E4%B8%AA%E4%B8%80%E8%88%AC%E6%80%A7%E7%9F%A9%E9%98%B5%E4%BA%92%E7%9B%B8%E7%9B%B8%E4%BC%BC%E7%9A%84%E6%9D%A1%E4%BB%B6/" class="article-date">
+  <time datetime="2020-05-18T09:08:28.000Z" itemprop="datePublished">2020-05-18</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>在复习的时候突然遇到一个问题，<strong>两个普通矩阵怎么判定相似</strong>。</p>
+<p>之前遇到的题目里面都是使用<strong>相似对角化</strong>的方法，这里就不在仔细介绍，总结就是如果当前矩阵的每一个特征值的几何重数和代数重数均相等，则可以相似于一个对角阵，如果两个矩阵相似于同一个对角阵，则这两个矩阵相似。</p>
+<p>$$<br>A \sim \Lambda \sim B<br>$$</p>
+<p>这样就要求A和B拥有同样的特征值，并且每一个特征值的几何重数等于代数重数，并且两矩阵对应特征值的几何重数也要相等。</p>
+<p>这样先然不是最简的条件，经过网上查询，发现两个矩阵相似不一定同时相似于一个对角阵，任意的矩阵都可以通过可逆变化变为约当标准型，Jordan Matrix。</p>
+<p>约当标准型是最简的解耦矩阵，对角阵可以理解为一种特殊的约当矩阵，即每一个约当块的大小为1。</p>
+<p>所以两矩阵相似的条件就变为了同时相似与一个约当矩阵了，而约当矩阵就要求约当快对应相等</p>
+<p>$$<br>A \sim J \sim B<br>$$</p>
+<p>所以我觉得最后的结论是，<strong>两矩阵相似的充要条件是两矩阵AB拥有同样的特征值，并且两矩阵每个特征值的几何重数和代数重数对应相等(几何重数不必等于代数重数)</strong>，两矩阵即可相似。</p>
+<p>（这个hexo的markdown编辑器居然不能解析latex公式，emm）</p>
+
+      
+      <!-- 打赏 -->
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://gwyxjtu.github.io/2020/05/18/%E4%B8%A4%E4%B8%AA%E4%B8%80%E8%88%AC%E6%80%A7%E7%9F%A9%E9%98%B5%E4%BA%92%E7%9B%B8%E7%9B%B8%E4%BC%BC%E7%9A%84%E6%9D%A1%E4%BB%B6/" data-id="ckpqb9cz30011uwv22ga801e8"
+        class="article-share-link">分享</a>
+        
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" rel="tag">线性代数</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-一道ctfweb题目" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/26/%E4%B8%80%E9%81%93ctfweb%E9%A2%98%E7%9B%AE/"
+    >一道ctfweb题目</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/26/%E4%B8%80%E9%81%93ctfweb%E9%A2%98%E7%9B%AE/" class="article-date">
+  <time datetime="2020-04-25T17:04:17.000Z" itemprop="datePublished">2020-04-26</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>这道题目是模仿其他人的思路做的，相当于复现吧。</p>
+<p>就一个登陆界面。目录也没扫出来。无源码泄露。<br>burp抓个包试试注入<br>输入单引号 返回请停止输入危险字符/单词!<br>用双引号试了下。没反应。应该就是单引号的注入</p>
+<p>猜测后台语句为</p>
+<pre><code>select token from user where username=&apos;&apos; and password=&apos;&apos;</code></pre><p>sql with group语句绕过审核密保问题</p>
+<p><img src="/images/black_web_2.png" alt=""></p>
+<p>打开进去发现有数据备份的功能，所以猜测可能存在mysql任意读取漏洞</p>
+<p><img src="/images/black_web_4.png" alt=""></p>
+<p>然后发现有写马的功能，尝试抓包分析</p>
+<p><img src="/images/black_web_5.png" alt=""></p>
+<p>抓取通信发现有两次通信，其中一次是json.php。后台的代码可能是</p>
+<pre><code>scandir($_GET[&apos;page&apos;].&apos;/webshell/&apos;)</code></pre><p>这里参考答案使用php版本低的问题进行%00截断和目录穿越绕过，读取到根目录的信息，里面就有flag和入群的口令了。</p>
+<p><img src="/images/black_web_1.png" alt=""></p>
+<p>最后用mysql任意读取读取到flag</p>
+<p><img src="/images/black_web_3.png" alt=""></p>
+<p>心情：今天无意间发现当年跟我一起刷buu的哥们已经进WM战队了，哎，可惜我没坚持下来啊，8说了，考研完了一定捡回来ctf这个爱好。</p>
+<p>参考：过客 . 某群入群题2［EB/OL］．<a href="https://guokeya.github.io/post/Y59x961oO/" target="_blank" rel="noopener">https://guokeya.github.io/post/Y59x961oO/</a></p>
+
+      
+      <!-- 打赏 -->
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://gwyxjtu.github.io/2020/04/26/%E4%B8%80%E9%81%93ctfweb%E9%A2%98%E7%9B%AE/" data-id="ckpqb9cz1000wuwv20s8jgvxb"
+        class="article-share-link">分享</a>
+        
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ctf/" rel="tag">ctf</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-西安交大本科生健康平台存储xss漏洞" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/21/%E8%A5%BF%E5%AE%89%E4%BA%A4%E5%A4%A7%E6%9C%AC%E7%A7%91%E7%94%9F%E5%81%A5%E5%BA%B7%E5%B9%B3%E5%8F%B0%E5%AD%98%E5%82%A8xss%E6%BC%8F%E6%B4%9E/"
+    >西安交大本科生健康平台存储xss漏洞</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/21/%E8%A5%BF%E5%AE%89%E4%BA%A4%E5%A4%A7%E6%9C%AC%E7%A7%91%E7%94%9F%E5%81%A5%E5%BA%B7%E5%B9%B3%E5%8F%B0%E5%AD%98%E5%82%A8xss%E6%BC%8F%E6%B4%9E/" class="article-date">
+  <time datetime="2020-04-21T15:47:58.000Z" itemprop="datePublished">2020-04-21</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>起因是想要写一个自动填写这个健康平台的脚本，每天被导员催着实在是不爽。无意间打开了个人纪录查看的界面。</p>
+<p><img src="/images/xjtu_xss_1.png" alt=""></p>
+<p>可以看出来这里存在明显的注入。于是拿出了尘封已久的burp。</p>
+<h2 id="第一次利用"><a href="#第一次利用" class="headerlink" title="第一次利用"></a>第一次利用</h2><p>最明显的思路是利用div标签的属性，闭合前一个的双引号，然后在后面加上onclick或者onmouseenter的事件属性。</p>
+<p>直接开始抓包，整个的通信结构其实并不复杂，开启应用时请求json形式表格，然后点鸡确认时候请求一个flowkey作为单次通信标志(其实没有时间限制，经过测试)。</p>
+<p><img src="/images/xjtu_xss_2.png" alt=""></p>
+<p>确认后点鸡提交，提交时直接发送全部表格的json形式文件，这里有一个技巧是搜索手机号，在整个数据包中只发现了唯一的手机号，于是可以断定该处的上下文部分就是提交的表格数据(其余的部分可能是验证信息)</p>
+<p><img src="/images/xjtu_xss_3.png" alt=""></p>
+<p>这个是明显的数据结构。要利用就要闭合双引号，想闭合引号还不简单</p>
+<pre><code>&quot; onclick=alert(&apos;果果最帅&apos;)//</code></pre><p>直接开整，然后暴毙，因为json数据包中解析了引号，所以这个不是人家后端的问题，是在数据包的构造上就出了问题。</p>
+<p>于是现在问题集中在了，怎样不使用引号来闭合前一个引号。</p>
+<p>首先想到的是HTMLEncode，测试后直接暴毙，插进去的没有问题，但是不解析。具体的效果截图没有了，导员发现我在搞事情后直接给我把我之前插的代码全弄没了。后来搜一下发现HTML编码是用来防止xss的。除了编码，还有一个思路就是。。</p>
+<h2 id="第二次利用"><a href="#第二次利用" class="headerlink" title="第二次利用"></a>第二次利用</h2><p>除了闭合双引号，还有一个方法就是闭合尖括号。思路的来源是，除了div的tittle标签里面插入了可执行代码之外，地下的文字也加入了，所以不如直接暴力把div标签闭合掉。</p>
+<p>这次测试的主要难点是每天只能提交一次，之前好多看起来有效的payload都失效了，很离谱，最离谱的是<code>&lt;script&gt;</code>标签不执行，保存下来本地点开才能执行，可能他们前端有一些安全策略吧，超纲了。</p>
+<p>这里直接省略中间做过的一万次测试，包括插入哔哩哔哩播放器和其他乱起八糟的东西，后来发现是不能有双引号，哔哩哔哩播放器那里主要是出现了冒号，之后的任务是思考如何绕过这个冒号。。。。。。。</p>
+<p>最后测试的payload是</p>
+<pre><code>//&gt;&lt;/div&gt;&lt;img src=&apos;http://ggalaxy.top/file/mm.php&apos;  onclick=&apos;alert(`果果最帅`)&apos;&gt;&lt;div&gt;</code></pre><p><img src="/images/xjtu_xss.jpg" alt=""></p>
+<p><img src="/images/xjtu_xss_5.png" alt=""></p>
+<h2 id="还有可以做的地方"><a href="#还有可以做的地方" class="headerlink" title="还有可以做的地方"></a>还有可以做的地方</h2><p>可以注入一些更可恶的代码，现在的问题是冒号没有办法绕过了，style属性就不大行。之后再说吧。</p>
+<p>希望早点开学吧，在家里快闲出病了。</p>
+<p>参考：moxiaoxi . XSS测试备忘录［EB/OL］．<a href="https://momomoxiaoxi.com/2017/10/10/XSS/" target="_blank" rel="noopener">https://momomoxiaoxi.com/2017/10/10/XSS/</a></p>
+
+      
+      <!-- 打赏 -->
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://gwyxjtu.github.io/2020/04/21/%E8%A5%BF%E5%AE%89%E4%BA%A4%E5%A4%A7%E6%9C%AC%E7%A7%91%E7%94%9F%E5%81%A5%E5%BA%B7%E5%B9%B3%E5%8F%B0%E5%AD%98%E5%82%A8xss%E6%BC%8F%E6%B4%9E/" data-id="ckpqb9d0p0029uwv28xuw881m"
+        class="article-share-link">分享</a>
+        
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/xss/" rel="tag">xss</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+  </article>
+  
+
+  
+  <nav class="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/page/5/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/7/">下一页</a>
+  </nav>
+  
+</section>
+</div>
+
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2019-2021
+        galaxy
+      </li>
+      <li>
+        
+          Powered by
+        
+        
+        <a href="https://hexo.io" target="_blank">Hexo</a> Theme <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <ul class="list-inline">
+  <li>PV:<span id="busuanzi_value_page_pv"></span></li>
+  <li>UV:<span id="busuanzi_value_site_uv"></span></li>
+</ul>
+        
+      </li>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+    <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+      <aside class="sidebar">
+        <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="果果的博客"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2021/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+      </aside>
+      <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+      
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js"></script>
+<script>
+  var typed = new Typed("#subtitle", {
+    strings: ['人一生会遇到约2920万人,两个人相爱的概率是0.000049,所以你不爱我,我不怪你.','台下人走过不见旧言色','没有永远的年轻，没有唱不完的歌'],
+    startDelay: 0,
+    typeSpeed: 200,
+    loop: true,
+    backSpeed: 100,
+    showCursor: true
+    });
+</script>
+
+
+
+
+<script>
+  var ayerConfig = {
+    mathjax: true
+  }
+</script>
+
+
+<script src="/js/ayer.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.6/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
+  </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+
+</html>

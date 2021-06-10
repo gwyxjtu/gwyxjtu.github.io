@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="description" content="岁月不改她模样" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    图书馆预约脚本新版个人版_requests |  果果的博客
+  </title>
+  <meta name="generator" content="hexo-theme-yilia-plus">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<script src="/js/pace.min.js"></script>
+
+
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-图书馆预约脚本新版个人版-requests" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  图书馆预约脚本新版个人版_requests
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/08/20/%E5%9B%BE%E4%B9%A6%E9%A6%86%E9%A2%84%E7%BA%A6%E8%84%9A%E6%9C%AC%E6%96%B0%E7%89%88%E4%B8%AA%E4%BA%BA%E7%89%88-requests/" class="article-date">
+  <time datetime="2020-08-20T15:36:41.000Z" itemprop="datePublished">2020-08-20</time>
+</a>
+      
+      
+      
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">3.5k字</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">20分钟</span>
+        </span>
+    </span>
+</div>
+
+      
+    </div>
+    
+
+    
+    
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="script-for-PG"><a href="#script-for-PG" class="headerlink" title="script_for_PG"></a>script_for_PG</h2><p>由于之前图书馆敏感的原因下线了GitHub的仓库，也被图书馆管理员叫去谈话，只能在博客里面做一下记录吧，这个是午休期间可以维持座位的脚本，测试可用仅限于四楼东侧座位，其余座位需要轻微修改，早上的预约脚本中mylist可以根据个人需求修改座位号。</p>
+<p>日后希望能做出一个完整版个人预约服务脚本，然后放在校内师兄服务器上运行，个人电脑的运行环境不稳定，可能因为宿舍网络原因导致预约失败。</p>
+<h2 id="午休脚本"><a href="#午休脚本" class="headerlink" title="午休脚本"></a>午休脚本</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br></pre></td><td class="code"><pre><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;env python3</span><br><span class="line"># @Author  : Guoguo</span><br><span class="line"># @Blog    ：https:&#x2F;&#x2F;gwyxjtu.github.io</span><br><span class="line">import os</span><br><span class="line">import time</span><br><span class="line">import json</span><br><span class="line">import base64</span><br><span class="line">import requests</span><br><span class="line">from Crypto.Cipher import AES</span><br><span class="line">import re</span><br><span class="line">from lxml import etree</span><br><span class="line">from threading import Thread</span><br><span class="line">import datetime</span><br><span class="line"></span><br><span class="line">class XJTUUser(object):</span><br><span class="line"></span><br><span class="line">    def __init__(self, config_file_path&#x3D;&#39;.&#x2F;config.json&#39;):</span><br><span class="line">        with open(config_file_path) as config_file:</span><br><span class="line">            config &#x3D; json.loads(config_file.read())</span><br><span class="line">        self.config &#x3D; config</span><br><span class="line">        self.is_login &#x3D; False</span><br><span class="line">        self.session &#x3D; requests.Session()</span><br><span class="line">        self.session.headers.update(config[&#39;headers&#39;])</span><br><span class="line">        self.session.cookies.update(config[&#39;cookies&#39;])</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    def login(self):</span><br><span class="line">        #--------------------------------------</span><br><span class="line">        self.weizhi &#x3D; &#39;&#39;</span><br><span class="line">        def vxpush(self,msg):</span><br><span class="line">            url &#x3D; &#39;http:&#x2F;&#x2F;wxpusher.zjiecode.com&#x2F;api&#x2F;send&#x2F;message&#39;</span><br><span class="line">            uid &#x3D; &#39;&#39; </span><br><span class="line">            headers &#x3D; &#123;</span><br><span class="line">                &#39;User-Agent&#39;: &#39;Mozilla&#x2F;5.0 (Windows NT 10.0; WOW64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;75.0.3770.100 Safari&#x2F;537.36&#39;,</span><br><span class="line">                &#39;Content-Type&#39;:&#39;application&#x2F;json;charset&#x3D;UTF-8&#39;</span><br><span class="line">            &#125;</span><br><span class="line">            data &#x3D; &#123;</span><br><span class="line">            &#39;appToken&#39;:&#39;&#39;,</span><br><span class="line">            &#39;content&#39;: msg,</span><br><span class="line">            &#39;contentType&#39;:1,</span><br><span class="line">            &#39;uids&#39;:[uid]</span><br><span class="line">            &#125;</span><br><span class="line">            print(requests.post(url,headers&#x3D;headers,json&#x3D;data).text)</span><br><span class="line"></span><br><span class="line">        def check_my_seat(self):#返回你的座位字符穿</span><br><span class="line">            r &#x3D; self.session.get(&#39;http:&#x2F;&#x2F;rg.lib.xjtu.edu.cn:8010&#x2F;my&#x2F;&#39;) </span><br><span class="line">            dom &#x3D; etree.HTML(r.text)</span><br><span class="line">            a_text &#x3D; dom.xpath(&#39;&#x2F;html&#x2F;body&#x2F;div[2]&#x2F;center&#x2F;div[1]&#x2F;div&#x2F;div&#x2F;div&#x2F;div&#x2F;div&#x2F;div[1]&#x2F;h3&#x2F;text()[2]&#39;)</span><br><span class="line">            ans &#x3D; re.findall(&#39;\d+&#39;, a_text[0])[0]</span><br><span class="line">            #print()</span><br><span class="line">            self.weizhi &#x3D; a_text[0].split(&#39;\xa0&#39;)[-1].split(&#39;\n&#39;)[0]</span><br><span class="line">            jjj &#x3D; dom.xpath(&#39;&#x2F;html&#x2F;body&#x2F;div[2]&#x2F;center&#x2F;div[1]&#x2F;div&#x2F;div&#x2F;div&#x2F;div&#x2F;div&#x2F;div[2]&#x2F;center&#x2F;h3[1]&#39;)</span><br><span class="line">            if(len(jjj)&lt;1):</span><br><span class="line">                return 0;</span><br><span class="line">            if jjj[0].text &#x3D;&#x3D; &#39;已取消&#39; or jjj[0].text &#x3D;&#x3D; &#39;已离馆&#39; or jjj[0].text &#x3D;&#x3D; &#39;超时未入馆&#39;:</span><br><span class="line">                vxpush(self,self.config[&#39;username&#39;]+&#39;没弄上，出现错误&#39;)</span><br><span class="line">                print(self.config[&#39;username&#39;]+&#39;没弄上，出现错误&#39;)</span><br><span class="line">                return 0</span><br><span class="line">            else:</span><br><span class="line">                vxpush(self,self.config[&#39;username&#39;]+&#39;弄好了,当前位置&#39;+ans)</span><br><span class="line">                print(self.config[&#39;username&#39;]+&#39;弄好了&#39;+ans)</span><br><span class="line">                return 1    </span><br><span class="line">          </span><br><span class="line">        </span><br><span class="line">        def cancel(self):</span><br><span class="line">            try:</span><br><span class="line">                r &#x3D; self.session.get(&quot;http:&#x2F;&#x2F;rg.lib.xjtu.edu.cn:8010&#x2F;my&#x2F;&quot;)</span><br><span class="line">                pattern &#x3D; re.compile(&quot;cancelconfirm\(&#39;(.*?)&#39;\);&quot;, re.S) </span><br><span class="line">                yu_id &#x3D; re.findall(pattern, r.text)[0]</span><br><span class="line">                print(yu_id)</span><br><span class="line">                self.session.get(&quot;http:&#x2F;&#x2F;rg.lib.xjtu.edu.cn:8010&#x2F;my&#x2F;?cancel&#x3D;1&amp;ri&#x3D;&quot; + yu_id)</span><br><span class="line">                #微信通知</span><br><span class="line">                vxpush(self,&#39;取消成功&#39;)</span><br><span class="line">                print(&quot;取消成功&quot;)</span><br><span class="line">                return 1</span><br><span class="line">            except Exception as e:</span><br><span class="line">                print(&quot;取消失败\n&quot; + str(e))</span><br><span class="line">                return 0</span><br><span class="line">        #预约座位</span><br><span class="line">        def reserve(self,kid,sp):</span><br><span class="line">            r &#x3D; self.session.get(&#39;http:&#x2F;&#x2F;rg.lib.xjtu.edu.cn:8010&#x2F;ruguan&#39;)#入关</span><br><span class="line">            #print(&#39;--------------------------&#39;)</span><br><span class="line">            nn &#x3D; r.text.find(&#39;&lt;input id&#x3D;&quot;csrf_token&quot; name&#x3D;&quot;csrf_token&quot; type&#x3D;&quot;hidden&quot; value&#x3D;&#39;)</span><br><span class="line">            tok &#x3D; r.text[nn+1+len(&#39;&lt;input id&#x3D;&quot;csrf_token&quot; name&#x3D;&quot;csrf_token&quot; type&#x3D;&quot;hidden&quot; value&#x3D;&#39;):nn+56+len(&#39;&lt;input id&#x3D;&quot;csrf_token&quot; name&#x3D;&quot;csrf_token&quot; type&#x3D;&quot;hidden&quot; value&#x3D;&#39;)]</span><br><span class="line">            #print(r.text[nn+1+len(&#39;&lt;input id&#x3D;&quot;csrf_token&quot; name&#x3D;&quot;csrf_token&quot; type&#x3D;&quot;hidden&quot; value&#x3D;&#39;):nn+56+len(&#39;&lt;input id&#x3D;&quot;csrf_token&quot; name&#x3D;&quot;csrf_token&quot; type&#x3D;&quot;hidden&quot; value&#x3D;&#39;)])</span><br><span class="line">            data&#x3D;&#123;</span><br><span class="line">            &#39;csrf_token&#39;:tok,</span><br><span class="line">            &#39;csrf_token&#39;:tok,</span><br><span class="line">            &#39;service&#39;:&#39;seat&#39;,</span><br><span class="line">            &#39;submit&#39;:&#39;%E6%8F%90%E4%BA%A4&#39;,</span><br><span class="line">            &#39;rplace&#39;:&#39;east&#39;</span><br><span class="line">            &#125;#入关post,比较麻烦</span><br><span class="line">            r &#x3D; self.session.post(&#39;http:&#x2F;&#x2F;rg.lib.xjtu.edu.cn:8010&#x2F;ruguan&#39;,data &#x3D; data)#提交</span><br><span class="line">            </span><br><span class="line">            r &#x3D; self.session.get(&#39;http:&#x2F;&#x2F;rg.lib.xjtu.edu.cn:8010&#x2F;seat&#x2F;?kid&#x3D;&#39;+kid+&#39;&amp;sp&#x3D;&#39;+sp)</span><br><span class="line">            #print(r.text)</span><br><span class="line">            #------------------------------新版判断</span><br><span class="line">            #兴庆区的，别的区得自行修改了</span><br><span class="line">            if check_my_seat(self) &#x3D;&#x3D; 1:</span><br><span class="line">                #vxpush(self,&#39;预约成功&#39;+str(check_my_seat(self)))</span><br><span class="line">                #print(&#39;预约成功状态&#39;+str(check_my_seat(self)))</span><br><span class="line">                return 1</span><br><span class="line">            else:</span><br><span class="line">                vxpush(self,&#39;预约失败&#39;)</span><br><span class="line">                print(&#39;预约失败&#39;)</span><br><span class="line">                return 0</span><br><span class="line">            # if(sp &#x3D;&#x3D; &#39;west3B&#39;):</span><br><span class="line">            #     r_w3&#x3D;self.session.get(&#39;http:&#x2F;&#x2F;rg.lib.xjtu.edu.cn:8010&#x2F;qseat?sp&#x3D;west3B&#39;)</span><br><span class="line">            #     s2 &#x3D; json.loads(r_w3.text)[&#39;seat&#39;]</span><br><span class="line">            #     if(s2[kid] &#x3D;&#x3D; 1):</span><br><span class="line">            #         return 200</span><br><span class="line">            #     else:</span><br><span class="line">            #         print(&#39;预约了但是没有成功,肯定是你已经预约过了&#39;)</span><br><span class="line">            #         exit(0)</span><br><span class="line">            #         return 0</span><br><span class="line">            # if(sp &#x3D;&#x3D; &#39;east3A&#39;):</span><br><span class="line">            #     r_w3&#x3D;self.session.get(&#39;http:&#x2F;&#x2F;rg.lib.xjtu.edu.cn:8010&#x2F;qseat?sp&#x3D;east3A&#39;)</span><br><span class="line">            #     s2 &#x3D; json.loads(r_w3.text)[&#39;seat&#39;]</span><br><span class="line">            #     if(s2[kid] &#x3D;&#x3D; 1):</span><br><span class="line">            #         return 200</span><br><span class="line">            #     else:</span><br><span class="line">            #         print(&#39;预约了但是没有成功，肯定是你已经预约过了&#39;)</span><br><span class="line">            #         exit(0)</span><br><span class="line">            #         return 0</span><br><span class="line">            return r.status_code</span><br><span class="line">        def encrypt_pwd(raw_pwd, publicKey&#x3D;&#39;0725@pwdorgopenp&#39;):</span><br><span class="line">            &#39;&#39;&#39; AES-ECB encrypt &#39;&#39;&#39;</span><br><span class="line">            publicKey &#x3D; publicKey.encode(&#39;utf-8&#39;)</span><br><span class="line">            # pkcs7 padding</span><br><span class="line">            BS &#x3D; AES.block_size</span><br><span class="line">            pad &#x3D; lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS)</span><br><span class="line">            pwd &#x3D; pad(raw_pwd)</span><br><span class="line">            # zero padding</span><br><span class="line">            &#39;&#39;&#39;</span><br><span class="line">            pwd &#x3D; raw_pwd</span><br><span class="line">            while len(raw_pwd.encode(&#39;utf-8&#39;)) % 16 !&#x3D; 0:</span><br><span class="line">                pwd +&#x3D; &#39;\0&#39;</span><br><span class="line">            &#39;&#39;&#39;</span><br><span class="line">            cipher &#x3D; AES.new(publicKey, AES.MODE_ECB)</span><br><span class="line">            pwd &#x3D; cipher.encrypt(pwd.encode(&#39;utf-8&#39;))</span><br><span class="line">            return str(base64.b64encode(pwd), encoding&#x3D;&#39;utf-8&#39;)</span><br><span class="line"></span><br><span class="line">        _headers &#x3D; self.config[&#39;headers&#39;]</span><br><span class="line">        _headers[&#39;Content-Type&#39;] &#x3D; &#39;application&#x2F;x-www-form-urlencoded&#39;</span><br><span class="line"></span><br><span class="line">        # start with 302 redirection from ehall</span><br><span class="line">        _r &#x3D; self.session.get(&#39;http:&#x2F;&#x2F;rg.lib.xjtu.edu.cn:8010&#x2F;auth&#x2F;login&#x2F;?next&#x3D;%2Fseat%2F&#39;)</span><br><span class="line"></span><br><span class="line">        # get cookie route</span><br><span class="line">        self.session.get(&#39;https:&#x2F;&#x2F;org.xjtu.edu.cn&#x2F;openplatform&#x2F;login.html&#39;)</span><br><span class="line"></span><br><span class="line">        # get JcaptchaCode and cookie JSESSIONID &amp; sid_code</span><br><span class="line">        r_JcaptchaCode &#x3D; self.session.post(&#39;https:&#x2F;&#x2F;org.xjtu.edu.cn&#x2F;openplatform&#x2F;g&#x2F;admin&#x2F;getJcaptchaCode&#39;,</span><br><span class="line">                              headers&#x3D;_headers)</span><br><span class="line"></span><br><span class="line">        # is_JcaptchaCode_show</span><br><span class="line">        url &#x3D; &#39;https:&#x2F;&#x2F;org.xjtu.edu.cn&#x2F;openplatform&#x2F;g&#x2F;admin&#x2F;getIsShowJcaptchaCode&#39;</span><br><span class="line">        params &#x3D; &#123;</span><br><span class="line">            &#39;userName&#39;: self.config[&#39;username&#39;],</span><br><span class="line">            &#39;_&#39;: str(int(time.time() * 1000))</span><br><span class="line">        &#125;</span><br><span class="line">        r &#x3D; self.session.get(url, params&#x3D;params, headers&#x3D;_headers)</span><br><span class="line">        print(r.text)</span><br><span class="line">        # login</span><br><span class="line">        url &#x3D; &#39;https:&#x2F;&#x2F;org.xjtu.edu.cn&#x2F;openplatform&#x2F;g&#x2F;admin&#x2F;login&#39;</span><br><span class="line">        cookie &#x3D; &#123;</span><br><span class="line">            &#39;cur_appId_&#39;:&#39;JL4oKidbLpQ&#x3D;&#39;</span><br><span class="line">        &#125;</span><br><span class="line">        data &#x3D; &#123;</span><br><span class="line">            &quot;loginType&quot;: 1,</span><br><span class="line">            &quot;username&quot;: self.config[&#39;username&#39;],</span><br><span class="line">            &quot;pwd&quot;: encrypt_pwd(self.config[&#39;password&#39;]),</span><br><span class="line">            &quot;jcaptchaCode&quot;: &quot;&quot;</span><br><span class="line">        &#125;</span><br><span class="line">        _headers[&#39;Content-Type&#39;] &#x3D; &#39;application&#x2F;json;charset&#x3D;UTF-8&#39;</span><br><span class="line">        r &#x3D; self.session.post(url, data&#x3D;json.dumps(data), headers&#x3D;_headers,cookies&#x3D;cookie)</span><br><span class="line">        print(r.text)</span><br><span class="line">        token &#x3D; json.loads(r.text)[&#39;data&#39;][&#39;tokenKey&#39;]</span><br><span class="line"></span><br><span class="line">        cookie &#x3D; &#123;</span><br><span class="line">            &#39;cur_appId_&#39;:&#39;JL4oKidbLpQ&#x3D;&#39;,</span><br><span class="line">            &#39;open_Platform_User&#39; : token</span><br><span class="line">        &#125;</span><br><span class="line">        r&#x3D;self.session.get(&#39;http:&#x2F;&#x2F;org.xjtu.edu.cn&#x2F;openplatform&#x2F;oauth&#x2F;auth&#x2F;getRedirectUrl?userType&#x3D;1&amp;personNo&#x3D;&#39;+self.config[&#39;person_id&#39;]+&#39;&amp;_&#x3D;1590998261976&#39;,cookies &#x3D; cookie)</span><br><span class="line">        print(r.text)</span><br><span class="line">        r&#x3D;self.session.get(json.loads(r.text)[&#39;data&#39;])</span><br><span class="line">        r&#x3D;self.session.get(&#39;http:&#x2F;&#x2F;rg.lib.xjtu.edu.cn:8080&#x2F;bxusr&#x2F;link.jsp?uid&#x3D;&#39;+self.config[&#39;username&#39;]+&#39;&amp;cn&#x3D;%E9%83%AD%E7%8E%8B%E6%87%BF&amp;employeeNumber&#x3D;&#39;+self.config[&#39;person_id&#39;]+&#39;&amp;depId&#x3D;%E7%94%B5%E5%AD%90%E4%B8%8E%E4%BF%A1%E6%81%AF%E5%AD%A6%E9%83%A8&amp;mobile&#39;)#&amp;email&#x3D;867718012@qq.com去掉了</span><br><span class="line">        #print(r.text)</span><br><span class="line">        #---------------------登陆成功------------------------</span><br><span class="line">        check_my_seat(self)</span><br><span class="line">        re_time &#x3D; datetime.datetime.now()</span><br><span class="line">        while(1):</span><br><span class="line">            #ii+&#x3D;1</span><br><span class="line">            r&#x3D;self.session.get(&#39;http:&#x2F;&#x2F;rg.lib.xjtu.edu.cn:8086&#x2F;qseat?sp&#x3D;north4east&#39;)#兴庆区的，别的区得自行修改了</span><br><span class="line">            s &#x3D; json.loads(r.text)[&#39;seat&#39;]</span><br><span class="line">            #print(s1,s2,s_new)</span><br><span class="line">            print(&#39;循环次数：&#39;)</span><br><span class="line">            #vxpush(self,&#39;test&#39;)</span><br><span class="line">            #print(ii)</span><br><span class="line">            #reserve(self,&#39;029&#39;,&#39;south3middle&#39;)</span><br><span class="line">            print(&quot;位置状态&quot; + str(s[self.weizhi]))</span><br><span class="line">            if s[self.weizhi] &#x3D;&#x3D; 0:</span><br><span class="line">                while(1):</span><br><span class="line">                    if reserve(self,self.weizhi,&#39;north4east&#39;) &#x3D;&#x3D; 1:</span><br><span class="line">                        print(&#39;座位号是&#39;+self.weizhi)</span><br><span class="line">                    time.sleep(60*25)</span><br><span class="line">                    while(cancel(self) &#x3D;&#x3D; 0):</span><br><span class="line">                        time.sleep(5)</span><br><span class="line">                        </span><br><span class="line">                        # return(0)</span><br><span class="line">            time.sleep(2)</span><br><span class="line">            # if((datetime.datetime.now()-re_time).seconds&gt;&#x3D;300):</span><br><span class="line">            #     exit(0)</span><br><span class="line"></span><br><span class="line">if __name__ &#x3D;&#x3D; &#39;__main__&#39;:</span><br><span class="line">    #time.sleep(60*1)#预计一分钟离馆加延迟</span><br><span class="line">    dt &#x3D; &#39;2020-08-19 11:00:02&#39;</span><br><span class="line">    ts &#x3D; int(time.mktime(time.strptime(dt, &quot;%Y-%m-%d %H:%M:%S&quot;)))</span><br><span class="line">    t &#x3D; int(time.time())</span><br><span class="line">    cha &#x3D; ts - t</span><br><span class="line">    while cha &gt;0:</span><br><span class="line">        t &#x3D; int(time.time())</span><br><span class="line">        cha &#x3D; ts - t </span><br><span class="line">        time.sleep(1)</span><br><span class="line">        if(cha%100 &#x3D;&#x3D; 0):</span><br><span class="line">            print(cha)</span><br><span class="line">    print(&quot;开始&quot;)</span><br><span class="line">    guoguo &#x3D; XJTUUser(&#39;.&#x2F;config.json&#39;)</span><br><span class="line">    guoguo.login()</span><br><span class="line">    exit(0)</span><br></pre></td></tr></table></figure>
+<h2 id="凌晨预约脚本"><a href="#凌晨预约脚本" class="headerlink" title="凌晨预约脚本"></a>凌晨预约脚本</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br></pre></td><td class="code"><pre><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;env python3</span><br><span class="line"># @Author  : Guoguo</span><br><span class="line"># @Blog    ：https:&#x2F;&#x2F;gwyxjtu.github.io</span><br><span class="line">import os</span><br><span class="line">import time</span><br><span class="line">import json</span><br><span class="line">import base64</span><br><span class="line">import requests</span><br><span class="line">from Crypto.Cipher import AES</span><br><span class="line">import re</span><br><span class="line">from lxml import etree</span><br><span class="line">from threading import Thread</span><br><span class="line"></span><br><span class="line">our_seat &#x3D; []</span><br><span class="line"></span><br><span class="line">class XJTUUser(object):</span><br><span class="line"></span><br><span class="line">    def __init__(self, config_file_path&#x3D;&#39;.&#x2F;config.json&#39;):</span><br><span class="line">        with open(config_file_path) as config_file:</span><br><span class="line">            config &#x3D; json.loads(config_file.read())</span><br><span class="line">        self.config &#x3D; config</span><br><span class="line">        self.is_login &#x3D; False</span><br><span class="line">        self.session &#x3D; requests.Session()</span><br><span class="line">        self.session.headers.update(config[&#39;headers&#39;])</span><br><span class="line">        self.session.cookies.update(config[&#39;cookies&#39;])</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    def login(self):</span><br><span class="line"></span><br><span class="line">        #--------------------------------------</span><br><span class="line">        def check_my_seat(self):#返回你的座位字符穿</span><br><span class="line">            r &#x3D; self.session.get(&#39;http:&#x2F;&#x2F;rg.lib.xjtu.edu.cn:8086&#x2F;my&#x2F;&#39;)</span><br><span class="line">            dom &#x3D; etree.HTML(r.text)</span><br><span class="line">            a_text &#x3D; dom.xpath(&#39;&#x2F;html&#x2F;body&#x2F;div[2]&#x2F;center&#x2F;div[1]&#x2F;div&#x2F;div&#x2F;div&#x2F;div&#x2F;div&#x2F;div[1]&#x2F;h3&#x2F;text()[2]&#39;)</span><br><span class="line">            jjj &#x3D; dom.xpath(&#39;&#x2F;html&#x2F;body&#x2F;div[2]&#x2F;center&#x2F;div[1]&#x2F;div&#x2F;div&#x2F;div&#x2F;div&#x2F;div&#x2F;div[2]&#x2F;center&#x2F;h3[1]&#39;)</span><br><span class="line">            if(len(jjj)&lt;1):</span><br><span class="line">                print(&#39;没弄上1，出现错误&#39;)</span><br><span class="line">                return 0;</span><br><span class="line">            if jjj[0].text &#x3D;&#x3D; &#39;已取消&#39; or jjj[0].text &#x3D;&#x3D; &#39;已离馆&#39; or jjj[0].text &#x3D;&#x3D; &#39;超时未入馆&#39;:</span><br><span class="line">                print(&#39;没弄上，出现错误&#39;)</span><br><span class="line">                return 0</span><br><span class="line">            else:</span><br><span class="line">                print(&#39;弄好了&#39;+str(a_text))</span><br><span class="line">                our_seat.append(str(a_text))</span><br><span class="line">                return 1</span><br><span class="line"></span><br><span class="line">            </span><br><span class="line"></span><br><span class="line">        def reserve(self,kid,sp):</span><br><span class="line">            r &#x3D; self.session.get(&#39;http:&#x2F;&#x2F;rg.lib.xjtu.edu.cn:8086&#x2F;ruguan&#39;)#入关</span><br><span class="line">            #print(&#39;--------------------------&#39;)</span><br><span class="line">            nn &#x3D; r.text.find(&#39;&lt;input id&#x3D;&quot;csrf_token&quot; name&#x3D;&quot;csrf_token&quot; type&#x3D;&quot;hidden&quot; value&#x3D;&#39;)</span><br><span class="line">            tok &#x3D; r.text[nn+1+len(&#39;&lt;input id&#x3D;&quot;csrf_token&quot; name&#x3D;&quot;csrf_token&quot; type&#x3D;&quot;hidden&quot; value&#x3D;&#39;):nn+56+len(&#39;&lt;input id&#x3D;&quot;csrf_token&quot; name&#x3D;&quot;csrf_token&quot; type&#x3D;&quot;hidden&quot; value&#x3D;&#39;)]</span><br><span class="line">            #print(r.text[nn+1+len(&#39;&lt;input id&#x3D;&quot;csrf_token&quot; name&#x3D;&quot;csrf_token&quot; type&#x3D;&quot;hidden&quot; value&#x3D;&#39;):nn+56+len(&#39;&lt;input id&#x3D;&quot;csrf_token&quot; name&#x3D;&quot;csrf_token&quot; type&#x3D;&quot;hidden&quot; value&#x3D;&#39;)])</span><br><span class="line">            data&#x3D;&#123;</span><br><span class="line">            &#39;csrf_token&#39;:tok,</span><br><span class="line">            &#39;csrf_token&#39;:tok,</span><br><span class="line">            &#39;service&#39;:&#39;seat&#39;,</span><br><span class="line">            &#39;submit&#39;:&#39;%E6%8F%90%E4%BA%A4&#39;,</span><br><span class="line">            &#39;rplace&#39;:&#39;east&#39;</span><br><span class="line">            &#125;#入关post,比较麻烦</span><br><span class="line">            r &#x3D; self.session.post(&#39;http:&#x2F;&#x2F;rg.lib.xjtu.edu.cn:8086&#x2F;ruguan&#39;,data &#x3D; data)#提交</span><br><span class="line">            </span><br><span class="line">            r &#x3D; self.session.get(&#39;http:&#x2F;&#x2F;rg.lib.xjtu.edu.cn:8086&#x2F;seat&#x2F;?kid&#x3D;&#39;+kid+&#39;&amp;sp&#x3D;&#39;+sp)</span><br><span class="line">            #print(r.text)</span><br><span class="line">            #------------------------------新版判断</span><br><span class="line">            #兴庆区的，别的区得自行修改了</span><br><span class="line">            if check_my_seat(self) &#x3D;&#x3D; 1:</span><br><span class="line">                print(&#39;预约成功&#39;+str(check_my_seat(self)))</span><br><span class="line">                return 1</span><br><span class="line">            else:</span><br><span class="line">                print(&#39;预约失败&#39;)</span><br><span class="line">                return 0</span><br><span class="line"></span><br><span class="line">            return r.status_code</span><br><span class="line">        def encrypt_pwd(raw_pwd, publicKey&#x3D;&#39;0725@pwdorgopenp&#39;):</span><br><span class="line">            &#39;&#39;&#39; AES-ECB encrypt &#39;&#39;&#39;</span><br><span class="line">            publicKey &#x3D; publicKey.encode(&#39;utf-8&#39;)</span><br><span class="line">            # pkcs7 padding</span><br><span class="line">            BS &#x3D; AES.block_size</span><br><span class="line">            pad &#x3D; lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS)</span><br><span class="line">            pwd &#x3D; pad(raw_pwd)</span><br><span class="line">            # zero padding</span><br><span class="line">            &#39;&#39;&#39;</span><br><span class="line">            pwd &#x3D; raw_pwd</span><br><span class="line">            while len(raw_pwd.encode(&#39;utf-8&#39;)) % 16 !&#x3D; 0:</span><br><span class="line">                pwd +&#x3D; &#39;\0&#39;</span><br><span class="line">            &#39;&#39;&#39;</span><br><span class="line">            cipher &#x3D; AES.new(publicKey, AES.MODE_ECB)</span><br><span class="line">            pwd &#x3D; cipher.encrypt(pwd.encode(&#39;utf-8&#39;))</span><br><span class="line">            return str(base64.b64encode(pwd), encoding&#x3D;&#39;utf-8&#39;)</span><br><span class="line"></span><br><span class="line">        _headers &#x3D; self.config[&#39;headers&#39;]</span><br><span class="line">        _headers[&#39;Content-Type&#39;] &#x3D; &#39;application&#x2F;x-www-form-urlencoded&#39;</span><br><span class="line"></span><br><span class="line">        # start with 302 redirection from ehall</span><br><span class="line">        _r &#x3D; self.session.get(&#39;http:&#x2F;&#x2F;rg.lib.xjtu.edu.cn:8086&#x2F;auth&#x2F;login&#x2F;?next&#x3D;%2Fseat%2F&#39;)</span><br><span class="line"></span><br><span class="line">        # get cookie route</span><br><span class="line">        self.session.get(&#39;https:&#x2F;&#x2F;org.xjtu.edu.cn&#x2F;openplatform&#x2F;login.html&#39;)</span><br><span class="line"></span><br><span class="line">        # get JcaptchaCode and cookie JSESSIONID &amp; sid_code</span><br><span class="line">        r_JcaptchaCode &#x3D; self.session.post(&#39;https:&#x2F;&#x2F;org.xjtu.edu.cn&#x2F;openplatform&#x2F;g&#x2F;admin&#x2F;getJcaptchaCode&#39;,</span><br><span class="line">                              headers&#x3D;_headers)</span><br><span class="line"></span><br><span class="line">        # is_JcaptchaCode_show</span><br><span class="line">        url &#x3D; &#39;https:&#x2F;&#x2F;org.xjtu.edu.cn&#x2F;openplatform&#x2F;g&#x2F;admin&#x2F;getIsShowJcaptchaCode&#39;</span><br><span class="line">        params &#x3D; &#123;</span><br><span class="line">            &#39;userName&#39;: self.config[&#39;username&#39;],</span><br><span class="line">            &#39;_&#39;: str(int(time.time() * 1000))</span><br><span class="line">        &#125;</span><br><span class="line">        r &#x3D; self.session.get(url, params&#x3D;params, headers&#x3D;_headers)</span><br><span class="line">        print(r.text)</span><br><span class="line">        # login</span><br><span class="line">        url &#x3D; &#39;https:&#x2F;&#x2F;org.xjtu.edu.cn&#x2F;openplatform&#x2F;g&#x2F;admin&#x2F;login&#39;</span><br><span class="line">        cookie &#x3D; &#123;</span><br><span class="line">            &#39;cur_appId_&#39;:&#39;JL4oKidbLpQ&#x3D;&#39;</span><br><span class="line">        &#125;</span><br><span class="line">        data &#x3D; &#123;</span><br><span class="line">            &quot;loginType&quot;: 1,</span><br><span class="line">            &quot;username&quot;: self.config[&#39;username&#39;],</span><br><span class="line">            &quot;pwd&quot;: encrypt_pwd(self.config[&#39;password&#39;]),</span><br><span class="line">            &quot;jcaptchaCode&quot;: &quot;&quot;</span><br><span class="line">        &#125;</span><br><span class="line">        _headers[&#39;Content-Type&#39;] &#x3D; &#39;application&#x2F;json;charset&#x3D;UTF-8&#39;</span><br><span class="line">        r &#x3D; self.session.post(url, data&#x3D;json.dumps(data), headers&#x3D;_headers,cookies&#x3D;cookie)</span><br><span class="line">        print(r.text)</span><br><span class="line">        token &#x3D; json.loads(r.text)[&#39;data&#39;][&#39;tokenKey&#39;]</span><br><span class="line"></span><br><span class="line">        cookie &#x3D; &#123;</span><br><span class="line">            &#39;cur_appId_&#39;:&#39;JL4oKidbLpQ&#x3D;&#39;,</span><br><span class="line">            &#39;open_Platform_User&#39; : token</span><br><span class="line">        &#125;</span><br><span class="line">        r&#x3D;self.session.get(&#39;http:&#x2F;&#x2F;org.xjtu.edu.cn&#x2F;openplatform&#x2F;oauth&#x2F;auth&#x2F;getRedirectUrl?userType&#x3D;1&amp;personNo&#x3D;&#39;+self.config[&#39;person_id&#39;]+&#39;&amp;_&#x3D;1590998261976&#39;,cookies &#x3D; cookie)</span><br><span class="line">        print(r.text)</span><br><span class="line">        r&#x3D;self.session.get(json.loads(r.text)[&#39;data&#39;])</span><br><span class="line">        r&#x3D;self.session.get(&#39;http:&#x2F;&#x2F;rg.lib.xjtu.edu.cn:8080&#x2F;bxusr&#x2F;link.jsp?uid&#x3D;&#39;+self.config[&#39;username&#39;]+&#39;&amp;cn&#x3D;%E9%83%AD%E7%8E%8B%E6%87%BF&amp;employeeNumber&#x3D;&#39;+self.config[&#39;person_id&#39;]+&#39;&amp;depId&#x3D;%E7%94%B5%E5%AD%90%E4%B8%8E%E4%BF%A1%E6%81%AF%E5%AD%A6%E9%83%A8&amp;mobile&#39;)#&amp;email&#x3D;867718012@qq.com去掉了</span><br><span class="line">        #print(r.text)</span><br><span class="line">        #---------------------登陆成功------------------------</span><br><span class="line"></span><br><span class="line">        #print(r_w3.text)</span><br><span class="line">        #print(&#39;各层座位数量&#39;,end &#x3D; &#39;&#39;)</span><br><span class="line">        #print(json.loads(r_e3.text)[&#39;scount&#39;])</span><br><span class="line">        #s.update(json.loads(r_w3.text)[&#39;seat&#39;])&#x2F;seat&#x2F;?kid&#x3D;015&amp;sp&#x3D;north4southwest</span><br><span class="line">        #print(s1,s2)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        #check_my_seat(self)</span><br><span class="line">        my_list &#x3D; [&#39;G029&#39;,&#39;G054&#39;,&#39;G066&#39;]</span><br><span class="line">        ii&#x3D;0</span><br><span class="line">        while(1):</span><br><span class="line">            ii+&#x3D;1</span><br><span class="line">            r&#x3D;self.session.get(&#39;http:&#x2F;&#x2F;rg.lib.xjtu.edu.cn:8086&#x2F;qseat?sp&#x3D;north4east&#39;)#兴庆区的，别的区得自行修改了</span><br><span class="line"></span><br><span class="line">            #print(&#39;各层座位数量&#39;,end &#x3D; &#39;&#39;)</span><br><span class="line">            s &#x3D; json.loads(r.text)[&#39;seat&#39;]</span><br><span class="line">            print(&#39;循环次数：&#39;)</span><br><span class="line">            print(ii)</span><br><span class="line">            for i in my_list:</span><br><span class="line">                if s[i] &#x3D;&#x3D; 0:</span><br><span class="line">                    print(i)</span><br><span class="line">                    if reserve(self,i,&#39;north4east&#39;) &#x3D;&#x3D; 1:</span><br><span class="line">                        return(0)</span><br><span class="line">            for i in s:</span><br><span class="line">                if s[i] &#x3D;&#x3D; 0:</span><br><span class="line">                    print(i)</span><br><span class="line">                    if reserve(self,i,&#39;north4east&#39;) &#x3D;&#x3D; 1:</span><br><span class="line">                        return(0)</span><br><span class="line">            time.sleep(2)</span><br><span class="line"></span><br><span class="line">if __name__ &#x3D;&#x3D; &#39;__main__&#39;:</span><br><span class="line"></span><br><span class="line">    guoguo &#x3D; XJTUUser(&#39;.&#x2F;config.json&#39;)</span><br><span class="line">    zxz &#x3D; XJTUUser(&#39;.&#x2F;config_zxz.json&#39;)</span><br><span class="line">    dt &#x3D; &#39;2020-08-20 06:00:02&#39;</span><br><span class="line">    ts &#x3D; int(time.mktime(time.strptime(dt, &quot;%Y-%m-%d %H:%M:%S&quot;)))</span><br><span class="line">    t &#x3D; int(time.time())</span><br><span class="line">    cha &#x3D; ts - t</span><br><span class="line">    while cha &gt;0:</span><br><span class="line">        t &#x3D; int(time.time())</span><br><span class="line">        cha &#x3D; ts - t </span><br><span class="line">        time.sleep(1)</span><br><span class="line">        if(cha%100 &#x3D;&#x3D; 0):</span><br><span class="line">            print(cha)</span><br><span class="line">    print(&quot;开始&quot;)</span><br><span class="line">    </span><br><span class="line">    #guoguo.login()</span><br><span class="line">    #别的人就分别建立新的结构体就行</span><br><span class="line">    #ruo &#x3D; XJTUUser(&#39;.&#x2F;config_1.json&#39;)</span><br><span class="line">    guoguo.login()</span><br><span class="line">    zxz.login()</span><br><span class="line">    exit(0)</span><br></pre></td></tr></table></figure>
+<h2 id="config文件"><a href="#config文件" class="headerlink" title="config文件"></a>config文件</h2><pre><code>{
+    &quot;username&quot;: &quot;netid&quot;,
+    &quot;password&quot;: &quot;&quot;,
+    &quot;person_id&quot;:&quot;217611****&quot;,
+    &quot;headers&quot;: {
+        &quot;User-Agent&quot;: &quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36&quot;
+    },
+    &quot;cookies&quot;: {}
+}</code></pre><p>考研加油！</p>
+
+      
+      <!-- 打赏 -->
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://gwyxjtu.github.io/2020/08/20/%E5%9B%BE%E4%B9%A6%E9%A6%86%E9%A2%84%E7%BA%A6%E8%84%9A%E6%9C%AC%E6%96%B0%E7%89%88%E4%B8%AA%E4%BA%BA%E7%89%88-requests/" data-id="ckpqb9d06001huwv21kl11cz1"
+        class="article-share-link">分享</a>
+        
+      
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+      <a href="/2020/11/04/%E5%AE%9E%E8%BD%B4%E4%B8%8A%E5%BC%80%E7%8E%AF%E9%9B%B6%E6%9E%81%E7%82%B9%E4%B9%8B%E9%97%B4%E7%9A%84%E5%88%86%E7%A6%BB%E4%BC%9A%E5%92%8C%E7%82%B9%E9%97%AE%E9%A2%98-1/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            实轴上开环零极点之间的分离会和点问题
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/08/10/hello-world/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Hello World</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        notify: false,
+        verify: '',
+        app_id: '',
+        app_key: '',
+        path: window.location.pathname,
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2019-2021
+        galaxy
+      </li>
+      <li>
+        
+          Powered by
+        
+        
+        <a href="https://hexo.io" target="_blank">Hexo</a> Theme <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <ul class="list-inline">
+  <li>PV:<span id="busuanzi_value_page_pv"></span></li>
+  <li>UV:<span id="busuanzi_value_site_uv"></span></li>
+</ul>
+        
+      </li>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+    <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+      <aside class="sidebar">
+        <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="果果的博客"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2021/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+      </aside>
+      <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+      
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js"></script>
+<script>
+  var typed = new Typed("#subtitle", {
+    strings: ['人一生会遇到约2920万人,两个人相爱的概率是0.000049,所以你不爱我,我不怪你.','台下人走过不见旧言色','没有永远的年轻，没有唱不完的歌'],
+    startDelay: 0,
+    typeSpeed: 200,
+    loop: true,
+    backSpeed: 100,
+    showCursor: true
+    });
+</script>
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer:'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    onClick: (e) => {
+      $('.toc-link').removeClass('is-active-link');
+      $(`a[href=${e.target.hash}]`).addClass('is-active-link');
+      $(e.target.hash).scrollIntoView();
+      return false;
+    }
+  });
+</script>
+
+
+<script>
+  var ayerConfig = {
+    mathjax: true
+  }
+</script>
+
+
+<script src="/js/ayer.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.6/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
+  </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+
+</html>

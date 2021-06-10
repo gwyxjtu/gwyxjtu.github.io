@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="description" content="岁月不改她模样" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    selenium的webdriver来自动填报每日健康日报 |  果果的博客
+  </title>
+  <meta name="generator" content="hexo-theme-yilia-plus">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<script src="/js/pace.min.js"></script>
+
+
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-selenium的webdriver来自动填报每日健康日报" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  selenium的webdriver来自动填报每日健康日报
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/06/01/selenium%E7%9A%84webdriver%E6%9D%A5%E8%87%AA%E5%8A%A8%E5%A1%AB%E6%8A%A5%E6%AF%8F%E6%97%A5%E5%81%A5%E5%BA%B7%E6%97%A5%E6%8A%A5/" class="article-date">
+  <time datetime="2020-06-01T00:48:13.000Z" itemprop="datePublished">2020-06-01</time>
+</a>
+      
+      
+      
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">1.1k字</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">4分钟</span>
+        </span>
+    </span>
+</div>
+
+      
+    </div>
+    
+
+    
+    
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>健康平台每天要求填报两次，每次还有时间限制，一次不填就成黄🐎了，写一个脚本，这里偷懒了，懒得去弄cas登陆那一套跳转，就直接懒狗selenium去弄了。</p>
+<h2 id="关键点"><a href="#关键点" class="headerlink" title="关键点"></a>关键点</h2><h3 id="安装selenium"><a href="#安装selenium" class="headerlink" title="安装selenium"></a>安装selenium</h3><p>首先是安装selenium，windows的话有chrome就问题不大，在设置里面看看自己的版本，然后去<a href="http://chromedriver.storage.googleapis.com/index.html" target="_blank" rel="noopener">http://chromedriver.storage.googleapis.com/index.html</a>下载相应的驱动</p>
+<p>这里下载下来后我看网上说放到C盘谷歌服务文件夹地下，不太行，我最后是放在了python的PATH地下，anaconda的话就是根目录的Script文件夹下，直接把可执行文件放进去就行，然后使用以下代码测试，如果没有报错说明驱动安装成功了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">'headless'</span>)</span><br><span class="line">driver=webdriver.Chrome(chrome_options=option)</span><br></pre></td></tr></table></figure>
+<p>Linux版本的安装就搜教程即可，问题不大</p>
+<h3 id="延时的必要性"><a href="#延时的必要性" class="headerlink" title="延时的必要性"></a>延时的必要性</h3><p>个人感觉这个是因为selenium本质是调用谷歌浏览器进行模拟，所以必定会有中间跳转的延时。</p>
+<p>在登陆跳转的时候，延时是必须的，不然搜索不到下一个的界面。</p>
+<h3 id="跳转时的页面切换"><a href="#跳转时的页面切换" class="headerlink" title="跳转时的页面切换"></a>跳转时的页面切换</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">windows = driver.window_handles</span><br><span class="line"></span><br><span class="line">driver.switch_to.window(windows[<span class="number">-1</span>])</span><br><span class="line">print(<span class="string">'当前页面title'</span>,driver.title)</span><br></pre></td></tr></table></figure>
+
+<p>这个可以检测是否跳转成功，有时候图形化界面看到的不一定是程序拿到的页面，这里相当于一个队列，直接跳转到最后一个，想要跳转回去就往前移。</p>
+<h3 id="iframe问题"><a href="#iframe问题" class="headerlink" title="iframe问题"></a>iframe问题</h3><p>iframe真是一个神奇的东西，我在浏览器复制好xpath，结果代码执行找不到，原因是用了iframe，这个相当于另外的一个htm，需要进行跳转</p>
+<p><img src="/images/health_1.png" alt=""></p>
+<pre><code>driver.switch_to.frame(driver.find_element_by_xpath(&quot;/html/body/div[2]/div[2]/table/tbody/tr/td[2]/div[2]/div/iframe&quot;))</code></pre><p>这里使用这个进行切换，xpath是新的iframe的xpath，这样就可以切换到iframe内部的htm了，然后填表，填完之后切换回去。</p>
+<pre><code>driver.switch_to.default_content()</code></pre><h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="comment">#先安装pywin32，才能导入下面两个包</span></span><br><span class="line"><span class="keyword">import</span> win32api</span><br><span class="line"><span class="keyword">import</span> win32con</span><br><span class="line"><span class="comment">#导入处理alert所需要的包</span></span><br><span class="line"><span class="keyword">from</span> selenium.common.exceptions <span class="keyword">import</span> NoAlertPresentException</span><br><span class="line"><span class="keyword">import</span> traceback</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">option = webdriver.ChromeOptions()</span><br><span class="line">option.add_argument(<span class="string">'headless'</span>)</span><br><span class="line"><span class="comment">#这里是重点，增加一个参数即可实现在不打开浏览器的情况下完成系列操作</span></span><br><span class="line"></span><br><span class="line">driver=webdriver.Chrome(chrome_options=option) <span class="comment"># 选择Chrome浏览器</span></span><br><span class="line">driver.get(<span class="string">'http://one2020.xjtu.edu.cn/EIP/nonlogin/user/index.htm'</span>) <span class="comment"># 打开网站</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#driver.maximize_window() #最大化谷歌浏览器</span></span><br><span class="line">driver.find_element_by_link_text(<span class="string">'登录 / SIGN IN'</span>).click()</span><br><span class="line">time.sleep(<span class="number">2</span>)</span><br><span class="line">windows = driver.window_handles</span><br><span class="line"></span><br><span class="line">driver.switch_to.window(windows[<span class="number">-1</span>])</span><br><span class="line">print(<span class="string">'当前页面title'</span>,driver.title)</span><br><span class="line">driver.find_element_by_xpath(<span class="string">'//*[@id="form1"]/input[1]'</span>).click() <span class="comment"># 点击用户名输入框</span></span><br><span class="line">driver.find_element_by_xpath(<span class="string">'//*[@id="form1"]/input[1]'</span>).clear() <span class="comment">#清空输入框</span></span><br><span class="line">driver.find_element_by_xpath(<span class="string">'//*[@id="form1"]/input[1]'</span>).send_keys(<span class="string">'your_netid'</span>) <span class="comment"># 自动敲入用户名</span></span><br><span class="line"> </span><br><span class="line">driver.find_element_by_name(<span class="string">'pwd'</span>).click() <span class="comment"># 点击密码输入框</span></span><br><span class="line">driver.find_element_by_name(<span class="string">'pwd'</span>).clear() <span class="comment">#清空输入框</span></span><br><span class="line">driver.find_element_by_name(<span class="string">'pwd'</span>).send_keys(<span class="string">'your_pwd'</span>) <span class="comment"># 自动敲入密码</span></span><br><span class="line"></span><br><span class="line">driver.find_element_by_xpath(<span class="string">'//*[@id="account_login"]'</span>).click()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">time.sleep(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#print('当前页面title',driver.page_source)</span></span><br><span class="line">driver.get(<span class="string">'http://one2020.xjtu.edu.cn/EIP/cooperative/openCooperative.htm?flowId=4af591a971bc5d460171e279f192078d'</span>)</span><br><span class="line">time.sleep(<span class="number">2</span>)</span><br><span class="line">windows = driver.window_handles</span><br><span class="line">driver.switch_to.window(windows[<span class="number">-1</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment">#time.sleep(2)</span></span><br><span class="line"><span class="comment">#driver.find_element_by_id('sendBtn').click()</span></span><br><span class="line"><span class="comment">#print('当前页面title',driver.page_source)</span></span><br><span class="line">driver.switch_to.frame(driver.find_element_by_xpath(<span class="string">"/html/body/div[2]/div[2]/table/tbody/tr/td[2]/div[2]/div/iframe"</span>))</span><br><span class="line"></span><br><span class="line">driver.find_element_by_xpath(<span class="string">'/html/body/div/div/span[2]/div/table/tbody/tr/td/div[1]/div[3]/input'</span>).click()</span><br><span class="line">driver.find_element_by_xpath(<span class="string">'/html/body/div/div/table/tbody/tr[13]/td[2]/span/span[1]/input'</span>).click() <span class="comment"># 点击用户名输入框</span></span><br><span class="line">driver.find_element_by_xpath(<span class="string">'/html/body/div/div/table/tbody/tr[13]/td[2]/span/span[1]/input'</span>).clear() <span class="comment">#清空输入框</span></span><br><span class="line">driver.find_element_by_xpath(<span class="string">'/html/body/div/div/table/tbody/tr[13]/td[2]/span/span[1]/input'</span>).send_keys(<span class="string">'36.5'</span>) <span class="comment"># 自动敲入用户名</span></span><br><span class="line">driver.switch_to.default_content()</span><br><span class="line">driver.find_element_by_id(<span class="string">'sendBtn'</span>).click()</span><br><span class="line"></span><br><span class="line">driver.find_element_by_xpath(<span class="string">'/html/body/div[5]/div/div[2]/div[2]/div[2]/a[1]/span'</span>).click()</span><br><span class="line">driver.quit()</span><br><span class="line">exit(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h2><p>想起来很简单的脚本实现起来还是遇到了一定问题，动手实践才可以更好的了解web架构，学校这一套系统跟我之前见过的htm+php还真的不一样，跳转连接复制出来都是void(0),填报日报的通信路由还是bp抓包分析来的，可能大型项目现在都这样写了吧。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li>selenium webdriver 不能得到网页全部内容 [问题点数：100分，无满意结帖，结帖人iwsyang]  <a href="https://bbs.csdn.net/topics/392315963" target="_blank" rel="noopener">https://bbs.csdn.net/topics/392315963</a></li>
+<li>selenium使用技巧  <a href="https://www.cnblogs.com/surewing/p/9432241.html" target="_blank" rel="noopener">https://www.cnblogs.com/surewing/p/9432241.html</a></li>
+</ul>
+
+      
+      <!-- 打赏 -->
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://gwyxjtu.github.io/2020/06/01/selenium%E7%9A%84webdriver%E6%9D%A5%E8%87%AA%E5%8A%A8%E5%A1%AB%E6%8A%A5%E6%AF%8F%E6%97%A5%E5%81%A5%E5%BA%B7%E6%97%A5%E6%8A%A5/" data-id="ckpqb9cyz000vuwv2bdf8gjw0"
+        class="article-share-link">分享</a>
+        
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/selenium/" rel="tag">selenium</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+      <a href="/2020/06/02/XJTU%E5%9B%BE%E4%B9%A6%E9%A6%86%E6%8A%A2%E5%BA%A7%E4%BD%8D%E8%84%9A%E6%9C%AC-requests%E5%BA%93/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            XJTU图书馆抢座位脚本--requests库
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/05/21/%E4%B8%80%E4%B8%AA%E9%9A%8F%E6%9C%BA%E7%A6%81%E8%A8%80%E5%BC%95%E8%B5%B7%E7%9A%84%E9%97%AE%E9%A2%98/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">一个随机禁言引起的算法问题</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        notify: false,
+        verify: '',
+        app_id: '',
+        app_key: '',
+        path: window.location.pathname,
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2019-2021
+        galaxy
+      </li>
+      <li>
+        
+          Powered by
+        
+        
+        <a href="https://hexo.io" target="_blank">Hexo</a> Theme <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <ul class="list-inline">
+  <li>PV:<span id="busuanzi_value_page_pv"></span></li>
+  <li>UV:<span id="busuanzi_value_site_uv"></span></li>
+</ul>
+        
+      </li>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+    <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+      <aside class="sidebar">
+        <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="果果的博客"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2021/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+      </aside>
+      <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+      
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js"></script>
+<script>
+  var typed = new Typed("#subtitle", {
+    strings: ['人一生会遇到约2920万人,两个人相爱的概率是0.000049,所以你不爱我,我不怪你.','台下人走过不见旧言色','没有永远的年轻，没有唱不完的歌'],
+    startDelay: 0,
+    typeSpeed: 200,
+    loop: true,
+    backSpeed: 100,
+    showCursor: true
+    });
+</script>
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer:'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    onClick: (e) => {
+      $('.toc-link').removeClass('is-active-link');
+      $(`a[href=${e.target.hash}]`).addClass('is-active-link');
+      $(e.target.hash).scrollIntoView();
+      return false;
+    }
+  });
+</script>
+
+
+<script>
+  var ayerConfig = {
+    mathjax: true
+  }
+</script>
+
+
+<script src="/js/ayer.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.6/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
+  </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+
+</html>
