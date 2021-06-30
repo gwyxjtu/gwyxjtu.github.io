@@ -1,0 +1,95 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "microsoft yahei";
+    font-size: 14px;
+    min-width: 1200px;
+    background:url(../images_sd/i-bodybg.jpg) center no-repeat #ffffff;
+    background-size:cover;
+	padding:0 10%
+}
+ul,li {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+h1,h2,h3,h4,h5,h6 {
+    margin: 0;
+    padding: 0;
+    font-weight: normal
+}
+img {
+    border: 0;
+}
+
+a{
+    text-decoration: none;
+    color:#666666;
+    -moz-transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+}
+a:hover{
+    text-decoration: none;
+    color: #cc3300;
+    -moz-transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+}
+
+.fl {
+    float: left !important;
+}
+.fr {
+    float: right !important;
+}
+.clearboth {
+    clear: both;
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+.w1100 {
+    width: 1100px;
+    height: auto;
+    margin: 0 auto;
+    overflow: hidden;
+}
+.clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+.wrapper { min-width:1200px;
+    height: auto;
+    overflow:hidden;
+    margin: 0 auto;
+    position: relative;
+}
+.relative {
+    position:relative;
+}
+.imghover {
+    cursor: pointer;
+    transition: all 0.6s;
+}
+.imghover:hover {
+    transform: scale(1.2);
+}
+.table_box{ margin:0 auto 100px auto; position:relative; height:auto; }
+.i-yimnzhang{ position:absolute; bottom:-20px; right:0px;height:auto; overflow:hidden}
+.table_title{ font-size:20px; color:#3967bb; line-height:50px; text-align:center; font-weight:bold;}
+.table_title_nr{ font-size:16px; color:#333333; line-height:40px;text-align:center;}
+.i-table{
+margin:0px auto;
+font:Georgia 16px;
+text-align:center;
+border-collapse:collapse;border:1px solid #000000;
+}
+.i-table td{
+border:1px solid #000000;
+}
