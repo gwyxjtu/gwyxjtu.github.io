@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+  
+
+    <head>
+      <meta charset="utf-8" />
+       
+      <meta name="keywords" content="她永远年轻永远漂亮，穿着鲜艳的长裙站在回忆里，对着你笑靥如花" />
+       
+      <meta name="description" content="她永远年轻永远漂亮，穿着鲜艳的长裙站在回忆里，对着你笑靥如花" />
+      
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>青训营笔记｜YARN资源调度 |  果果的博客</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    <!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="果果的博客" type="application/atom+xml">
+</head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+      <canvas width="1777" height="841"
+        style="position: fixed; left: 0px; top: 0px; z-index: 99999; pointer-events: none;"></canvas>
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-YARN资源调度"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  青训营笔记｜YARN资源调度
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/08/20/YARN%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6/" class="article-date">
+  <time datetime="2022-08-20T08:41:24.000Z" itemprop="datePublished">2022-08-20</time>
+</a>   
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">3.2k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">10 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1>走进 YARN 资源管理和调度</h1>
+<h2 id="YARN-概述：从食堂分配座位场景导入，初识调度系统；介绍调度系统发展的背景、解决的问题、目标和范型；Hadoop-YARN-的设计思想和整体架构；">YARN 概述：从食堂分配座位场景导入，初识调度系统；介绍调度系统发展的背景、解决的问题、目标和范型；Hadoop YARN 的设计思想和整体架构；</h2>
+<p>首先考虑如下虚拟场景，如何进行调度在保障就餐公平性的前提下让尽可能多的学生都能够在该餐厅就餐、尽可能多的座位被有效使用？</p>
+<ul>
+<li>学校为改善学生生活新建了一所美食餐厅，餐厅座位有限且只能堂食；</li>
+<li>各个学院需要缴纳一定管理费用后其学生才能在该餐厅用餐，缴纳费用与分配的座位数成正比；</li>
+<li>因餐厅物美价廉、环境干净，来该餐厅就餐的人络绎不绝；</li>
+</ul>
+<p>一种简易的分配模型参考如下：</p>
+<ul>
+<li>学院缴纳费用后获得固定座位数；</li>
+<li>学生按照学院组织，学院内的用餐小组按照预定时间排队，每个小组有一个负责人；</li>
+<li>餐厅经理（两个备用经理）对所有学院按照分配座位满足率由低到高排序，优先选择靠前学院进行餐位派发；</li>
+<li>餐厅经理选择一个学院后，基于餐厅座位情况，以 FIFO 方式选择用餐小组并分配桌号；</li>
+<li>用餐小组在餐厅经理助手引导下到特定位置进行就餐，用餐小组负责人安排组内成员就坐；</li>
+<li>用餐结束后，用餐小组负责人向餐厅助手说明；</li>
+</ul>
+<h3 id="调度系统概述">调度系统概述</h3>
+<p>如今，我们已经由信息科技时代（IT）进化到数据科技时代（DT），数据中蕴藏的海量信息激发我们开发各种计算模型和计算框架进行挖掘，而这些计算模型和计算框架最终都需要落地计算。同时数据计算方式也发生了很大变革，从单机到分布式集群再到大规模数据中心，计算越来越快。对于大型互联网公司而言，为了完成各种对外服务以及对内挖掘等任务，需要的硬件资源数以万计，具有较高的成本。</p>
+<p>当用有限资源解决有限资源无法满足的需求时就需要调度。如何充分挖掘硬件资源潜力、灵活进行资源管理与调度以及提高集群整体利用率成为降本增效的关键问题。资源资源管理与调度主要解决资源请求和可用资源的映射(Mapping) 问题，也就是将负载的资源请求与当前计算集群中的可用物理资源通过一定的调度策略进行匹配(Matching)。</p>
+<h3 id="调度系统设计的基本问题">调度系统设计的基本问题</h3>
+<ol>
+<li>资源异质性与工作负载异质性<br>
+异质性通常指组成元素构成的多元性和相互之间较大的差异性。资源异质性是从系统所拥有的资源角度来看的，对于大型数据中心来说，其采购往往是分批次的，不同批次的机器硬件配置和计算存储资源都存在较大差异，很难保证采用完全相同的配置，目前主要通过将资源分配单位细粒度划分以及虚拟化技术来解决；工作负载异质性是从系统提交的任务角度来看的，负载类型多样化（流处理、批处理、内存计算、在线服务等），任务偏好多样化和动态化（任务的约束条件、运行过程中资源使用动态变化），资源需求多样化（CPU，内存，GPU，IO等），例如对外服务要保证高可用和快速响应，对于批处理任务要保证快速调度等。</li>
+<li>数据局部性<br>
+大数据场景下因为数据传输开销要远大于计算逻辑传输开销，因此往往将计算任务推送到数据存储所在地进行，这种设计哲学一般被称为数据局部性问题。在资源管理与调度语境下一般存在3种类型数据局部性：节点局部性，机架局部性和全局局部性。节点局部性完成计算不需要进行数据传输，机架局部性需要在机架之间进行数据传输存在一定开销，其它情况则属于全局局部性需要跨机架进行网络传输进而产生较大的网络传输开销，因此最优的方式是尽可能保证节点局部性。</li>
+<li>抢占式与非抢占式调度<br>
+在多用户多任务场景下，面对已分配资源，资源管理与调度系统有两种不同类型的调度方式：抢占式调度与非抢占式调度。抢占式调度指的是当系统资源不足或存在资源竞争时高优先级的任务可以抢占低优先级任务的资源；非抢占式调度，每次只允许从空闲资源中分配，空闲资源若不足则须等待其它任务释放资源后才能继续推进，mesos采用非抢占式调度。两种方式各有特点，一般如果强调高优先级任务执行效率的调度策略会采用抢占式调度，强调资源公平分配的调度会采用非抢占式调度。</li>
+<li>资源分配粒度<br>
+大数据场景下的计算任务往往呈现层级结构，例如：作业级（Job）-任务级（Task）-实例级（Instance），从计算任务视角来看，此时资源调度系统就面临资源分配粒度问题，资源分配粒度主要存在三种方式：（1）群体分配策略（Gang Scheduler），即要么全满足要么全不满足，Flink和MPI任务依赖这种方式；（2）增量满足式分配策略，只要分配部分资源就可以启动运行，MR采用这种方式；（3）资源储备策略，资源达到一定量才能启动作业，在未获得足够资源时作业可以先持有目前已经分配的资源并等待其他作业释放资源，调度系统不断获取新资源并进行储备和积累，直到分配到的资源量达到最低标准后开始运行，在作业启动前已经分配的资源处于闲置状态。</li>
+<li>饿死与死锁问题<br>
+饿死是由于调度策略不当而导致计算任务长时间无法获得开始执行所需要的最少资源量，例如支持优先级调度时，如果不断出现高优先级任务，那么低优先级任务可能饿死；死锁是由于资源分配不当而导致整个调度系统无法正常执行，例如在资源储备策略下，如果AB两个作业启动作业需要的最小资源为2/3，那么如果两个任务被分配了1/2的资源时，就导致死锁。调度系统出现死锁必然表现为某些作业处于饿死状态，但计算任务饿死的情景并不一定意味着调度系统处于死锁状态。</li>
+<li>资源隔离方法<br>
+为了减少任务之间的干扰需要进行一定的隔离措施，LXC是一种轻量级的内核虚拟化技术，LXC在资源管理方面依赖于 Linux 内核的 cgroups 子系统，cgroups 子系统是 Linux 内核提供的一个基于进程组的资源管理框架，可以为特定的进程组限定可以使用的资源。其他技术有Intel RDT。</li>
+</ol>
+<h2 id="资源管理与调度系统范型">资源管理与调度系统范型</h2>
+<h3 id="集中式调度系统">集中式调度系统</h3>
+<p>产生背景：该调度系统是大规模数据分析和云计算出现的雏形，主要进行大规模的集群管理以提高数据处理能力。<br>
+基本原理：中心式调度系统融合了资源管理和任务调度，有一个中心式的 JobTracker 负责进行集群资源的合理分配、任务的统一调度、集群计算节点信息的统计维护、任务执行过程中的状态管理等。</p>
+<ul>
+<li>优点：</li>
+</ul>
+<p>JobTracker 能够感知集群中所有资源和任务的执行状态，能够进行全局最优的资源分配和调度，避免任务间的干扰，适当进行任务抢占，保证任务计算效率和服务质量；<br>
+架构模型简单，只有一个全局的管理者负责进行所有管理。</p>
+<ul>
+<li>缺点</li>
+</ul>
+<p>JobTracker 作为集群的中心，存在单点瓶颈问题，不能支持大规模集群；<br>
+内部实现异常复杂，一个调度器中需要实现所有的功能模块，可扩展性差；<br>
+负载变更会导致系统需要进行不断的迭代，这将增加系统的复杂性，不利于后期的维护和扩展；<br>
+只支持单类型的任务，MR 类型的批处理任务</p>
+<h3 id="两层调度系统">两层调度系统</h3>
+<p>产生背景：为了解决集中式调度系统的扩展性问题，系统实现复杂，可扩展性差，不能支持不同类型任务等缺点。</p>
+<p>实现原理：将资源管理和任务调度解耦。集群资源管理器负责维护集群中的资源信息并将资源分配给具体的任务，任务管理器负责申请资源并将申请到的资源根据用户逻辑进行细分和具体的任务调度。</p>
+<ul>
+<li>
+<p>优点：<br>
+资源管理器只负责资源分配，任务调度由应用完成，提高了系统的扩展性；<br>
+任务调度逻辑由具体的任务完成，能够提供对不同类型任务的支持；<br>
+内部实现模块化，利于维护和扩展；</p>
+</li>
+<li>
+<p>缺点：<br>
+任务无法感知全局的资源情况，只能基于request/offer来进行资源获取，无法有效避免异构负载之间的性能干扰问题；<br>
+任务调度和资源管理解耦不利于实现多任务间的优先级抢占；<br>
+所有任务的资源请求都需要资源管理器进行处理，此外其还需要与节点管理器之间维持通信，导致资源管理器存在单点问题；</p>
+</li>
+</ul>
+<p>Mesos 最先将资源管理和任务调度解耦的 offer-based（基于资源供应）方案，其有一个中心的资源管理器，通过分配策略（DRF）将资源分配给不同的计算框架，每个计算框架依据自身的逻辑、资源偏好等采取增量或者 All-or-Nothing 的方式决定接受还是拒绝分配的资源，计算框架根据分配到的资源进行下一步的资源分配和任务执行。</p>
+<h3 id="共享状态调度系统">共享状态调度系统</h3>
+<p>产生背景：前面的调度器存在一个问题就是计算框架在进行资源申请的时候无法获知到集群的全局资源信息，这就导致无法进行全局最优的调度，共享状态调度器就提供了这个问题的一种解决方式。</p>
+<p>基本原理：是一个半分布式的架构，通过共享集群状态为应用提供全局的资源视图，并采用乐观并发机制进行资源申请和释放，来提高系统的并发度。</p>
+<ul>
+<li>优点：</li>
+</ul>
+<p>支持全局最优调度；<br>
+能够一定程度的提高并发度；</p>
+<ul>
+<li>缺点：</li>
+</ul>
+<p>高并发资源请求下会造成频繁的资源竞争；<br>
+不利于资源分配的公平性；<br>
+资源全局副本维护模块存在单点瓶颈；</p>
+<h3 id="分布式调度系统">分布式调度系统</h3>
+<p>产生背景：提高系统吞吐率和并发度</p>
+<p>基本原理：分布式调度器之间没有通讯协作，每个分布式调度器根据自己最少的先验知识进行最快的决策，每个调度器单独响应任务，总体的执行计划与资源分配服从统计意义。</p>
+<p>优点：提高吞吐量和并发度</p>
+<p>缺点：</p>
+<p>调度质量得不到保障；<br>
+资源非公平分配；<br>
+不能支持多租户管理；<br>
+不能避免不同任务之间的性能干扰；</p>
+ 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          Donate
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://gwyxjtu.github.io/2022/08/20/YARN%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%97%E8%8A%82%E9%9D%92%E8%AE%AD%E8%90%A5/" rel="tag">字节青训营</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2022/08/27/%E5%88%86%E6%94%AF%E5%AE%9A%E7%95%8C%E6%B1%82%E8%A7%A3MIP%E7%9A%84%E5%A4%8D%E7%8E%B0/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            分支定界(隐枚举)求解MIP的复现
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2022/08/13/HBase-%E7%9F%A5%E8%AF%86%E7%82%B9/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">HBase 知识点</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.staticfile.org/valine/1.4.16/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "zBdCKnsBMIRCBXHahw9SYFv2-gzGzoHsz",
+    app_key: "yHNBwdRosASQOd3VYcO4zX4t",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2015-2023
+        <i class="ri-heart-fill heart_icon"></i> galaxy
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="果果的博客"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/%E6%97%85%E8%A1%8C/">旅行</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" target="_blank" rel="noopener" href="http://shenyu-vip.lofter.com">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/friends">友链</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2021/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+ <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/mathjax/2.7.7/MathJax.js"></script>
+<script src="https://cdn.staticfile.org/mathjax/2.7.7/config/TeX-AMS-MML_HTMLorMML-full.js"></script>
+<script>
+  var ayerConfig = {
+    mathjax: true,
+  };
+</script>
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+ 
+<script src="/js/clickBoom2.js"></script>
+ 
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="52"
+        src="//music.163.com/outchain/player?type=2&id=1867217766&auto=1&height=32"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+    
+
+  </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+
+</html>

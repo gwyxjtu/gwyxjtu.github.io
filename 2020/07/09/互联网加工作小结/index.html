@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+  
+
+    <head>
+      <meta charset="utf-8" />
+       
+      <meta name="keywords" content="她永远年轻永远漂亮，穿着鲜艳的长裙站在回忆里，对着你笑靥如花" />
+       
+      <meta name="description" content="她永远年轻永远漂亮，穿着鲜艳的长裙站在回忆里，对着你笑靥如花" />
+      
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>互联网加工作小结 |  果果的博客</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    <!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="果果的博客" type="application/atom+xml">
+</head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+      <canvas width="1777" height="841"
+        style="position: fixed; left: 0px; top: 0px; z-index: 99999; pointer-events: none;"></canvas>
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-互联网加工作小结"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  互联网加工作小结
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/07/09/%E4%BA%92%E8%81%94%E7%BD%91%E5%8A%A0%E5%B7%A5%E4%BD%9C%E5%B0%8F%E7%BB%93/" class="article-date">
+  <time datetime="2020-07-09T04:37:43.000Z" itemprop="datePublished">2020-07-09</time>
+</a>   
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">1.4k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">5 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="起因">起因</h2>
+<p>腾飞杯虽然得到了电子信息赛道的特奖，但是对于我个人来说还是有一些遗憾，对项目也是很不舍得，希望能做到更好！</p>
+<p>这里展示一下自己所作的内容，其中部分源代码暂时不能开发，等评奖结束后可以开源，目前包括csdn异步http和异步mysql爬虫，哔哩哔哩批量视频爬虫等。</p>
+<h3 id="开工前的期望">开工前的期望</h3>
+<h4 id="后端和爬虫">后端和爬虫</h4>
+<ol>
+<li>爬取的范围更为广阔，搜索撸棒性更强。</li>
+<li>保留原文格式，方便读者阅读。</li>
+</ol>
+<h4 id="前端">前端</h4>
+<ol>
+<li>晃动问题，不能让所有节点完全离开界面，不能让用户找不到节点的位置，这个是腾飞杯版本的最难受的地方。</li>
+</ol>
+<h4 id="驱动">驱动</h4>
+<ol>
+<li>模式切换问题，切换操作过于复杂。</li>
+</ol>
+<h2 id="总工作量">总工作量</h2>
+<ol>
+<li>前期图书馆预约和维持脚本，并尝试团队维持脚本，虽然最后由于稳定性原因没有推广。</li>
+<li>新版数据库设计，关系表和内容表分离，提高效率。</li>
+<li>配合小明的爬虫写了一套异步数据库接口，和小明的异步http爬虫配合不错，最终分四天大致上完全部数据。</li>
+<li>提供少量python的数据库调试接口，这个比较简略。</li>
+<li>完善后端java中socket和前端通信部分，升级为新版数据库所对应的版本，目录升级为二级目录，内容更为丰富。</li>
+<li>调试前端，debug。</li>
+<li>节点关系表存储设计和接口。</li>
+</ol>
+<p>部分后端的AI推荐算法相关工作等待若哥和钱龙完成，我这里使用random代替。</p>
+<h2 id="新版爬虫数据系统设计-v2">新版爬虫数据系统设计_v2</h2>
+<h3 id="搜索正文存储表-spyder-main-table">搜索正文存储表  spyder_main_table</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">id</th>
+<th style="text-align:center">keyword</th>
+<th style="text-align:center">link</th>
+<th style="text-align:center">tittle</th>
+<th style="text-align:center">abstract</th>
+<th style="text-align:center">content</th>
+<th style="text-align:center">child_len</th>
+<th style="text-align:center">value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">int</td>
+<td style="text-align:center">char 50</td>
+<td style="text-align:center">char 100</td>
+<td style="text-align:center">char 200</td>
+<td style="text-align:center">TEXT</td>
+<td style="text-align:center">TEXT</td>
+<td style="text-align:center">int</td>
+<td style="text-align:center">int</td>
+</tr>
+<tr>
+<td style="text-align:center">主键</td>
+<td style="text-align:center">搜索的关键词</td>
+<td style="text-align:center">本文连接</td>
+<td style="text-align:center">文章标题</td>
+<td style="text-align:center">内容摘要（第一轮的摘要在搜索界面存储）</td>
+<td style="text-align:center">内容全文</td>
+<td style="text-align:center">子链接的总个数</td>
+<td style="text-align:center">节点权重价值，目前没有使用</td>
+</tr>
+</tbody>
+</table>
+<h3 id="搜索内容表-t-spyder-main-content">搜索内容表 t_spyder_main_content</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">id</th>
+<th style="text-align:center">content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">主键</td>
+<td style="text-align:center">内容</td>
+</tr>
+</tbody>
+</table>
+<h3 id="子链接存储表-spyder-child-table">子链接存储表  spyder_child_table</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">id</th>
+<th style="text-align:center">parent_link</th>
+<th style="text-align:center">link</th>
+<th style="text-align:center">tittle</th>
+<th style="text-align:center">abstract</th>
+<th style="text-align:center">content</th>
+<th style="text-align:center">child_len</th>
+<th style="text-align:center">value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">int</td>
+<td style="text-align:center">char 100</td>
+<td style="text-align:center">char 200</td>
+<td style="text-align:center">char 200</td>
+<td style="text-align:center">TEXT</td>
+<td style="text-align:center">TEXT</td>
+<td style="text-align:center">int</td>
+<td style="text-align:center">int</td>
+</tr>
+<tr>
+<td style="text-align:center">主键</td>
+<td style="text-align:center">父连接地址，作为搜索子链接的索引</td>
+<td style="text-align:center">当前连接</td>
+<td style="text-align:center">当前连接标题</td>
+<td style="text-align:center">当前链接摘要(之后的摘要在父文末就有，展开连接后存储新的连接内容)</td>
+<td style="text-align:center">当前连接内容</td>
+<td style="text-align:center">子链接数目</td>
+<td style="text-align:center">权重</td>
+</tr>
+</tbody>
+</table>
+<h3 id="推荐内容表-t-spyder-child-content">推荐内容表 t_spyder_child_content</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">id</th>
+<th style="text-align:center">content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">主键</td>
+<td style="text-align:center">内容</td>
+</tr>
+</tbody>
+</table>
+<h3 id="评论存储表-t-spyder-comment-table">评论存储表  t_spyder_comment_table</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">link</th>
+<th style="text-align:center">target</th>
+<th style="text-align:center">nick_name</th>
+<th style="text-align:center">write_time</th>
+<th style="text-align:center">content</th>
+<th style="text-align:center">value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">char 200</td>
+<td style="text-align:center">char 200</td>
+<td style="text-align:center">TEXT</td>
+<td style="text-align:center">datetime</td>
+<td style="text-align:center">TEXT</td>
+<td style="text-align:center">int</td>
+</tr>
+<tr>
+<td style="text-align:center">链接</td>
+<td style="text-align:center">回复的用户昵称，如果没有回复，就存博客链接</td>
+<td style="text-align:center">用户昵称</td>
+<td style="text-align:center">评论时间</td>
+<td style="text-align:center">评论内容</td>
+<td style="text-align:center">评分</td>
+</tr>
+</tbody>
+</table>
+<h3 id="主菜单表，从大keyword映射到小keyword-t-spyder-menu">主菜单表，从大keyword映射到小keyword  t_spyder_menu</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">main_keyword</th>
+<th style="text-align:center">keyword</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">主菜单节点</td>
+<td style="text-align:center">子keyword</td>
+</tr>
+</tbody>
+</table>
+<h3 id="视频url映射表-t-spyder-url">视频url映射表 t_spyder_url</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">keyword</th>
+<th style="text-align:center">url</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">关键词</td>
+<td style="text-align:center">视频地址</td>
+</tr>
+</tbody>
+</table>
+<p>预估搜索子链接，广搜，深度三轮左右，两轮也行。如果当前连接是最后一轮，child_len为0.</p>
+<p>子链接存储的数据结构</p>
+<h2 id="爬虫设计思路：">爬虫设计思路：</h2>
+<ol>
+<li>
+<p>每次get新的连接，在当前索引中存储当前连接的内容，和子链接的数目，然后根据页面的索引，去子链接的表里面存储，当前页面可以存子链接的标题和摘要，展开子链接内容后存子链接的content。</p>
+</li>
+<li>
+<p>可以递归爬取三层子链接</p>
+</li>
+<li>
+<p>子链接需要检验重复，就连接编号不能一致，可能会用到ignore</p>
+</li>
+<li>
+<p>ignore查重可能会导致不公平性，比如第一个搜索的节点没有重复内容，第二个就会出现重复内容，最后一个可能百分之七八十都是重复的，效率很低，关联方法可以优化。</p>
+</li>
+</ol>
+<h3 id="关于爬虫想到的两个问题：">关于爬虫想到的两个问题：</h3>
+<ol>
+<li>
+<p>子节点不均衡的问题，(目前想到的办法是设置上限，或者设计多对多的关系，感觉怪怪的)</p>
+</li>
+<li>
+<p>优秀博客筛选：<br>
+内容长度大于一定限制<br>
+标题不能含有特殊标签<br>
+内容，标题，阅读量和发表时间。</p>
+</li>
+</ol>
+<h2 id="bilibili视频爬虫">bilibili视频爬虫</h2>
+<p>视频爬虫，哔哩哔哩，两个问题，一个是总存储量，即爬不爬第二页，第二个是弹幕，可以爬.</p>
+<p>使用阿里云存储对象，</p>
+<h2 id="关键词表单">关键词表单</h2>
+<p>[‘C语言学习’,‘java学习’,‘python’,‘机器学习’,‘Kubernetes’,‘前端’,‘计算机网络’]<br>
+[‘C语言指针’,‘C语言结构体’,‘C语言数组’,‘C函数’,‘C语言标准库’,‘C语言算法’,‘C语言内存管理’,‘C语言字符串’,‘C语言实例’,‘C语言错误处理’,‘java数据结构’,‘Java排序算法’,‘java注解’,‘java基础’,‘jvm’,‘java框架’,‘数据库基础’,‘java高并发’,‘java泛型’,‘java反射’,‘python基础’,‘python面向对象’,‘python异步’,‘python文件系统’,‘python异常处理’,‘python数据科学’,‘pythonweb库’,‘python爬虫’,‘python机器学习’,‘python图像处理’,‘计算机视觉’,‘自然语言处理’,‘社会网络分析’,‘推荐算法’,‘数据挖掘’,‘模型诊断’,‘强化学习’,‘模型融合’,‘搜索引擎’,‘统计学习方法’,‘kubernetes环境’,‘kubernetes基础概念’,‘kubernetes基本架构’,‘kubernetes基本调度流程’,‘kubernetes API’,‘kubernetes Master’,‘kubernetes扩展’,‘kubebuilder’,‘kubernetes存储’,‘kubectl’,‘Ajax’,‘HTML’,‘CSS’,‘JavaScript’,‘Dom’,‘HTML5’,‘VUE’,‘React’,‘Angular’,‘jQuery’,‘物理层’,‘数据链路层’,‘网络层’,‘传输层’,‘应用层’,‘网络安全’,‘无线网路’,‘HTTP协议’,‘TCP’,‘DNS’,‘数字认证’]</p>
+<h2 id="socket通信">socket通信</h2>
+<p>这里的思路是让java后端和python代码隔离，交互只能通过数据库，否则日后维护将更加困难<br>
+get_menu这里，必须维护一个手动版的初始节点</p>
+ 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          Donate
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://gwyxjtu.github.io/2020/07/09/%E4%BA%92%E8%81%94%E7%BD%91%E5%8A%A0%E5%B7%A5%E4%BD%9C%E5%B0%8F%E7%BB%93/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2020/07/16/myrio%E5%B0%8F%E8%BD%A6/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            myrio小车
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/07/02/mysql-win10%E5%AF%86%E7%A0%81%E5%BF%98%E8%AE%B0%E4%BF%AE%E6%94%B9/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">mysql win10密码忘记修改</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.staticfile.org/valine/1.4.16/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "zBdCKnsBMIRCBXHahw9SYFv2-gzGzoHsz",
+    app_key: "yHNBwdRosASQOd3VYcO4zX4t",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2015-2023
+        <i class="ri-heart-fill heart_icon"></i> galaxy
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="果果的博客"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/%E6%97%85%E8%A1%8C/">旅行</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" target="_blank" rel="noopener" href="http://shenyu-vip.lofter.com">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/friends">友链</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2021/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+ <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/mathjax/2.7.7/MathJax.js"></script>
+<script src="https://cdn.staticfile.org/mathjax/2.7.7/config/TeX-AMS-MML_HTMLorMML-full.js"></script>
+<script>
+  var ayerConfig = {
+    mathjax: true,
+  };
+</script>
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+ 
+<script src="/js/clickBoom2.js"></script>
+ 
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="52"
+        src="//music.163.com/outchain/player?type=2&id=1867217766&auto=1&height=32"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+    
+
+  </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+
+</html>

@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+  
+
+    <head>
+      <meta charset="utf-8" />
+       
+      <meta name="keywords" content="她永远年轻永远漂亮，穿着鲜艳的长裙站在回忆里，对着你笑靥如花" />
+       
+      <meta name="description" content="她永远年轻永远漂亮，穿着鲜艳的长裙站在回忆里，对着你笑靥如花" />
+      
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>kmeans聚类手动实现-python版 |  果果的博客</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    <!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="果果的博客" type="application/atom+xml">
+</head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+      <canvas width="1777" height="841"
+        style="position: fixed; left: 0px; top: 0px; z-index: 99999; pointer-events: none;"></canvas>
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-kmeans聚类手动实现-python版"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  kmeans聚类手动实现-python版
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/11/19/kmeans%E8%81%9A%E7%B1%BB%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0-python%E7%89%88/" class="article-date">
+  <time datetime="2020-11-19T15:05:31.000Z" itemprop="datePublished">2020-11-19</time>
+</a>   
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">2k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">9 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="聚类算法">聚类算法</h2>
+<p>是在没有给定划分类别的情况下，根据数据的相似度进行分组的一种方法，分组的原则是组内距离最小化而组间距离最大化。</p>
+<p>K-means算法是典型的基于距离的非层次聚类算法，在最小化误差函数的基础上将数据划分为预定的K类别，采用距离作为相似性的评级指标，即认为两个对象的距离越近，其相似度越大。</p>
+<h2 id="kmeans流程">kmeans流程</h2>
+<p>算法过程：</p>
+<ol>
+<li>从N个样本数据中随机选取K个对象作为初始的聚类质心。</li>
+<li>分别计算每个样本到各个聚类中心的距离，将对象分配到距离最近的聚类中。</li>
+<li>所有对象分配完成之后，重新计算K个聚类的质心。</li>
+<li>与前一次的K个聚类中心比较，如果发生变化，重复过程2，否则转过程5.</li>
+<li>当质心不再发生变化时，停止聚类过程，并输出聚类结果。</li>
+</ol>
+<h2 id="数据集介绍">数据集介绍</h2>
+<p>使用sklearn自带的鸢尾花数据集</p>
+<pre><code>from sklearn.datasets import load_iris
+data = load_iris()
+</code></pre>
+<p>即可导入数据。</p>
+<p>数据集中的特征包括：</p>
+<pre><code>print(&quot;鸢尾花数据集的返回值：\n&quot;, iris)
+# 返回值是一个继承自字典的Bench
+print(&quot;鸢尾花的特征值:\n&quot;, iris[&quot;data&quot;])
+print(&quot;鸢尾花的目标值：\n&quot;, iris.target)
+print(&quot;鸢尾花特征的名字：\n&quot;, iris.feature_names)
+print(&quot;鸢尾花目标值的名字：\n&quot;, iris.target_names)
+print(&quot;鸢尾花的描述：\n&quot;, iris.DESCR)
+</code></pre>
+<p>我们这里只使用目标是和特征值，这个特征值经过print是一个四维向量。<br>
+鸢尾花的target只包括三种花，所以k=3时候理论上最佳。编写代码的时候将target一并写入数组进行组合，这样在聚类完成后进行验证分类的错误率来衡量算法好坏。</p>
+<h2 id="代码简介">代码简介</h2>
+<p>代码除了调用数据集和划分数据集使用到了sklearn的库函数之外，其余全部使用python自带的list结构或set结构和numpy相关函数实现。</p>
+<h3 id="主函数">主函数</h3>
+<p>第一次随机选取核心，就取数据集的前k个分别作为中心</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">def main(x,y,k,max_iter,interrupte_distance = 0):</span><br><span class="line">	#x是数据集，y是标签，k是聚类数目,终止距离和最大迭代数目.</span><br><span class="line">	#第一步初始化ak</span><br><span class="line">	a=[]</span><br><span class="line">	a_check = []#用于之后检查准确率</span><br><span class="line">	for i in range(k):</span><br><span class="line">		a.append([x.pop(0)])</span><br><span class="line">		a_check.append([y.pop(0)])</span><br><span class="line">	#初始化完了，来一遍第一次</span><br><span class="line">	for i in range(len(x)):</span><br><span class="line">		dist = []</span><br><span class="line">		for num in range(k):</span><br><span class="line">			dist.append(calc_distance(a[num][0],x[i]))</span><br><span class="line">		min_index = indexofMin(dist)</span><br><span class="line">		a[min_index].append(x[i])</span><br><span class="line">		a_check[min_index].append(y[i])</span><br><span class="line">	check_print(a,a_check)</span><br><span class="line">	#c初始化完成，a是一个k*特征数，的矩阵，a_check是检查矩阵。</span><br><span class="line">	for i in range(max_iter):</span><br><span class="line">		print(&#x27;\n------------&#x27;)</span><br><span class="line">		print(&#x27;第&#x27;+str(i+1)+&#x27;次循环&#x27;)</span><br><span class="line">		main_loop(a,a_check,interrupte_distance)</span><br></pre></td></tr></table></figure>
+<h3 id="主循环">主循环</h3>
+<p>先检查终止条件是否满足。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">def main_loop(a,a_check,interrupte_distance=0):</span><br><span class="line">	#a的一重下表是k，a_check跟着最后算准确率.第二下标是数据集。</span><br><span class="line">	k = len(a)</span><br><span class="line">	ll = len(a[0][0])#特征的数量</span><br><span class="line"></span><br><span class="line">	## a的第一个是上次的质心</span><br><span class="line">	#计算质心</span><br><span class="line">	a_array = np.array(a)</span><br><span class="line">	heart_calc = []</span><br><span class="line">	flag_interrupt = 0</span><br><span class="line">	for i in range(k):</span><br><span class="line">		heart_calc.append([])</span><br><span class="line"></span><br><span class="line">	#print(len())</span><br><span class="line">	#print(a[2])</span><br><span class="line">	#exit(0)</span><br><span class="line">	for i in range(k):</span><br><span class="line">		#对a[i]求均值了</span><br><span class="line">		for j in range(ll):</span><br><span class="line">			#print(a[i][:][j][1])</span><br><span class="line">			#print(i,j)</span><br><span class="line">			#heart_calc[i].append(np.mean(a[i][:][j]))</span><br><span class="line">			heart_calc[i].append(middle_mean(a,i,j))</span><br><span class="line">		if calc_distance(heart_calc[i],a[i][0])&gt;interrupte_distance:</span><br><span class="line">			flag_interrupt = 1</span><br><span class="line">	if flag_interrupt == 0:</span><br><span class="line">		#满足距离要求</span><br><span class="line">		return 0</span><br><span class="line"></span><br><span class="line">	#聚类中心算完,并且不满足距离要求,开始迭代</span><br><span class="line"></span><br><span class="line">	for i in range(k):</span><br><span class="line">		for j in range(len(a[i])):</span><br><span class="line">			tmp = a[i].pop(0)</span><br><span class="line">			tmp_lab = a_check[i].pop(0)</span><br><span class="line">			tmp_index = find_heart_index(heart_calc,tmp)</span><br><span class="line">			a[tmp_index].append(tmp)</span><br><span class="line">			a_check[tmp_index].append(tmp_lab)</span><br><span class="line">	print(&#x27;中心点坐标：&#x27;)</span><br><span class="line">	print(heart_calc)</span><br><span class="line">	check_print(a,a_check)		</span><br><span class="line">	return a,a_check</span><br></pre></td></tr></table></figure>
+<h2 id="实验结果">实验结果</h2>
+<p>当k=3时候，输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">初始化错误率：0.35</span><br><span class="line">初始化方差：0.2637878757089331</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">------------</span><br><span class="line">第1次循环</span><br><span class="line">中心点坐标：</span><br><span class="line">[[5.173076923076924, 3.661538461538462, 1.4653846153846157, 0.27692307692307694], [6.528333333333333, 2.986666666666667, 5.255000000000001, 1.8366666666666667], [5.161764705882353, 2.8058823529411767, 2.85, 0.776470588235294]]</span><br><span class="line">错误率：0.20833333333333334</span><br><span class="line">方差：0.12704004558840606</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">------------</span><br><span class="line">第2次循环</span><br><span class="line">中心点坐标：</span><br><span class="line">[[4.9975000000000005, 3.47, 1.4625, 0.2475], [6.495238095238095, 2.9777777777777783, 5.204761904761905, 1.8126984126984127], [5.447058823529411, 2.5529411764705885, 3.7588235294117647, 1.1588235294117646]]</span><br><span class="line">错误率：0.15</span><br><span class="line">方差：0.126100321239607</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">------------</span><br><span class="line">第3次循环</span><br><span class="line">中心点坐标：</span><br><span class="line">[[4.9975000000000005, 3.47, 1.4625, 0.2475], [6.583928571428572, 3.001785714285714, 5.310714285714285, 1.8678571428571427], [5.545833333333333, 2.620833333333333, 3.9333333333333336, 1.2208333333333334]]</span><br><span class="line">错误率：0.125</span><br><span class="line">方差：0.12874688121486713</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">------------</span><br><span class="line">第4次循环</span><br><span class="line">中心点坐标：</span><br><span class="line">[[4.9975000000000005, 3.47, 1.4625, 0.2475], [6.609433962264151, 3.020754716981132, 5.350943396226417, 1.8962264150943395], [5.61111111111111, 2.625925925925926, 4.007407407407407, 1.237037037037037]]</span><br><span class="line">错误率：0.10833333333333334</span><br><span class="line">方差：0.13044657523262912</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">------------</span><br><span class="line">第5次循环</span><br><span class="line">中心点坐标：</span><br><span class="line">[[4.9975000000000005, 3.47, 1.4625, 0.2475], [6.631372549019607, 3.0156862745098034, 5.3803921568627455, 1.911764705882353], [5.641379310344826, 2.662068965517242, 4.048275862068966, 1.2551724137931033]]</span><br><span class="line">错误率：0.10833333333333334</span><br><span class="line">方差：0.13267293238109287</span><br></pre></td></tr></table></figure>
+<h2 id="实验结论">实验结论</h2>
+<p>整体来看，由于kmeans主要使用的是距离来分类，导致算法迅速收敛，一般两三个循环就可以收敛到最终结果了，即使一开始的中心点是随机选取的。</p>
+<p>从实验结果可以看出，k=3和k=4时候差距不大，如果在增加k，效果就会变得不佳。由于k=4比三多一类，所以每一类内部的样本个数会变少，所以方差会略低与k=3。</p>
+<h2 id="完整代码">完整代码</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">from sklearn.datasets import load_iris</span><br><span class="line">from sklearn.model_selection import train_test_split</span><br><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line">def indexofMin(arr):</span><br><span class="line">	minindex = 0</span><br><span class="line">	currentindex = 1</span><br><span class="line">	while currentindex &lt; len(arr):</span><br><span class="line">		if arr[currentindex] &lt; arr[minindex]:</span><br><span class="line">			minindex = currentindex</span><br><span class="line">		currentindex += 1</span><br><span class="line">	return minindex</span><br><span class="line">def get_var(a):</span><br><span class="line">	#狗屁需求还要弄什么密度,用方差来反映离散程度吧</span><br><span class="line">	l = len(a)</span><br><span class="line">	ans = []</span><br><span class="line">	for i in range(l):</span><br><span class="line">		ans.append(np.array(a[i]).var(axis=0))</span><br><span class="line">	return ans</span><br><span class="line">def calc_distance(list_a,list_b):</span><br><span class="line">	l = len(list_a)</span><br><span class="line">	#约束是最小均方误差MSE</span><br><span class="line">	ans = 0</span><br><span class="line">	for i in range(l):</span><br><span class="line">		ans += pow(list_a[i] - list_b[i],2)</span><br><span class="line">	return np.sqrt(ans)</span><br><span class="line"></span><br><span class="line">def main(x,y,k,max_iter,interrupte_distance = 0):</span><br><span class="line">	#x是数据集，y是标签，k是聚类数目,终止距离和最大迭代数目.</span><br><span class="line">	#第一步初始化ak</span><br><span class="line">	a=[]</span><br><span class="line">	a_check = []#用于之后检查准确率</span><br><span class="line">	for i in range(k):</span><br><span class="line">		a.append([x.pop(0)])</span><br><span class="line">		a_check.append([y.pop(0)])</span><br><span class="line">	#初始化完了，来一遍第一次</span><br><span class="line">	for i in range(len(x)):</span><br><span class="line">		dist = []</span><br><span class="line">		for num in range(k):</span><br><span class="line">			dist.append(calc_distance(a[num][0],x[i]))</span><br><span class="line">		min_index = indexofMin(dist)</span><br><span class="line">		a[min_index].append(x[i])</span><br><span class="line">		a_check[min_index].append(y[i])</span><br><span class="line">	check_print(a,a_check)</span><br><span class="line">	#c初始化完成，a是一个k*特征数，的矩阵，a_check是检查矩阵。</span><br><span class="line">	for i in range(max_iter):</span><br><span class="line">		print(&#x27;\n------------&#x27;)</span><br><span class="line">		print(&#x27;第&#x27;+str(i+1)+&#x27;次循环&#x27;)</span><br><span class="line">		main_loop(a,a_check,interrupte_distance)</span><br><span class="line"></span><br><span class="line">def middle_mean(l,i,j):</span><br><span class="line">	#妈的heart_calc[i].append(np.mean(a[i][:][j]))用不了，why doesnt np work?</span><br><span class="line">	tmp =[]</span><br><span class="line">	for ii in range(len(l[i])):</span><br><span class="line">		tmp.append(l[i][ii][j])</span><br><span class="line">	return np.mean(tmp)</span><br><span class="line"></span><br><span class="line">def main_loop(a,a_check,interrupte_distance=0):</span><br><span class="line">	#a的一重下表是k，a_check跟着最后算准确率.第二下标是数据集。</span><br><span class="line">	k = len(a)</span><br><span class="line">	ll = len(a[0][0])#特征的数量</span><br><span class="line"></span><br><span class="line">	## a的第一个是上次的质心</span><br><span class="line">	#计算质心</span><br><span class="line">	a_array = np.array(a)</span><br><span class="line">	heart_calc = []</span><br><span class="line">	flag_interrupt = 0</span><br><span class="line">	for i in range(k):</span><br><span class="line">		heart_calc.append([])</span><br><span class="line"></span><br><span class="line">	#print(len())</span><br><span class="line">	#print(a[2])</span><br><span class="line">	#exit(0)</span><br><span class="line">	for i in range(k):</span><br><span class="line">		#对a[i]求均值了</span><br><span class="line">		for j in range(ll):</span><br><span class="line">			#print(a[i][:][j][1])</span><br><span class="line">			#print(i,j)</span><br><span class="line">			#heart_calc[i].append(np.mean(a[i][:][j]))</span><br><span class="line">			heart_calc[i].append(middle_mean(a,i,j))</span><br><span class="line">		if calc_distance(heart_calc[i],a[i][0])&gt;interrupte_distance:</span><br><span class="line">			flag_interrupt = 1</span><br><span class="line">	if flag_interrupt == 0:</span><br><span class="line">		#满足距离要求</span><br><span class="line">		return 0</span><br><span class="line"></span><br><span class="line">	#聚类中心算完,并且不满足距离要求,开始迭代</span><br><span class="line"></span><br><span class="line">	for i in range(k):</span><br><span class="line">		for j in range(len(a[i])):</span><br><span class="line">			tmp = a[i].pop(0)</span><br><span class="line">			tmp_lab = a_check[i].pop(0)</span><br><span class="line">			tmp_index = find_heart_index(heart_calc,tmp)</span><br><span class="line">			a[tmp_index].append(tmp)</span><br><span class="line">			a_check[tmp_index].append(tmp_lab)</span><br><span class="line">	print(&#x27;中心点坐标：&#x27;)</span><br><span class="line">	print(heart_calc)</span><br><span class="line">	check_print(a,a_check)		</span><br><span class="line">	return a,a_check</span><br><span class="line">def check_print(a,a_check):</span><br><span class="line">	sum_num = 0</span><br><span class="line">	wrong_num = 0</span><br><span class="line">	for i in range(len(a_check)):</span><br><span class="line">		tmp = max(a_check[i],key = a_check.count)</span><br><span class="line">		for j in a_check[i]:</span><br><span class="line">			sum_num+=1</span><br><span class="line">			if j != tmp:</span><br><span class="line">				wrong_num += 1</span><br><span class="line">	#print(a_check)</span><br><span class="line">	print(&quot;错误率：&quot;+str(wrong_num/sum_num))</span><br><span class="line">	print(&quot;方差：&quot;+str(np.mean(get_var(a))))</span><br><span class="line">	print()</span><br><span class="line">def find_heart_index(heart,undef):</span><br><span class="line">	#heart是各个中心节点,undef是待确定的特征</span><br><span class="line">	k = len(heart)</span><br><span class="line">	#print(heart)</span><br><span class="line">	min_index = 0</span><br><span class="line">	min_dis = 100000</span><br><span class="line">	for i in range(k):</span><br><span class="line">		tmp_dis = calc_distance(undef,heart[i])</span><br><span class="line">		#print(tmp_dis)</span><br><span class="line">		if(tmp_dis&lt;min_dis):</span><br><span class="line">			min_index = i</span><br><span class="line">			min_dis = tmp_dis</span><br><span class="line">	#print(&#x27;min&#x27;)</span><br><span class="line">	#print(min_index)</span><br><span class="line">	return min_index</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">if __name__ == &#x27;__main__&#x27;:</span><br><span class="line">	data = load_iris()</span><br><span class="line"></span><br><span class="line">	#print(data.keys())</span><br><span class="line">	x_train, x_test, y_train, y_test = train_test_split(data.data, data.target,test_size=0.2, random_state=222)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	#print(&quot;测试集的目标值：\n&quot;, y_train)</span><br><span class="line">	main(x_train.tolist(),y_train.tolist(),4,5)</span><br></pre></td></tr></table></figure> 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          Donate
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://gwyxjtu.github.io/2020/11/19/kmeans%E8%81%9A%E7%B1%BB%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0-python%E7%89%88/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2020/11/25/%E7%95%99%E6%95%B0%E8%AE%A1%E7%AE%97%E5%8F%8D%E5%B8%B8%E7%A7%AF%E5%88%86/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            留数计算反常积分
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/11/04/%E5%AE%9E%E8%BD%B4%E4%B8%8A%E5%BC%80%E7%8E%AF%E9%9B%B6%E6%9E%81%E7%82%B9%E4%B9%8B%E9%97%B4%E7%9A%84%E5%88%86%E7%A6%BB%E4%BC%9A%E5%92%8C%E7%82%B9%E9%97%AE%E9%A2%98-1/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">实轴上开环零极点之间的分离会和点问题</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.staticfile.org/valine/1.4.16/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "zBdCKnsBMIRCBXHahw9SYFv2-gzGzoHsz",
+    app_key: "yHNBwdRosASQOd3VYcO4zX4t",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2015-2023
+        <i class="ri-heart-fill heart_icon"></i> galaxy
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="果果的博客"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/%E6%97%85%E8%A1%8C/">旅行</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" target="_blank" rel="noopener" href="http://shenyu-vip.lofter.com">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/friends">友链</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2021/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+ <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/mathjax/2.7.7/MathJax.js"></script>
+<script src="https://cdn.staticfile.org/mathjax/2.7.7/config/TeX-AMS-MML_HTMLorMML-full.js"></script>
+<script>
+  var ayerConfig = {
+    mathjax: true,
+  };
+</script>
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+ 
+<script src="/js/clickBoom2.js"></script>
+ 
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="52"
+        src="//music.163.com/outchain/player?type=2&id=1867217766&auto=1&height=32"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+    
+
+  </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+
+</html>

@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+  
+
+    <head>
+      <meta charset="utf-8" />
+       
+      <meta name="keywords" content="她永远年轻永远漂亮，穿着鲜艳的长裙站在回忆里，对着你笑靥如花" />
+       
+      <meta name="description" content="她永远年轻永远漂亮，穿着鲜艳的长裙站在回忆里，对着你笑靥如花" />
+      
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+      />
+      <title>成语接龙指定版本 |  果果的博客</title>
+  <meta name="generator" content="hexo-theme-ayer">
+      
+      <link rel="shortcut icon" href="/favicon.ico" />
+       
+<link rel="stylesheet" href="/dist/main.css">
+
+      
+<link rel="stylesheet" href="/css/fonts/remixicon.css">
+
+      
+<link rel="stylesheet" href="/css/custom.css">
+ 
+      <script src="https://cdn.staticfile.org/pace/1.2.4/pace.min.js"></script>
+       
+ 
+
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bulma@5.0.1/bulma.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+      <!-- mermaid -->
+      
+      <style>
+        .swal2-styled.swal2-confirm {
+          font-size: 1.6rem;
+        }
+      </style>
+    <!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="果果的博客" type="application/atom+xml">
+</head>
+  </html>
+</html>
+
+
+<body>
+  <div id="app">
+    
+      
+      <canvas width="1777" height="841"
+        style="position: fixed; left: 0px; top: 0px; z-index: 99999; pointer-events: none;"></canvas>
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-成语接龙指定版本"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  成语接龙指定版本
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/02/01/%E6%88%90%E8%AF%AD%E6%8E%A5%E9%BE%99%E6%8C%87%E5%AE%9A%E7%89%88%E6%9C%AC/" class="article-date">
+  <time datetime="2020-02-01T08:22:59.000Z" itemprop="datePublished">2020-02-01</time>
+</a>   
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">994</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">4 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>昨天找到了新华字典的json就很开心，想到了一个顶俩那个项目，自己也想做一个接到口谐辞给。（因为没有给字开头的成语）</p>
+<h2 id="思路">思路</h2>
+<p>算法过程其实很简单，就是广搜就可以，使用队列这个数据结构，每次pop一个，然后push进来一组当前读音的扩展。在此基础上进行广搜遍历，然后当满足输入要求的时候就停止。</p>
+<h2 id="扩展包">扩展包</h2>
+<ul>
+<li>
+<p>pypinyin<br>
+<a target="_blank" rel="noopener" href="https://github.com/pwxcoo/chinese-xinhua">扩展包地址传送门</a></p>
+</li>
+<li>
+<p>unicodedata anaconda好像自带？我这里可以直接import</p>
+</li>
+</ul>
+<h2 id="成语词典数据来源">成语词典数据来源</h2>
+<p><a target="_blank" rel="noopener" href="https://github.com/mozillazg/python-pinyin">https://github.com/mozillazg/python-pinyin</a><br>
+嫌GitHub慢的也可去<br>
+<a target="_blank" rel="noopener" href="http://ggalaxy.top/file/idiom.json">http://ggalaxy.top/file/idiom.json</a>自取</p>
+<h2 id="代码">代码</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> pypinyin</span><br><span class="line"><span class="keyword">import</span> unicodedata</span><br><span class="line"></span><br><span class="line"><span class="comment">#广搜，用队列</span></span><br><span class="line">flag = <span class="number">0</span></span><br><span class="line"><span class="built_in">str</span>(unicodedata.normalize(<span class="string">&#x27;NFKD&#x27;</span>, pypinyin.lazy_pinyin(<span class="string">&quot;bǎi&quot;</span>)[<span class="number">0</span>]).encode(<span class="string">&#x27;ascii&#x27;</span>,<span class="string">&#x27;ignore&#x27;</span>))[<span class="number">2</span>:-<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">judge</span>(<span class="params">a,b</span>):</span><br><span class="line">	<span class="keyword">if</span>(unicodedata.normalize(<span class="string">&#x27;NFKD&#x27;</span>, pypinyin.lazy_pinyin(a)[<span class="number">0</span>]).encode(<span class="string">&#x27;ascii&#x27;</span>,<span class="string">&#x27;ignore&#x27;</span>) == unicodedata.normalize(<span class="string">&#x27;NFKD&#x27;</span>, pypinyin.lazy_pinyin(b)[<span class="number">0</span>]).encode(<span class="string">&#x27;ascii&#x27;</span>,<span class="string">&#x27;ignore&#x27;</span>)):</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">display</span>(<span class="params">c</span>):<span class="comment">#传进来一个字符串</span></span><br><span class="line">	list_play = c.split(<span class="string">&quot;+&quot;</span>)</span><br><span class="line">	<span class="comment">#print(list_play)</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(list_play)-<span class="number">1</span>):</span><br><span class="line">		<span class="built_in">print</span>(<span class="string">&quot;第&quot;</span>+<span class="built_in">str</span>(i)+<span class="string">&quot;个成语：&quot;</span>,end = <span class="string">&quot;&quot;</span>)</span><br><span class="line">		<span class="built_in">print</span>(file_json[<span class="built_in">int</span>(list_play[i])][<span class="string">&quot;word&quot;</span>])</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">degrade</span>(<span class="params">a</span>):<span class="comment">#数据降维</span></span><br><span class="line">	b = <span class="built_in">str</span>(a)</span><br><span class="line">	b = b.replace(<span class="string">&#x27;[&#x27;</span>,<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">	b = b.replace(<span class="string">&#x27;]&#x27;</span>,<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">	b = b.replace(<span class="string">&quot;&#x27;&quot;</span>,<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">	<span class="comment">#print(b)</span></span><br><span class="line">	a = b.split(<span class="string">&quot;,&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> a</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">search_idiom</span>(<span class="params">p</span>):</span><br><span class="line">	<span class="comment">#进来一个拼音，返回一个list，是以传进来的拼音结尾的</span></span><br><span class="line">	<span class="keyword">global</span> flag</span><br><span class="line">	ans1=[]</span><br><span class="line">	ans2=[]</span><br><span class="line">	<span class="keyword">for</span> iiii <span class="keyword">in</span> <span class="built_in">range</span>(l):<span class="comment">#json</span></span><br><span class="line">		ll = <span class="built_in">len</span>(file_json[iiii][<span class="string">&quot;word&quot;</span>])</span><br><span class="line">		<span class="comment">#print(file_json[iiii][&quot;pinyin&quot;].split(&quot; &quot;))</span></span><br><span class="line">		<span class="keyword">if</span>(judge(file_json[iiii][<span class="string">&quot;pinyin&quot;</span>].split(<span class="string">&quot; &quot;</span>)[-<span class="number">1</span>] ,p)):</span><br><span class="line">			<span class="comment">#print(file_json[iiii][&quot;pinyin&quot;].split(&quot; &quot;)[0])</span></span><br><span class="line">			ans1.append(file_json[iiii][<span class="string">&quot;pinyin&quot;</span>].split(<span class="string">&quot; &quot;</span>)[<span class="number">0</span>].replace(<span class="string">&quot;&#x27;&quot;</span>,<span class="string">&quot;&quot;</span>))<span class="comment">#返回首字的拼音和索引</span></span><br><span class="line">			ans2.append(<span class="built_in">str</span>(iiii)+<span class="string">&quot;+&quot;</span>)</span><br><span class="line">			<span class="comment">#print(&quot;-------------------------------------\n&quot;)</span></span><br><span class="line">			<span class="comment">#print(file_json[iiii][&quot;pinyin&quot;].split(&quot; &quot;)[0],pinyin2)</span></span><br><span class="line">			<span class="comment">#print(file_json[iiii][&quot;pinyin&quot;].split(&quot; &quot;)[0] == pinyin2)</span></span><br><span class="line">			<span class="comment">#print(&quot;-------------------------------------\n&quot;)</span></span><br><span class="line">			<span class="keyword">if</span>(judge(file_json[iiii][<span class="string">&quot;pinyin&quot;</span>].split(<span class="string">&quot; &quot;</span>)[<span class="number">0</span>],pinyin2)):</span><br><span class="line">				flag = <span class="number">1</span></span><br><span class="line">				<span class="comment">#print(ans1,ans2)</span></span><br><span class="line">				<span class="keyword">return</span> ans1,ans2</span><br><span class="line">	<span class="comment">#print(ans1)</span></span><br><span class="line">	<span class="keyword">return</span> ans1,ans2</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">traverse</span>(<span class="params">list_idiom,list_index</span>):</span><br><span class="line">	idiom_tmp = degrade(list_idiom)</span><br><span class="line">	index_tmp = degrade(list_index)</span><br><span class="line">	<span class="comment">#print(idiom_tmp)</span></span><br><span class="line">	<span class="keyword">global</span> dp</span><br><span class="line">	<span class="keyword">global</span> index </span><br><span class="line">	<span class="keyword">global</span> flag</span><br><span class="line">	<span class="comment">#l = len(np.array(list_idiom).shape)</span></span><br><span class="line">	l_tmp = <span class="built_in">len</span>(idiom_tmp)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(l_tmp):</span><br><span class="line">		tmp1,tmp2 = search_idiom(idiom_tmp[i])</span><br><span class="line">		<span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(tmp1)):</span><br><span class="line">			<span class="comment">#print(tmp2[j])</span></span><br><span class="line">			tmp2[j]=tmp2[j]+index_tmp[i]</span><br><span class="line">			<span class="comment">#print(tmp2[j])</span></span><br><span class="line">		<span class="keyword">if</span>(flag !=<span class="number">0</span>):</span><br><span class="line">			<span class="comment">#print(tmp2[i])</span></span><br><span class="line">			<span class="built_in">print</span>(<span class="string">&quot;成功了&quot;</span>)</span><br><span class="line">			flag =<span class="number">1</span>;</span><br><span class="line">			display(tmp2[-<span class="number">1</span>])</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">			</span><br><span class="line">		<span class="keyword">if</span>(<span class="built_in">len</span>(tmp1)&gt;<span class="number">0</span>):</span><br><span class="line">			dp.append(tmp1)</span><br><span class="line">		<span class="comment">#print(dp)</span></span><br><span class="line">		<span class="keyword">if</span>(<span class="built_in">len</span>(tmp2)&gt;<span class="number">0</span>):</span><br><span class="line">			index.append(tmp2)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">file = <span class="built_in">open</span>(<span class="string">&quot;H:/2020/idiom/idiom.json&quot;</span>,<span class="string">&quot;rb&quot;</span>)</span><br><span class="line">file_json = json.load(file)</span><br><span class="line">l = <span class="built_in">len</span>(file_json)</span><br><span class="line"><span class="keyword">while</span>(<span class="number">1</span>):</span><br><span class="line">	s = <span class="built_in">input</span>(<span class="string">&quot;想要接龙到的成语(输入exit退出程序):&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span>(s == <span class="string">&quot;&quot;</span>):</span><br><span class="line">		<span class="keyword">continue</span></span><br><span class="line">	<span class="keyword">if</span>(s == <span class="string">&quot;exit&quot;</span>):</span><br><span class="line">		<span class="keyword">break</span></span><br><span class="line">	pinyin1 = pypinyin.pinyin(s)[<span class="number">0</span>][<span class="number">0</span>]<span class="comment">#</span></span><br><span class="line">	<span class="comment">#print(pinyin1)</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>):</span><br><span class="line">		e = <span class="built_in">input</span>(<span class="string">&quot;开始的成语(exit退出到上一级)：&quot;</span>)</span><br><span class="line">		<span class="keyword">if</span>(e == <span class="string">&quot;&quot;</span>):</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		<span class="keyword">if</span>(e == <span class="string">&quot;exit&quot;</span>):</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		pinyin2 = pypinyin.pinyin(e)[-<span class="number">1</span>][<span class="number">0</span>]</span><br><span class="line">		<span class="comment">#print(pinyin2)</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">#转为拼音</span></span><br><span class="line">		dp=[]<span class="comment">#核心要维护的队列</span></span><br><span class="line">		index = []<span class="comment">#对应dp的队列</span></span><br><span class="line">		dp.append(pinyin1)</span><br><span class="line">		index.append(<span class="string">&quot;&quot;</span>)</span><br><span class="line">		times = <span class="number">0</span></span><br><span class="line">		flag = <span class="number">0</span></span><br><span class="line">		<span class="keyword">while</span>(times &lt; <span class="number">10</span> <span class="keyword">and</span> flag == <span class="number">0</span>):</span><br><span class="line">			<span class="keyword">for</span> ii <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(dp)):</span><br><span class="line">				traverse(dp.pop(<span class="number">0</span>),index.pop(<span class="number">0</span>))</span><br><span class="line">				<span class="keyword">if</span>(<span class="built_in">len</span>(dp) == <span class="number">0</span>):</span><br><span class="line">					<span class="comment">#print(&quot;dp=0&quot;)</span></span><br><span class="line">					flag =<span class="number">1</span></span><br><span class="line"></span><br><span class="line">				</span><br><span class="line">				times+=<span class="number">1</span></span><br><span class="line">				<span class="built_in">print</span>(<span class="string">&quot;第&quot;</span>+<span class="built_in">str</span>(times)+<span class="string">&quot;轮广搜查询&quot;</span>)</span><br><span class="line">				<span class="comment"># if(len(index)&gt;0):</span></span><br><span class="line">				<span class="comment"># 	for ij in range(len(index)):</span></span><br><span class="line">				<span class="comment"># 		for ji in range(len(index[ij])):</span></span><br><span class="line"></span><br><span class="line">				<span class="comment"># 			display(index[ij][ji])</span></span><br><span class="line">				<span class="comment"># 			print(&quot;-------------------------------------\n&quot;)</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="强调">强调</h3>
+<ul>
+<li>除了要维护一个子扩展的拼音队列外，还需要维护一个索引队列，size和拼音队列相等，在地下的代码里面分别是dp[]和index[]，索引队列用与在找到答案之后的返回，我使用字符串拼接然后split的方法。效果不错。</li>
+<li>一定要删除掉空的查询结果，不然你的数组会无穷大。。。。</li>
+</ul>
+<h1>效果</h1>
+<p><img src="https://img-blog.csdnimg.cn/20200201162220430.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjU3ODQxMg==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>能算出来是真的<br>
+不过速度真的很慢，一般两轮以内能找到还行，轮次高了就很慢。<br>
+我寻思着深搜会不会更快？不过讲道理，一般人想到成语接龙要接到指定的成语肯定是先想着广搜吧，不可能一条道走到黑。<br>
+或者还有更好的搜索方法</p>
+<p><img src="https://img-blog.csdnimg.cn/20200201160831390.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjU3ODQxMg==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+ 
+      <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          Donate
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+          
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://gwyxjtu.github.io/2020/02/01/%E6%88%90%E8%AF%AD%E6%8E%A5%E9%BE%99%E6%8C%87%E5%AE%9A%E7%89%88%E6%9C%AC/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%83%A1%E4%B9%B1%E6%90%9E/" rel="tag">胡乱搞</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2020/02/02/pip%E8%B6%85%E6%97%B6/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            pip超时
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/01/31/python%E5%AE%9E%E7%8E%B0%E6%88%90%E8%AF%AD%E6%8E%A5%E9%BE%99%EF%BC%9F%EF%BC%9F/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">python实现成语接龙？？</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.staticfile.org/valine/1.4.16/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "zBdCKnsBMIRCBXHahw9SYFv2-gzGzoHsz",
+    app_key: "yHNBwdRosASQOd3VYcO4zX4t",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2015-2023
+        <i class="ri-heart-fill heart_icon"></i> galaxy
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></span>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>    
+    </main>
+    <div class="float_btns">
+      <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+    </div>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="果果的博客"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/%E6%97%85%E8%A1%8C/">旅行</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" target="_blank" rel="noopener" href="http://shenyu-vip.lofter.com">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/friends">友链</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2021/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-3.6.0.min.js"></script>
+ 
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.org/jquery-modal/0.9.2/jquery.modal.min.css"
+/>
+<script src="https://cdn.staticfile.org/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+ <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.staticfile.org/photoswipe/4.1.3/default-skin/default-skin.min.css">
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="https://cdn.staticfile.org/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script> 
+<!-- MathJax -->
+ <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.staticfile.org/mathjax/2.7.7/MathJax.js"></script>
+<script src="https://cdn.staticfile.org/mathjax/2.7.7/config/TeX-AMS-MML_HTMLorMML-full.js"></script>
+<script>
+  var ayerConfig = {
+    mathjax: true,
+  };
+</script>
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+ 
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+ 
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+ 
+<script src="/js/clickBoom2.js"></script>
+ 
+<!-- CodeCopy -->
+ 
+<link rel="stylesheet" href="/css/clipboard.css">
+ <script src="https://cdn.staticfile.org/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+ 
+<!-- CanvasBackground -->
+ 
+<script src="/js/dz.js"></script>
+ 
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({ theme: "forest" });
+  }
+</script>
+
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="52"
+        src="//music.163.com/outchain/player?type=2&id=1867217766&auto=1&height=32"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+    
+
+  </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+
+</html>
