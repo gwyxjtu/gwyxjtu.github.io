@@ -183,6 +183,58 @@
     
     
     <article
+  id="post-qq-add-answer"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2021/06/08/qq-add-answer/"
+    >qq_add_answer</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/06/08/qq-add-answer/" class="article-date">
+  <time datetime="2021-06-08T01:43:02.000Z" itemprop="datePublished">2021-06-08</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>设置的qq加好友问题，count Prime number less than 867718012 。<br>
+答案如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">typedef</span> <span class="type">long</span> <span class="type">long</span> LL;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">5e6</span> + <span class="number">2</span>;</span><br><span class="line"><span class="type">bool</span> np[N];</span><br><span class="line"><span class="type">int</span> prime[N], pi[N];</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">getprime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> cnt = <span class="number">0</span>;</span><br><span class="line">    np[<span class="number">0</span>] = np[<span class="number">1</span>] = <span class="literal">true</span>;</span><br><span class="line">    pi[<span class="number">0</span>] = pi[<span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">2</span>; i &lt; N; ++i) &#123;</span><br><span class="line">        <span class="keyword">if</span>(!np[i]) prime[++cnt] = i;</span><br><span class="line">        pi[i] = cnt;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> j = <span class="number">1</span>; j &lt;= cnt &amp;&amp; i * prime[j] &lt; N; ++j) &#123;</span><br><span class="line">            np[i * prime[j]] = <span class="literal">true</span>;</span><br><span class="line">            <span class="keyword">if</span>(i % prime[j] == <span class="number">0</span>)   <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> cnt;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> M = <span class="number">7</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> PM = <span class="number">2</span> * <span class="number">3</span> * <span class="number">5</span> * <span class="number">7</span> * <span class="number">11</span> * <span class="number">13</span> * <span class="number">17</span>;</span><br><span class="line"><span class="type">int</span> phi[PM + <span class="number">1</span>][M + <span class="number">1</span>], sz[M + <span class="number">1</span>];</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">getprime</span>();</span><br><span class="line">    sz[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt;= PM; ++i)  phi[i][<span class="number">0</span>] = i;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">1</span>; i &lt;= M; ++i) &#123;</span><br><span class="line">        sz[i] = prime[i] * sz[i - <span class="number">1</span>];</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> j = <span class="number">1</span>; j &lt;= PM; ++j) &#123;</span><br><span class="line">            phi[j][i] = phi[j][i - <span class="number">1</span>] - phi[j / prime[i]][i - <span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">sqrt2</span><span class="params">(LL x)</span> </span>&#123;</span><br><span class="line">    LL r = (LL)<span class="built_in">sqrt</span>(x - <span class="number">0.1</span>);</span><br><span class="line">    <span class="keyword">while</span>(r * r &lt;= x)   ++r;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">int</span>(r - <span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">sqrt3</span><span class="params">(LL x)</span> </span>&#123;</span><br><span class="line">    LL r = (LL)<span class="built_in">cbrt</span>(x - <span class="number">0.1</span>);</span><br><span class="line">    <span class="keyword">while</span>(r * r * r &lt;= x)   ++r;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">int</span>(r - <span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">LL <span class="title">getphi</span><span class="params">(LL x, <span class="type">int</span> s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(s == <span class="number">0</span>)  <span class="keyword">return</span> x;</span><br><span class="line">    <span class="keyword">if</span>(s &lt;= M)  <span class="keyword">return</span> phi[x % sz[s]][s] + (x / sz[s]) * phi[sz[s]][s];</span><br><span class="line">    <span class="keyword">if</span>(x &lt;= prime[s]*prime[s])   <span class="keyword">return</span> pi[x] - s + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span>(x &lt;= prime[s]*prime[s]*prime[s] &amp;&amp; x &lt; N) &#123;</span><br><span class="line">        <span class="type">int</span> s2x = pi[<span class="built_in">sqrt2</span>(x)];</span><br><span class="line">        LL ans = pi[x] - (s2x + s - <span class="number">2</span>) * (s2x - s + <span class="number">1</span>) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = s + <span class="number">1</span>; i &lt;= s2x; ++i) &#123;</span><br><span class="line">            ans += pi[x / prime[i]];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">getphi</span>(x, s - <span class="number">1</span>) - <span class="built_in">getphi</span>(x / prime[s], s - <span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">LL <span class="title">getpi</span><span class="params">(LL x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(x &lt; N)   <span class="keyword">return</span> pi[x];</span><br><span class="line">    LL ans = <span class="built_in">getphi</span>(x, pi[<span class="built_in">sqrt3</span>(x)]) + pi[<span class="built_in">sqrt3</span>(x)] - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = pi[<span class="built_in">sqrt3</span>(x)] + <span class="number">1</span>, ed = pi[<span class="built_in">sqrt2</span>(x)]; i &lt;= ed; ++i) &#123;</span><br><span class="line">        ans -= <span class="built_in">getpi</span>(x / prime[i]) - i + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">LL <span class="title">lehmer_pi</span><span class="params">(LL x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(x &lt; N)   <span class="keyword">return</span> pi[x];</span><br><span class="line">    <span class="type">int</span> a = (<span class="type">int</span>)<span class="built_in">lehmer_pi</span>(<span class="built_in">sqrt2</span>(<span class="built_in">sqrt2</span>(x)));</span><br><span class="line">    <span class="type">int</span> b = (<span class="type">int</span>)<span class="built_in">lehmer_pi</span>(<span class="built_in">sqrt2</span>(x));</span><br><span class="line">    <span class="type">int</span> c = (<span class="type">int</span>)<span class="built_in">lehmer_pi</span>(<span class="built_in">sqrt3</span>(x));</span><br><span class="line">    LL sum = <span class="built_in">getphi</span>(x, a) + <span class="built_in">LL</span>(b + a - <span class="number">2</span>) * (b - a + <span class="number">1</span>) / <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = a + <span class="number">1</span>; i &lt;= b; i++) &#123;</span><br><span class="line">        LL w = x / prime[i];</span><br><span class="line">        sum -= <span class="built_in">lehmer_pi</span>(w);</span><br><span class="line">        <span class="keyword">if</span> (i &gt; c) <span class="keyword">continue</span>;</span><br><span class="line">        LL lim = <span class="built_in">lehmer_pi</span>(<span class="built_in">sqrt2</span>(w));</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = i; j &lt;= lim; j++) &#123;</span><br><span class="line">            sum -= <span class="built_in">lehmer_pi</span>(w / prime[j]) - (j - <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">init</span>();</span><br><span class="line">    LL n;</span><br><span class="line">    <span class="keyword">while</span>(cin &gt;&gt; n) &#123;</span><br><span class="line">        cout &lt;&lt; <span class="built_in">lehmer_pi</span>(n) &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码copy自Meisell-Lehmer算法模板。<br>
+速度极快</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
   id="post-使用docker以及dockernetwork搭建etcd集群"
   class="article article-type-post"
   itemscope
@@ -316,84 +368,6 @@
 <p>更新遇到问题，管理员权限打开cmd。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">SC config wuauserv start= auto</span><br><span class="line"></span><br><span class="line">SC config bits start= auto</span><br><span class="line"></span><br><span class="line">SC config cryptsvc start= auto</span><br><span class="line"></span><br><span class="line">SC config trustedinstaller start= auto</span><br><span class="line"></span><br><span class="line">SC config wuauserv <span class="built_in">type</span>=share</span><br><span class="line"></span><br><span class="line">net stop wuauserv</span><br><span class="line"></span><br><span class="line">net stop cryptSvc</span><br><span class="line"></span><br><span class="line">net stop bits</span><br><span class="line"></span><br><span class="line">net stop msiserver</span><br><span class="line"></span><br><span class="line">ren C:\Windows\SoftwareDistribution SoftwareDistribution.old</span><br><span class="line"></span><br><span class="line">net start wuauserv</span><br><span class="line"></span><br><span class="line">net start cryptSvc</span><br><span class="line"></span><br><span class="line">net start bits</span><br><span class="line"></span><br><span class="line">net start msiserver</span><br></pre></td></tr></table></figure>
 <p>执行即可</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-Dempster证据理论python复现"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2021/04/08/Dempster%E8%AF%81%E6%8D%AE%E7%90%86%E8%AE%BApython%E5%A4%8D%E7%8E%B0/"
-    >Dempster证据理论python复现</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2021/04/08/Dempster%E8%AF%81%E6%8D%AE%E7%90%86%E8%AE%BApython%E5%A4%8D%E7%8E%B0/" class="article-date">
-  <time datetime="2021-04-08T01:28:30.000Z" itemprop="datePublished">2021-04-08</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h2 id="证据理论">证据理论</h2>
-<p>Dempster合成规则是证据理论的核心，由于在证据理论中需要的先验数据比概率推理理论中的更为直观，再加上Dempster合成公式可以综合不同专家或数据源的知识和数据，使得证据理论在专家系统，信息融合，情报分析，多属性决策等领域广泛应用。</p>
-<h3 id="证据理论的概念">证据理论的概念</h3>
-<ul>
-<li>基本概率分配（BPA）：识别框架上的mass函数，证据不为0的元成为焦元。</li>
-<li>似真函数：也称作似真度函数，定义为$Pl(A) = \sum_{B\bigcap A\neq \Phi}^{ } m(B)$</li>
-<li>信任函数：$Bel(A) = \sum_{B\subseteq  A}^{ } m(B)$</li>
-<li>信任区间：新人函数和似真函数组成信任区间</li>
-</ul>
-<h2 id="证据理论的特点">证据理论的特点</h2>
-<ul>
-<li>满足比bayes概率理论更弱的条件，即不必满足概率可加性。</li>
-<li>具有直接表达“不确定”和“不知道”的能力，这些信息表示在mass函数中，并在证据合成过程中保留了这些信息。</li>
-<li>证据理论不但允许人们将信度赋予假设空间的单个元素，而且还能赋予它的子集。</li>
-</ul>
-<h2 id="Dempster组合公式">Dempster组合公式</h2>
-<pre><code>$$
-m_1 \oplus m_2(A)=\frac&#123;1&#125;&#123;1-K&#125; \sum_&#123;B\bigcap C=A&#125;^&#123; &#125; m_1(B) m_2(C)
-$$
-其中
-$$
-K= \sum_&#123;B\bigcap C=\Phi&#125;^&#123; &#125; m_1(B)m_2(C)
-$$
-</code></pre>
-<h2 id="python复现">python复现</h2>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bit_and</span>(<span class="params">a,b</span>):</span><br><span class="line">	l = <span class="built_in">len</span>(a)</span><br><span class="line">	ans =<span class="string">&#x27;&#x27;</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(l):</span><br><span class="line">		ans += <span class="built_in">str</span>(<span class="built_in">int</span>(a[i]) <span class="keyword">and</span> <span class="built_in">int</span>(b[i]))</span><br><span class="line">	<span class="keyword">return</span> ans</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">DS_fusions</span>(<span class="params">A</span>):</span><br><span class="line">	<span class="comment">#编码那个太难想了，简简单单字符串比较好</span></span><br><span class="line">	<span class="comment">#A为n*3矩阵，首列为证据集合编码，后续两列为支持度。</span></span><br><span class="line">	<span class="comment">#mass函数假设只有两个</span></span><br><span class="line">	num_terrorist = <span class="built_in">len</span>(A[<span class="number">0</span>][<span class="number">0</span>])<span class="comment">#字符串长度就是单个恐怖分子的数目</span></span><br><span class="line">	all_terrorist = <span class="built_in">len</span>(A) <span class="comment">#整体数目，用来遍历</span></span><br><span class="line">	ans = [<span class="number">0</span>] * all_terrorist<span class="comment">#最后的答案</span></span><br><span class="line">	k = <span class="number">0</span><span class="comment">#算分母</span></span><br><span class="line">	intersection = <span class="number">0</span><span class="comment">#算分子，用一个循环算完</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(all_terrorist):</span><br><span class="line">		first = A[i][<span class="number">0</span>]</span><br><span class="line">		<span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(all_terrorist):</span><br><span class="line">			second = A[j][<span class="number">0</span>]</span><br><span class="line">			<span class="comment">#tmp = first and second</span></span><br><span class="line">			tmp = bit_and(first,second)</span><br><span class="line">			<span class="built_in">print</span>(first,second,tmp)</span><br><span class="line">			<span class="keyword">if</span> tmp == <span class="string">&#x27;0&#x27;</span>*num_terrorist:</span><br><span class="line">				k += A[i][<span class="number">1</span>]*A[j][<span class="number">2</span>]</span><br><span class="line">			<span class="keyword">for</span> ii <span class="keyword">in</span> <span class="built_in">range</span>(all_terrorist):</span><br><span class="line">				<span class="keyword">if</span> tmp ==  A[ii][<span class="number">0</span>]:</span><br><span class="line">					ans[ii] += A[i][<span class="number">1</span>]*A[j][<span class="number">2</span>]</span><br><span class="line">	<span class="built_in">print</span>(<span class="number">1</span>-k)</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(all_terrorist):</span><br><span class="line">		ans[i] = ans[i]/(<span class="number">1</span>-k)</span><br><span class="line">	<span class="keyword">return</span> ans</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">input_A</span>():</span><br><span class="line">	A = []</span><br><span class="line">	<span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line"></span><br><span class="line">		tmp = [<span class="built_in">input</span>(<span class="string">&#x27;input terrorist(press q finish input): &#x27;</span>)]</span><br><span class="line">		<span class="keyword">if</span> tmp[<span class="number">0</span>] == <span class="string">&#x27;q&#x27;</span>:</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		tmp.append(<span class="built_in">float</span>(<span class="built_in">input</span>(<span class="string">&#x27;input first mass: &#x27;</span>)))</span><br><span class="line">		tmp.append(<span class="built_in">float</span>(<span class="built_in">input</span>(<span class="string">&#x27;input second mass: &#x27;</span>)))</span><br><span class="line">		A.append(tmp)</span><br><span class="line">	<span class="keyword">return</span> A</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">	<span class="comment"># A = input_A()</span></span><br><span class="line">	<span class="comment"># print(A)</span></span><br><span class="line">	A = [[<span class="string">&#x27;100&#x27;</span>,<span class="number">0.4</span>, <span class="number">0.2</span>], [<span class="string">&#x27;010&#x27;</span>, <span class="number">0.3</span>, <span class="number">0.2</span>], [<span class="string">&#x27;001&#x27;</span>, <span class="number">0.1</span>, <span class="number">0.05</span>], [<span class="string">&#x27;110&#x27;</span>, <span class="number">0.1</span>, <span class="number">0.5</span>], [<span class="string">&#x27;111&#x27;</span>, <span class="number">0.1</span>, <span class="number">0.05</span>]]</span><br><span class="line"></span><br><span class="line">	<span class="built_in">print</span>(DS_fusions(A))</span><br></pre></td></tr></table></figure>
-<p>输入为n*3维矩阵，矩阵每一行第一列是支持的证据的编码，支持则该位为1，不支持为0。后面两列为两组支持度。<br>
-DS_fusions函数为证据融合主函数，一个循环内同时，将两组证据的字符串按位与，如果为‘000’则给K增加，若为A中的某个数则给ans中增加，同时计算分子和分母。</p>
-<h2 id="实验结果">实验结果</h2>
-<p>实验结果为<br>
-[0.4657534246575344, 0.363013698630137, 0.020547945205479458,0.14383561643835618, 0.006849315068493152]与ppt答案一致。</p>
  
       <!-- reward -->
       

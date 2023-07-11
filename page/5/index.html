@@ -183,6 +183,93 @@
     
     
     <article
+  id="post-理解gurobi求解器日志"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/05/21/%E7%90%86%E8%A7%A3gurobi%E6%B1%82%E8%A7%A3%E5%99%A8%E6%97%A5%E5%BF%97/"
+    >理解gurobi求解器日志</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/05/21/%E7%90%86%E8%A7%A3gurobi%E6%B1%82%E8%A7%A3%E5%99%A8%E6%97%A5%E5%BF%97/" class="article-date">
+  <time datetime="2022-05-21T02:19:34.000Z" itemprop="datePublished">2022-05-21</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>学习和了解gurobi求解器日志对于理解算法和数学模型有很大帮助，所以加以记录。本文主要记录了simplex和MIP的求解日志。</p>
+<h1>Header</h1>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Optimize a model with 755 rows, 2756 columns and 8937 nonzeros</span><br><span class="line">Model fingerprint: 0x22935346</span><br><span class="line">Variable types: 0 continuous, 2756 integer (0 binary)</span><br></pre></td></tr></table></figure>
+<p>展示了模型的大小以及整数变量数目。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Coefficient statistics:</span><br><span class="line">  Matrix range     [1e+00, 1e+04]</span><br><span class="line">  Objective range  [1e+00, 1e+04]</span><br><span class="line">  Bounds range     [1e+00, 1e+00]</span><br><span class="line">  RHS range        [1e+00, 1e+04]</span><br></pre></td></tr></table></figure>
+<p>这个信息给出了一个非常粗略的指示，说明您在解决模型时是否可以预期数值问题。</p>
+<h1>Simplex Logging</h1>
+<p>单纯形日志有三部分，presolve部分，求解过程和总结部分</p>
+<h2 id="Presolve-Section">Presolve Section</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Presolve removed 2349 rows and 3378 columns</span><br><span class="line">Presolve time: 0.04s</span><br><span class="line">Presolved: 3722 rows, 8852 columns, 30908 nonzeros</span><br></pre></td></tr></table></figure>
+<p>第一步是使用presolve算法简化模型。<br>
+示例输出显示，presolve能够删除2349行和3378列，这需要0.04秒。预解部分的最后一行显示了预解后模型的大小。这是传递给simplex优化器的模型的大小。请注意，为该模型计算的解决方案在simplex完成后会自动转换为原始问题的解决方案(在这个过程中通常称为uncrush)，但这个uncrush步骤是透明的，不会产生日志输出。</p>
+<h2 id="Progress-Section">Progress Section</h2>
+<p><img src="images/gurobi1.png" alt=""></p>
+<p>在每个输出行五列显示单纯形迭代执行的数量,当前的目标函数值,原始的不可行性的程度(计算违反约束的绝对值之和),对偶不可行性的程度(计算违反对偶约束的绝对值之和),和花费的时间(以挂钟时间计算)。Gurobi求解器中默认的单纯形算法是对偶单纯形，它试图在执行单纯形轴心来改进目标的同时保持对偶可行性。</p>
+<h2 id="Summary-Section">Summary Section</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Solved in 20370 iterations and 5.75 seconds</span><br><span class="line">Optimal objective  1.126639304e+07</span><br></pre></td></tr></table></figure>
+<p>字面意思</p>
+<h1>MIP Logging</h1>
+<p>日志也是分为三部分the presolve section, the simplex progress section, and the summary section.</p>
+<h2 id="Presolve-Section-2">Presolve Section</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Presolve removed 0 rows and 3 columns</span><br><span class="line">Presolve time: 0.01s</span><br><span class="line">Presolved: 12 rows, 148 columns, 1615 nonzeros</span><br><span class="line">Variable types: 1 continuous, 147 integer (145 binary)</span><br></pre></td></tr></table></figure>
+<p>在本例中，presolve能够删除3列。最后两行显示了传递给分支切割算法的模型的大小以及剩余变量的类型。</p>
+<h2 id="Progress-Section-2">Progress Section</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Found heuristic solution: objective 157344.61033</span><br></pre></td></tr></table></figure>
+<p>这句话说明gurobi在root relaxation 之前用启发式找到了一个整数可行解<br>
+<img src="images/gurobi2.png" alt=""></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Root relaxation: objective 3.889390e+04, 50 iterations, 0.00 seconds</span><br></pre></td></tr></table></figure>
+<p>第二个是root relaxation，如果这一步耗费时间比较长，会自动将log展开</p>
+<p><img src="images/gurobi3.png" alt=""><br>
+Nodes部分(前两列)提供了关于搜索进展的一般定量信息。第一列显示到目前为止已经探索的分支和剪切节点的数量，而第二列显示搜索树中仍未探索的叶子节点的数量。有时，输出行开头会有一个H或<em>字符。这表明通过MIP启发式(H)或分支(</em>)找到了一个新的可行解。</p>
+<p>Current Node部分提供了在分支和切割树中研究的特定节点的信息。它显示了相关松弛的目标，分支和切割树中节点的深度，以及在相关松弛中具有非整数值的整数变量的数量。（松弛变量的数目）</p>
+<p>Objective Bounds部分提供了一个可行解的最重要的目标值的信息(即，当前可行解的目标值)，以及搜索树的叶子节点提供的当前目标边界。最佳目标值总是在这两个值之间。本节的第三栏(差距)显示了两个客观边界之间的相对差距。当此间隙小于MIPGap参数时，优化终止。</p>
+<p>日志的Work部分提供了到该点为止已经执行了多少工作的信息。第一列显示了分枝和切割树中每个节点执行的单纯形迭代的平均次数。最后一列显示自解算开始以来所经过的时间。</p>
+<p>注意，所研究的节点计数通常在较长一段时间内保持为0。这意味着Gurobi MIP求解器正在处理根节点。Gurobi求解器通常会在根节点上花费大量的精力，生成切割平面并尝试各种启发式方法，以减少后续的分支和切割树的大小。</p>
+<h2 id="Summary-Section-2">Summary Section</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Cutting planes:</span><br><span class="line">  Gomory: 1</span><br><span class="line">  MIR: 17</span><br><span class="line"></span><br><span class="line">Explored 313128 nodes (1741251 simplex iterations) in 4.80 seconds</span><br><span class="line">Thread count was 8 (of 8 available processors)</span><br><span class="line">Solution count 7: 40005.1 40697.1 41203.6 ... 157345</span><br><span class="line"></span><br><span class="line">Optimal solution found (tolerance 1.00e-04)</span><br><span class="line">Best objective 4.000505414200e+04, best bound 4.000505414200e+04, gap 0.0000%</span><br></pre></td></tr></table></figure>
+<p>在这个示例中，Gurobi求解器只需要不到5秒的时间就可以将模型求解到最优，并且它使用了8个线程(线程数可以通过threads参数进行限制)。最佳可行解目标与最佳界之间的差距为0.0%，这产生了一个最优终止状态，因为实现的差距小于默认MIPGap参数值。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Gurobi/" rel="tag">Gurobi</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
   id="post-“勒贝格传“"
   class="article article-type-post"
   itemscope
@@ -378,59 +465,6 @@ $E[S_3|N(1)=4]$可以很好的理解为1时刻内发生四个事件，四个事�
     <footer class="article-footer">
        
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BC%98%E5%8C%96%E5%AD%A6%E4%B9%A0/" rel="tag">优化学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9A%8F%E6%9C%BA%E8%BF%87%E7%A8%8B/" rel="tag">随机过程</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-图书馆"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/04/19/%E5%9B%BE%E4%B9%A6%E9%A6%86/"
-    >图书馆</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/04/19/%E5%9B%BE%E4%B9%A6%E9%A6%86/" class="article-date">
-  <time datetime="2022-04-19T11:04:01.000Z" itemprop="datePublished">2022-04-19</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>来到创新港有快一年时间了，最近才爱上去图书馆学习的。图书馆跟工位比起来好像也没什么好的地方，工位桌子还大，而且工位还提供纯净水，电脑甚至还有双屏，但为什么图书馆的吸引力这么大呢？想了想，有三个原因。第一个原因，可能是因为很喜欢图书馆里面这种陌生人社会的氛围。之前中特老师讲到，中国传统的村落社会一直是一种熟人社会，因为村子里的人基本上都认识，而现在逐渐转为了陌生人社会，一个小区里的人，甚至一栋楼上的人都可能互不认识。图书馆可能是这种陌生人社会气氛的最完美的体现，同学们之间的距离甚至不超过半米，翻书的声音彼此都能听到，但是却互相不认识。这种感觉很奇妙，虽然可能坐在你同桌的同学跟你学的根本不是一门学科，可能你在算积分的同时她在阅读小说，但是这种图书馆的气氛却将同学们联系起来，虽然当我们真正遇到学习困难的时候也不可能去问同桌，但是这种气氛给我们一种心理暗示，周围的同学都很努力，我有不会的问题肯定可以解决。我很享受这种陌生的感觉。</p>
-<p>除了桌子，我比较喜欢每次离开图书馆的感觉，这也是今天我写这篇日记的原因。每次离开图书馆就会回想起自己今天在图书馆的所学所得，今天是去图书馆复习随机过程的，吧泊松和马尔可夫的笔记做完了，同时听了一些张颢老师讲的课，能把泊松过程讲的这么丝滑的，可能没有第二个老师了吧。今天还去图书馆转了转人文社科区的书架，看了几片小小说，希望我能在毕业前吧图书馆每个书架摆的书的类型都记住，现在大概能记住优化书，积分书和语言类书的位置。每次去图书馆的体验都很足，离开的时候心里的满足感是无可替代的。</p>
-<p>除此之外，可能是由于本科去图书馆的习惯吧，对图书馆的桌子情有独钟，发现各类学校的图书馆都有一个共同的特点，桌子虽然不大，但是都有挂书包的地方和电源。本科经常去兴庆钱图的咖啡厅，同时3楼的“湖景座”也是我喜欢去的地方，桌子是各有特色。兴庆钱图咖啡厅的桌子大致分为三类，一类是吧台旁边的方桌，有电源，空间足，但是缺点是离点餐的吧台太近了，噪音大、第二类是南侧贴墙的小圆桌，也有电源，但是桌子空间稍微小一些，好处是噪声小、第三类就是中间没有电源的桌子，一般是去的晚了没别的座位了就会坐中间，方桌子，空间大，不用电脑的读书写作业简直完美。创新港图书馆的桌子目前我只体验了一种，就是中间大区域的四人桌，体验非常好，旁边设置两个插销，而且还有挂书包的地方，可以说条件已经是比兴庆咖啡厅的更好了。跟同桌之间的空间也是足够的，不至于像之兴庆忘了一个地方的桌子， 学习时候两个人胳膊碰胳膊，没点社交能力都不好意思自习了。</p>
-<p>与其说对图书馆的桌子记忆犹新，不如说怀念自己在图书馆桌子上的那一段时光。看到北四楼的方形木桌，就会想起自己考研时候独自复习的那段时光；看到图书馆三楼的白色湖景桌，就会想起大二的下午上自习的时光；看到咖啡厅的小圆桌，就会想起大三和自己一起复习期末考试的同学。每天第一个披萨半价的活动在大三的时候就没有了，一起学习的同学们也各奔东西了，我也很少有机会去兴庆的咖啡厅了，只剩下图书馆还在那里，为一届又一届的学生们留下回忆。</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/diary/" rel="tag">diary</a></li></ul>
 
     </footer>
   </div>

@@ -183,6 +183,62 @@
     
     
     <article
+  id="post-burpsuite根证书导入"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/02/04/burpsuite%E6%A0%B9%E8%AF%81%E4%B9%A6%E5%AF%BC%E5%85%A5/"
+    >burpsuite根证书导入</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/02/04/burpsuite%E6%A0%B9%E8%AF%81%E4%B9%A6%E5%AF%BC%E5%85%A5/" class="article-date">
+  <time datetime="2020-02-04T02:34:10.000Z" itemprop="datePublished">2020-02-04</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="burpsuite代理出现不信任根证书方法">burpsuite代理出现不信任根证书方法</h2>
+<p>转载自https://www.waitalone.cn/technology/burpsuitessl.html</p>
+<h2 id="0x01-概述">0x01 概述</h2>
+<p>不正确的导入ssl证书，将导致每次访问https网站时，都会弹出红色的提示框，本文都指导你如何在windows和mac下正确导入burpsuite证书，方便安全测试。</p> 
+      <a class="article-more-link" href="/2020/02/04/burpsuite%E6%A0%B9%E8%AF%81%E4%B9%A6%E5%AF%BC%E5%85%A5/"
+        >阅读更多...</a
+      >
+       
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%BD%AC%E8%BD%BD/" rel="tag">转载</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
   id="post-pip小换源和指定版本"
   class="article article-type-post"
   itemscope
@@ -354,69 +410,6 @@
        
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%83%A1%E4%B9%B1%E6%90%9E/" rel="tag">胡乱搞</a></li></ul>
 
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-python实现成语接龙？？"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/01/31/python%E5%AE%9E%E7%8E%B0%E6%88%90%E8%AF%AD%E6%8E%A5%E9%BE%99%EF%BC%9F%EF%BC%9F/"
-    >python实现成语接龙？？</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2020/01/31/python%E5%AE%9E%E7%8E%B0%E6%88%90%E8%AF%AD%E6%8E%A5%E9%BE%99%EF%BC%9F%EF%BC%9F/" class="article-date">
-  <time datetime="2020-01-31T11:57:26.000Z" itemprop="datePublished">2020-01-31</time>
-</a> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%83%A1%E4%B9%B1%E6%90%9E/">胡乱搞</a>
-  </div>
-   
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>群里面玩的成语接龙很嗨，想到了之前的一个顶俩的项目，自己搞一个陷害QQ小冰的程序吧。</p>
-<h2 id="扩展包">扩展包</h2>
-<p>pypinyin<br>
-<a target="_blank" rel="noopener" href="https://github.com/pwxcoo/chinese-xinhua">扩展包地址传送门</a></p>
-<h2 id="成语词典数据来源">成语词典数据来源</h2>
-<p><a target="_blank" rel="noopener" href="https://github.com/mozillazg/python-pinyin">https://github.com/mozillazg/python-pinyin</a><br>
-嫌GitHub慢的也可去<br>
-<a target="_blank" rel="noopener" href="http://ggalaxy.top/file/idiom.json">http://ggalaxy.top/file/idiom.json</a>自取</p>
-<p>具体代码</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> pypinyin</span><br><span class="line"></span><br><span class="line">file = <span class="built_in">open</span>(<span class="string">&quot;idiom.json&quot;</span>,<span class="string">&quot;rb&quot;</span>)</span><br><span class="line">file_json = json.load(file)</span><br><span class="line">l = <span class="built_in">len</span>(file_json)</span><br><span class="line"><span class="keyword">while</span>(<span class="number">1</span>):</span><br><span class="line">	s = <span class="built_in">input</span>(<span class="string">&quot;目前要开始的字符：(输入exit退出):&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span>(s == <span class="string">&quot;&quot;</span>):</span><br><span class="line">		<span class="keyword">continue</span></span><br><span class="line">	<span class="keyword">if</span>(s == <span class="string">&quot;exit&quot;</span>):</span><br><span class="line">		<span class="keyword">break</span></span><br><span class="line">	pinyin1 = pypinyin.pinyin(s)[<span class="number">0</span>][<span class="number">0</span>]</span><br><span class="line">	<span class="built_in">print</span>(pinyin1)</span><br><span class="line">	<span class="comment">#转为拼音</span></span><br><span class="line">	e = <span class="built_in">input</span>(<span class="string">&quot;想要结尾的字符,不要求的输入nothing：&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> e == <span class="string">&quot;&quot;</span> <span class="keyword">or</span> e ==<span class="string">&quot;nothing&quot;</span>:</span><br><span class="line">		<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(l):</span><br><span class="line">			ll = <span class="built_in">len</span>(file_json[i][<span class="string">&quot;word&quot;</span>])</span><br><span class="line">			<span class="keyword">if</span>(file_json[i][<span class="string">&quot;pinyin&quot;</span>].split(<span class="string">&quot; &quot;</span>)[<span class="number">0</span>] == pinyin1):</span><br><span class="line">				<span class="built_in">print</span>(<span class="string">&quot;-----------------------------------------------------------------------------------------------------&quot;</span>)</span><br><span class="line">				<span class="built_in">print</span>(file_json[i][<span class="string">&quot;word&quot;</span>],end = <span class="string">&quot;&quot;</span>)</span><br><span class="line">				<span class="built_in">print</span>(<span class="string">&quot; ||拼音：&quot;</span>,end = <span class="string">&quot;&quot;</span>)</span><br><span class="line">				<span class="built_in">print</span>(file_json[i][<span class="string">&quot;pinyin&quot;</span>],end = <span class="string">&quot;&quot;</span>)</span><br><span class="line">				<span class="built_in">print</span>(<span class="string">&quot; ||释意：&quot;</span>,end = <span class="string">&quot;&quot;</span>)</span><br><span class="line">				<span class="built_in">print</span>(file_json[i][<span class="string">&quot;derivation&quot;</span>])</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(l):</span><br><span class="line">			ll = <span class="built_in">len</span>(file_json[i][<span class="string">&quot;word&quot;</span>])</span><br><span class="line">			<span class="keyword">if</span>(file_json[i][<span class="string">&quot;pinyin&quot;</span>].split(<span class="string">&quot; &quot;</span>)[<span class="number">0</span>] == pinyin1 <span class="keyword">and</span> file_json[i][<span class="string">&quot;word&quot;</span>][ll-<span class="number">1</span>] == e):</span><br><span class="line">				<span class="built_in">print</span>(<span class="string">&quot;--------------------------------------------------------------------------------------------------------&quot;</span>)</span><br><span class="line">				<span class="built_in">print</span>(file_json[i][<span class="string">&quot;word&quot;</span>],end = <span class="string">&quot;&quot;</span>)</span><br><span class="line">				<span class="built_in">print</span>(<span class="string">&quot; ||拼音：&quot;</span>,end = <span class="string">&quot;&quot;</span>)</span><br><span class="line">				<span class="built_in">print</span>(file_json[i][<span class="string">&quot;pinyin&quot;</span>],end = <span class="string">&quot;&quot;</span>)</span><br><span class="line">				<span class="built_in">print</span>(<span class="string">&quot; ||释意：&quot;</span>,end = <span class="string">&quot;&quot;</span>)</span><br><span class="line">				<span class="built_in">print</span>(file_json[i][<span class="string">&quot;derivation&quot;</span>])</span><br><span class="line"><span class="built_in">print</span>(file_json[<span class="number">9356</span>][<span class="string">&quot;derivation&quot;</span>])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="调戏">调戏</h2>
-<p><img src="https://img-blog.csdnimg.cn/20200131201705464.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjU3ODQxMg==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
     </footer>
   </div>
 
