@@ -183,6 +183,109 @@
     
     
     <article
+  id="post-留数计算反常积分"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/11/25/%E7%95%99%E6%95%B0%E8%AE%A1%E7%AE%97%E5%8F%8D%E5%B8%B8%E7%A7%AF%E5%88%86/"
+    >留数计算反常积分</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/11/25/%E7%95%99%E6%95%B0%E8%AE%A1%E7%AE%97%E5%8F%8D%E5%B8%B8%E7%A7%AF%E5%88%86/" class="article-date">
+  <time datetime="2020-11-25T14:29:55.000Z" itemprop="datePublished">2020-11-25</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>移步https://blog.csdn.net/weixin_42578412/article/details/110149981<br>
+这个hexo不支持latex公式。引html又有很多的加载项影响速度。</p>
+<p>这是一道用分部积分法无法解出的题目，故写博客以记之。</p>
+<h2 id="题目">题目</h2>
+<p>$$<br>
+\int_{0}^{+\infty}\frac{ln x}{a^2+x^2}dx<br>
+$$<br>
+其中a为常数。</p>
+<h2 id="方法一：朴素换元法">方法一：朴素换元法</h2>
+<p>这是一道反常积分的题目，理论上应该分为两段计算，分别是一个第一类反常积分和一个第二类反常积分。不过如果求出原函数并且两边极限都存在的话就免去了分段这一步。</p>
+<p>$$<br>
+\int_{0}^{+\infty}\frac{ln x}{a^2+x^2}dx<br>
+$$<br>
+首先进行换元，令x = a<em>tan(u)<br>
+$$<br>
+\overset{令x = a</em>tan(u)}{=}\int_{0}^{\pi/2}\frac{lna+ln(tan(u))}{\frac{a^2}{cos^2u}}d(a*tanu)<br>
+$$<br>
+$$<br>
+=\frac{1}{a}\int_{0}^{\pi/2}lna + ln(cosu)-ln(sinu)du<br>
+$$</p>
+<p>又因为<br>
+$$<br>
+\int_{0}^{\pi/2}ln(cosu)du=\int_{0}^{\pi/2}ln(sinu)du<br>
+$$</p>
+<p>所以原式可以化为<br>
+$$<br>
+\frac{1}{a}\int_{0}^{+\infty}lna,du=\frac{lna·\pi}{2a}<br>
+$$</p>
+<h2 id="方法二：留数">方法二：留数</h2>
+<p>设$z_0$为$f(z)$的孤立奇点，$f(z)$在$H：0&lt;|z-z_0|&lt;R$内解析，C为H内包含$z_0$的简单正向闭曲线，则称一下为$f(z)$在$z_0$处的留数。</p>
+<p>$$<br>
+Res[f(z_),z_0] = \frac{1}{2\pi i}\oint_{c}^{}f(z)dz<br>
+$$</p>
+<p>留数和定理，设函数$f(z)$在扩充复平面内只有有限个孤立奇点，则$f(z)$在所有奇点（包括无穷）的留数总和为零。</p>
+<p>观察原积分，将其扩展为</p>
+<p>$$<br>
+\frac{1}{2}\int_{-\infty}^{+\infty}\frac{ln |x|}{a^2+x^2}dx<br>
+$$<br>
+然后取整个虚平面的上半平面的一个顺时针大半圆为积分路径则在上半圆内部只有两个奇点，一个是原点另一个是$ai$</p>
+<p>$$<br>
+\int_{-\infty}^{+\infty}\frac{ln |x|}{a^2+x^2}dx =\int_{-\infty}^{+\infty}\frac{ln |x|}{(x+ai)(x-ai)}dx<br>
+$$<br>
+由于原点处的极点乘以$(x-0)$为0，所以该处的留数为0.<br>
+$$<br>
+\int_{-\infty}^{+\infty}\frac{ln |x|}{(x+ai)(x-ai)}dx = 2\pi i , Res[\frac{ln |x|}{(x+ai)(x-ai)},ai]<br>
+$$</p>
+<p>然后计算即可</p>
+<p>$$=2\pi i , \frac{ln,a}{2ai}=\frac{lna·\pi}{a}<br>
+$$</p>
+<p>所以原式为该积分的一半</p>
+<p>$$<br>
+\int_{0}^{+\infty}\frac{ln x}{a^2+x^2}dx =\frac{1}{2}\int_{-\infty}^{+\infty}\frac{ln |x|}{a^2+x^2}dx =\frac{lna·\pi}{2a}<br>
+$$</p>
+<p>与方法一结果一致。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%AB%98%E7%AD%89%E6%95%B0%E5%AD%A6/" rel="tag">高等数学</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
   id="post-kmeans聚类手动实现-python版"
   class="article article-type-post"
   itemscope
@@ -397,130 +500,6 @@ print(&quot;鸢尾花的描述：\n&quot;, iris.DESCR)
     
     <footer class="article-footer">
        
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-myrio小车"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/07/16/myrio%E5%B0%8F%E8%BD%A6/"
-    >myrio小车</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2020/07/16/myrio%E5%B0%8F%E8%BD%A6/" class="article-date">
-  <time datetime="2020-07-16T14:44:38.000Z" itemprop="datePublished">2020-07-16</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>代码放在仓库https://github.com/gwyxjtu/myrio_car</p>
-<p>一、实验设备与软件<br>
-1．NI myRIO一块，小车一台，自备iPad或手机。<br>
-2．软件系统：Win7系统，Labview2015开发软件，NI myRIO2015驱动程序，APP软件Data Dashboard For LabVIEW。<br>
-3．在iPad或手机上自行下载APP软件Data Dashboard For LabVIEW，Data Dashboard免费支持运行iOS，Android的智能手机和平板电脑。</p>
-<ol start="4">
-<li>由于实验室电源有限，且点亮不稳定，自行从网上购置了12V锂电池一块，红外传感器两个。<br>
-二、实验具体内容<br>
-实验一：手机遥控小车<br>
-首先是按照电路控制连接电机驱动电路，连接线路板。其中D0留给之后控制小车轮子旋转方向，PWM用于控制小车轮子转速。</li>
-<li>问题以及解决方法：<br>
-(1) 12V不能单独引导面包板上方的联通列中，最好单独插在一行，因为12V电压较大，面包板电阻不可忽略。<br>
-(2) myrio板子同样需要接地，否则会出现轮子一会正向转动，一会反向转动且只能受到微弱无规律的控制。<br>
-(3) 具体芯片的调试方法可以先对调两组芯片，然后观察控制效果，如果两个轮子都不受控制，很有可能是。<br>
-<img src="https://img-blog.csdnimg.cn/2020071622374150.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjU3ODQxMg==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></li>
-<li>设计思路和程序图<br>
-按照差分的思路设计小车路线控制，具体线路设计连线图如下，总共只用到了两个myrio的四个A组端口，分别是两个PWM，占用A组29，31端口，和d0分别输出给两个电机。<br>
-<img src="https://img-blog.csdnimg.cn/20200716223808418.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjU3ODQxMg==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
-PWM的使用方法就是两个参数，两个电机的占空比分别是p1+p2,p1-p2，p1用来控制小车的整体速度，p2用来跳街两个轮子差异，也可以用来转向，在后面的实验中负责补偿小车速度。<br>
-实验二：基于红外传感器的自动循迹小车</li>
-<li>传感器原理以及连线<br>
-红外循迹的传感器共有四个接线端，分别是VCC，GND，D0，A0，接线时候VCC接myrio的5V电压，GND连接地端，D0指的是红外的数字输出，A0指的是模拟输出，我们这里使用D0数字输出，即用螺丝刀调节红外传感器灵敏度，使得在黑线和普通地板返回不同的数字数值。如果使用模拟输入，则需要在程序中新增共享变量动态调整。<br>
-Labview中加入NImyrio的digital in，同时设置myrio的端口，我们这里使用A口的15和17引脚。</li>
-<li>程序框图以及算法设计<br>
-开始想到的思路有两种，一种是用红外传感器识别黑线，如果离开黑线则调节，第二种思路是用两个红外传感器夹住黑线，反馈调节。<br>
-最终我们选择了第二种思路，即用两个传感器来夹住赛道，原因是第一种的设计思路对传感器质量要求较高，同时过抖的弯道，比如垂直，第一种设计只能以十分卡顿的试错方法来过弯，而夹住赛道的方法有更多的控制手段。<br>
-设计框图如下，现在进行详细介绍<br>
-<img src="https://img-blog.csdnimg.cn/20200716223833436.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjU3ODQxMg==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
-首先将框图划分为三个区域，其中区域3就是实验一的差分控制，即p1和p2分别负责转速和转向补偿。区域1是一个逻辑判断，即四种情况，分别为：一，左侧右侧都没压黑线。二，左侧右侧都压住黑线。三，左侧压，右侧不压黑线，四，右侧压，左侧不压黑线。为了保证小车能成功通过十字路口，所以两侧都为黑线的时候直行，两侧都不压黑线的时候视为在赛道上，同样直行，如果一侧压住一侧不压，这时候就需要转向来控制，这里使用一个共享变量cons_1，在区域一的上方标记，用来控制自动转向的灵敏度，灵敏度过低会冲出弯道，灵敏度过高会左右摇摆，行进效率低下。仅仅依靠区域1和区域3的框图已经可以实现循迹，但是控制效果不佳，很容易速度过快冲出赛道。区域2在后面的优化里详细描述。</li>
-</ol>
-<p><img src="https://img-blog.csdnimg.cn/20200716223851479.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjU3ODQxMg==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<ol start="3">
-<li>优化方法<br>
-仅凭借区域1和区域3的控制不足以完成很急的弯道。所以加上区域2的优化，区域2首先判断区域一传来的函数值，让小车在弯道时一边轮子转速为0，即在输出的地方直接乘以0，在另一个轮子上给出compensate_1的转速，具体可以通过ipad调节。<br>
-如果需要更快的车速过弯，则需要再转弯时给小车整体一个倒退的速度，即强制减速，然后旋转，这里赋值了一个常数0.7，经过测试0.5到0.8之间都可以，由于转弯速度和转弯稳定程度是不可调和的一对矛盾，这里只能取一个折中。具体的演示再视频中展示。</li>
-<li>问题以及解决方法<br>
-（1）弯道过激，小车冲出弯道的问题，这里使用强制减速和自转的方法调节，实际运行的情况小车会在弯道的时候减速，符合生活经验，开车在弯道时确实需要减速。<br>
-（2）十字路口，这里选择十字路口走直线穿过。</li>
-</ol>
-<p>实验三：可以避障的自动循迹小车</p>
-<ol>
-<li>传感器原理以及连线<br>
-避障使用的是实验室提供的红外测距传感器，共有三个接线端，分别是5V vcc，GND接地端，A0模拟信号输出。这里使用两个传感器，这样可以判断转向方向。</li>
-<li>程序框图以及算法设计<br>
-这里设计的避障优先级高于寻路，所以避障有权利给寻路的输出乘以0然后加上自己的输出。右上方是d0，即当两个传感器都检测距离低于一个阈值的时候倒退。<br>
-<img src="https://img-blog.csdnimg.cn/20200716223917363.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjU3ODQxMg==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
-情形一：两个距离很远<br>
-按照循迹来，给循迹的输出乘以1，并且加上0，d0全部对F进行或运算，即不变。<br>
-情形二：两个距离都很近<br>
-输出乘以0，并且给一个avoid_acc，同时d0反转。即过近自转的速度，实际展示为贴近墙壁后旋转的角度，这里设置为0.3，旋转的角度略大于90度。<br>
-情形三：一侧距离过近，一侧距离过远<br>
-让一个轮子不转，另一个轮子旋转，绕过障碍。</li>
-<li>优化方法<br>
-先前版本的设计是检测距离过近的时候直线后退，这样有一个致命问题，就是小车会卡在距离阈值那里，前前后后运动，所以这里没有选择直线倒退，选择两个传感器都过近的时候自转。即为一侧前进，一侧后退，具体的演示参考视频，效果很不错。</li>
-</ol>
-<p>三、调试经验总结<br>
-1）轮子完全不转</p>
-<ol>
-<li>可以尝试点击程序前面板的停止，如果停止后轮子转动，则程序已经运行。估计是程序逻辑的问题，或者参数初始化失败，重新赋值参数。</li>
-<li>如果点击停止后轮子仍然不转，则检查电路，我们遇到的情况有，电机正负交叉，接地失败，电池没电，myrio电池没电等等。<br>
-2）轮子一直全速转动，不受控制<br>
-大可能是程序没烧上去，原因是myrio电量不足，程序是调试模式，是存储在DRAM里的，断电重连后需要重新烧写程序。<br>
-3）轮子不受控制，或控制逻辑完全错误<br>
-可能是myrio没有接地，myrio也需要接地，否则会随机控制，或控制失败。<br>
-4）轮子一侧转一侧不转，一边受控制，一边不受控制
-<ol>
-<li>myrio端口连接错了一位，就是一侧受控一侧不受控。</li>
-<li>测距红外没有提示灯，这时候可以对调测距红外来检查是否是传感器的问题。<br>
-其他调试思路：</li>
-</ol>
-</li>
-<li>元器件芯片一般不会坏掉，尤其是不可能两个芯片同时坏掉，如果错误是对称的，一般不要怀疑芯片，如果错误不对称，则对调两个芯片查看错误是否对调。</li>
-<li>通过观察myrio上的红色指示灯，是wifi模块，如果每次ipad控制红色灯都会闪烁，则说明myrio已经收到了信号，通信过程错误可以排除。</li>
-<li>可以通过dashboard来判断是否读取到信号，用手机先退出dashboard，在重新连接启动，如果能保存到上次运行的参数，则说明myrio已经存储了数据，通信过程没有问题。</li>
-</ol>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/labview2015/" rel="tag">labview2015</a></li></ul>
-
     </footer>
   </div>
 
@@ -831,7 +810,17 @@ Labview中加入NImyrio的digital in，同时设置myrio的端口，我们这里
 </script>
 
 <!-- Katex -->
-
+ 
+    
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.15.1/katex.min.css">
+        <script src="https://cdn.staticfile.org/KaTeX/0.15.1/katex.min.js"></script>
+        <script src="https://cdn.staticfile.org/KaTeX/0.15.1/contrib/auto-render.min.js"></script>
+        
+            <script src="https://cdn.staticfile.org/KaTeX/0.15.1/contrib/copy-tex.min.js"></script>
+            <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.15.1/contrib/copy-tex.min.css">
+        
+    
+ 
 <!-- busuanzi  -->
  
 <script src="/js/busuanzi-2.3.pure.min.js"></script>

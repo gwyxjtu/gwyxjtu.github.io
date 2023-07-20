@@ -183,6 +183,114 @@
     
     
     <article
+  id="post-使用广义简约梯度法求解有约束优化问题"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/04/03/%E4%BD%BF%E7%94%A8%E5%B9%BF%E4%B9%89%E7%AE%80%E7%BA%A6%E6%A2%AF%E5%BA%A6%E6%B3%95%E6%B1%82%E8%A7%A3%E6%9C%89%E7%BA%A6%E6%9D%9F%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98/"
+    >使用广义简约梯度法求解有约束优化问题</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/04/03/%E4%BD%BF%E7%94%A8%E5%B9%BF%E4%B9%89%E7%AE%80%E7%BA%A6%E6%A2%AF%E5%BA%A6%E6%B3%95%E6%B1%82%E8%A7%A3%E6%9C%89%E7%BA%A6%E6%9D%9F%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98/" class="article-date">
+  <time datetime="2022-04-03T05:40:57.000Z" itemprop="datePublished">2022-04-03</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>广义简约梯度法是简约梯度法的扩展，用于处理含有非线性约束的有约束优化问题，核心思想是用等式约束来减少优化变量的个数。</p>
+<h2 id="理论方法">理论方法</h2>
+<p>首先考虑优化问题：<br>
+$$<br>
+\begin{aligned}<br>
+\min   \quad f(X)\<br>
+\mathrm{ s.t. } \quad h_j(X)\leq0,&amp;j=1,2,…,m\<br>
+l_k(X)=0,&amp;k=1,2,…,l\<br>
+x_i^l\leq x_i\leq x_i^u,&amp;i=1,2,…,n<br>
+\end{aligned}<br>
+$$</p>
+<p>现对不等式约束增加松弛变量。可以描述为：<br>
+$$<br>
+\begin{aligned}<br>
+\min   \quad f(X)\<br>
+\mathrm{ s.t. } \quad h_j(X)+x_{n+j}=0,&amp;j=1,2,…,m\<br>
+h_k(X)=0,&amp;k=1,2,…,l\<br>
+x_i^l\leq x_i\leq x_i^u,&amp;i=1,2,…,n\<br>
+x_{n+j}\geq 0,&amp;j=1,2,…,m<br>
+\end{aligned}<br>
+$$<br>
+再将模型统一简化为：<br>
+$$<br>
+\begin{aligned}<br>
+\min   \quad f(X)\<br>
+\mathrm{ s.t. } \quad g_j(X)=0,&amp;j=1,2,…,m+l\<br>
+x_i^l\leq x_i\leq x_i^u,&amp;i=1,2,…,n+m\<br>
+\end{aligned}<br>
+$$<br>
+广义简约梯度是基于消元法的，现在将变量分解为两部分。<br>
+$$	X= \begin{bmatrix} 	Y\ 	Z \end{bmatrix} $$<br>
+其中Y是独立变量(design or independent variables),Z是非独立变量(state or dependent variables)。由于X满足约束条件 $g_j(X)=0$，所以<br>
+$$\mathrm{d}X=[C]\mathrm{d}Y+[D]\mathrm{d}Z $$<br>
+其中<br>
+$$[C]= 	\begin{bmatrix} 		\frac{\partial g_1}{\partial y_1}&amp; \cdots&amp;\frac{\partial g_1}{\partial y_{n-l}} \ 		\vdots&amp;\ddots &amp;\vdots \ 		\frac{\partial g_{m+l}}{\partial y_1}&amp;\cdots&amp;\frac{\partial g_{m+l}}{\partial y_{n-l}} 	\end{bmatrix} 	[D]= 	\begin{bmatrix} 		\frac{\partial g_1}{\partial z_1}&amp; \cdots&amp;\frac{\partial g_1}{\partial z_{m+l}} \ 		\vdots&amp;\ddots &amp;\vdots \ 		\frac{\partial g_{m+l}}{\partial z_1}&amp;\cdots&amp;\frac{\partial g_{m+l}}{\partial z_{m+l}} 	\end{bmatrix} $$<br>
+随着x的变化，约束g恒为零，所以 $$\mathrm{d}g=0$$ 所以<br>
+$$<br>
+\mathrm{d}Z=-[D]^{-1}[C]\mathrm{d}Y<br>
+\mathrm{d}f(X)=(\nabla^T_Y f-\nabla^T_Zf[D]^{-1}[C])\mathrm{d}Y $$<br>
+也可以表述为<br>
+$$\frac{\mathrm{d}f(X)}{\mathrm{d}Y}=G_R<br>
+G_R=\nabla_Y f-([D]^{-1}[C])^T\nabla_Zf<br>
+$$<br>
+其中 $G_R$ 就是广义简约梯度。<br>
+具体的实现算法可以表示为<br>
+初始化变量X，其中X包含Y和Z两部分。划分独立变量和非独立变量的标准为：划分应尽可能避免矩阵D为非奇异的情况；每个变量的上下界可以理解为非独立变量；由于松弛变量以线性约束的形式出现在问题中，所以松弛变量应当指定为非独立变量。<br>
+计算广义简约梯度。<br>
+检验收敛性。如果广义简约梯度的模足够小，则说明当前的变量值可以作为优化问题的最优解。<br>
+计算搜索方向。广义简约梯度可以理解为非约束优化问题目标函数的梯度，使用最速下降，共轭梯度等方法去确定搜索方向。<br>
+沿着搜索方向确定步长。使用以为搜索方法确定步长，值得注意的是这里的步长不能超过变量的上下界。</p>
+<h2 id="算例测试">算例测试</h2>
+<h3 id="算例1：线性约束问题">算例1：线性约束问题</h3>
+<p>$$\begin{aligned} 		\min   \quad obj =&amp; x_1^3+3x_2^3+2(x_1-x_2)^2+2e^{-(x_1+x_2)}\ 		\mathrm{ s.t. } \quad &amp;x_1-x_2\geq-2\ 		&amp;x_1+x_2\leq25\ 		&amp;x_1\geq0\ 		&amp;x_2\geq0 		 	\end{aligned}$$<br>
+计算迭代很快收敛，具体的数值结果可以去跑代码</p>
+<p><img src="/images/jy2.png" alt=""></p>
+<h3 id="算例2：非线性约束">算例2：非线性约束</h3>
+<p>$$\begin{aligned} 		\min   \quad obj =&amp; 4e^{x_1}-x_2^2+x_3^3-12\ 		\mathrm{ s.t. } \quad &amp;x_1^2+x_2=20\ 		&amp;x_1+x_3=7\ 		&amp;x_1\geq0\ 		&amp;x_2\geq0\ 		&amp;x_3\geq0 	 	\end{aligned} $$</p>
+<p><img src="/images/jy22.png" alt=""></p>
+<h2 id="代码">代码</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br></pre></td><td class="code"><pre><span class="line"># Generalized Reduced Gradient Algorithm </span><br><span class="line"></span><br><span class="line">import numpy as np</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line">from sympy import *</span><br><span class="line">import pandas as pd</span><br><span class="line">def generalized_reduced_gradient():</span><br><span class="line">	ans_list = []</span><br><span class="line">	alpha_list = []</span><br><span class="line">	d_list = []</span><br><span class="line">	x1, x2, x3, x4 = symbols(&#x27;x1 x2 x3 x4&#x27;)</span><br><span class="line">	xvars = [x1, x2, x3, x4]</span><br><span class="line">	x_l = [0,0,0,0]</span><br><span class="line">	fx = x1**3+3*x2**3+2*(x1-x2)**2+2*exp(-x1-x2)</span><br><span class="line">	hxs = [x1-x2+2-x3,x1+x2-25+x4]</span><br><span class="line">	xcurr = np.array([2, 4, 5,1])</span><br><span class="line"></span><br><span class="line">	# x1, x2, x3 = symbols(&#x27;x1 x2 x3&#x27;)</span><br><span class="line">	# xvars = [x1, x2, x3]</span><br><span class="line">	# x_l = [0,0,0]</span><br><span class="line">	# fx = 4 * exp(x1) - x2 ** 2 + x3**3 - 12				# Function to be minimized</span><br><span class="line">	# hxs = [20 - x1**2- x2, x1 + x3 - 7]					# Constraints to be obeyed</span><br><span class="line">	# xcurr = np.array([2, 4, 5])							# Starting solution</span><br><span class="line"></span><br><span class="line">	# x1, x2, x3 = symbols(&#x27;x1 x2 x3&#x27;)</span><br><span class="line">	# xvars = [x1, x2, x3]</span><br><span class="line">	# x_l = [0,0,0]</span><br><span class="line">	# fx = 4 * x1 - x2 ** 2 + x3**2 - 12				# Function to be minimized</span><br><span class="line">	# hxs = [ x1 + x3 - 7,x1+x2-50,20 - x1*x3]					# Constraints to be obeyed</span><br><span class="line">	# xcurr = np.array([2, 4, 5])							# Starting solution</span><br><span class="line"></span><br><span class="line">	alpha_0 = 1											# Parameter initializations</span><br><span class="line">	gamma = 0.4</span><br><span class="line">	max_iter = 10</span><br><span class="line">	max_outer_iter = 30</span><br><span class="line">	eps_1, eps_2, eps_3 = 0.001, 0.001, 0.001</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	dfx = np.array([diff(fx, xvar) for xvar in xvars])</span><br><span class="line">	dhxs = np.array([[diff(hx, xvar) for xvar in xvars] for hx in hxs])</span><br><span class="line">	nonbasic_vars = len(xvars) - len(hxs)</span><br><span class="line">	opt_sols = []</span><br><span class="line"></span><br><span class="line">	for outer_iter in range(max_outer_iter):</span><br><span class="line"></span><br><span class="line">		print( &#x27;\n\nOuter loop iteration: &#123;0&#125;, optimal solution: &#123;1&#125;&#x27;.format(outer_iter + 1, xcurr))</span><br><span class="line">		ans_list.append([float(xcurr[i]) for i in range(len(xcurr))])</span><br><span class="line">		opt_sols.append(fx.subs(zip(xvars, xcurr)))</span><br><span class="line"></span><br><span class="line">		# Step 1</span><br><span class="line"></span><br><span class="line">		delta_f = np.array([df.subs(zip(xvars, xcurr)) for df in dfx])</span><br><span class="line">		delta_h = np.array([[dh.subs(zip(xvars, xcurr)) for dh in dhx] for dhx in dhxs])		# Value of h&#x27;_i(xcurr) for all i</span><br><span class="line">		J = np.array([dhx[nonbasic_vars:] for dhx in delta_h])									# Computation of J and C matrices</span><br><span class="line">		C = np.array([dhx[:nonbasic_vars] for dhx in delta_h])</span><br><span class="line">		delta_f_bar = delta_f[nonbasic_vars:]</span><br><span class="line">		delta_f_cap = delta_f[:nonbasic_vars]</span><br><span class="line"></span><br><span class="line">		J_inv = np.linalg.inv(np.array(J, dtype=float))</span><br><span class="line">		delta_f_tilde = delta_f_cap - delta_f_bar.dot(J_inv.dot(C))</span><br><span class="line"></span><br><span class="line">		# Step 2</span><br><span class="line"></span><br><span class="line">		if abs(delta_f_tilde[0]) &lt;= eps_1:</span><br><span class="line">			break</span><br><span class="line"></span><br><span class="line">		d_bar = - delta_f_tilde.T 									# Direction of search in current iteration</span><br><span class="line">		d_cap = - J_inv.dot(C.dot(d_bar))</span><br><span class="line">		d = np.concatenate((d_bar, d_cap)).T</span><br><span class="line">		d_list.append([float(d[i]) for i in range(len(d))])</span><br><span class="line">		# Step 3</span><br><span class="line"></span><br><span class="line">		alpha = alpha_0</span><br><span class="line"></span><br><span class="line">		while alpha &gt; 0.001:</span><br><span class="line"></span><br><span class="line">			print( &#x27;\nAlpha value: &#123;0&#125;\n&#x27;.format(alpha))</span><br><span class="line"></span><br><span class="line">			# Step 3(a)</span><br><span class="line">			print(xcurr.T , alpha , d)</span><br><span class="line">			v = xcurr.T + alpha * d</span><br><span class="line"></span><br><span class="line">			v = np.array([x_l[i] if v[i]&lt;x_l[i] else v[i] for i in range(len(v))])</span><br><span class="line">			v_bar = v[:nonbasic_vars]</span><br><span class="line">			v_cap = v[nonbasic_vars:]</span><br><span class="line">			flag = False</span><br><span class="line"></span><br><span class="line">			for iters in range(max_iter):#一维搜索</span><br><span class="line">				print( &#x27;Iteration: &#123;0&#125;, optimal solution obtained at x = &#123;1&#125;&#x27;.format(iters + 1, v))</span><br><span class="line">				h = np.array([hx.subs(zip(xvars, v)) for hx in hxs])</span><br><span class="line">				if all([abs(h_i) &lt; eps_2 for h_i in h]):				# Check if candidate satisfies all constraints</span><br><span class="line">					if fx.subs(zip(xvars, xcurr)) &lt;= fx.subs(zip(xvars, v)):</span><br><span class="line">						alpha = alpha * gamma</span><br><span class="line">						break</span><br><span class="line">					else:</span><br><span class="line">						xcurr = v 						# Obtained a candidate better than the current optimal solution</span><br><span class="line">						flag = True</span><br><span class="line">						break</span><br><span class="line"></span><br><span class="line">				# Step 3(b)</span><br><span class="line"></span><br><span class="line">				delta_h_v = np.array([[dh.subs(zip(xvars, v)) for dh in dhx] for dhx in dhxs])</span><br><span class="line">				J_inv_v = np.linalg.inv(np.array([dhx[nonbasic_vars:] for dhx in delta_h_v], dtype=float))</span><br><span class="line">				v_next_cap = v_cap - J_inv_v.dot(h)</span><br><span class="line">				v_next_cap = np.array([x_l[i] if v_next_cap[i]&lt;x_l[i] else v_next_cap[i] for i in range(len(v_next_cap))])</span><br><span class="line">				# Step 3(c)</span><br><span class="line"></span><br><span class="line">				if abs(np.linalg.norm(np.array(v_cap - v_next_cap, dtype=float), 1)) &gt; eps_3:</span><br><span class="line">					v_cap = v_next_cap</span><br><span class="line">					v = np.concatenate((v_bar, v_cap))</span><br><span class="line">				else:</span><br><span class="line">					v_cap = v_next_cap</span><br><span class="line">					v = np.concatenate((v_bar, v_cap))</span><br><span class="line">					h = np.array([hx.subs(zip(xvars, v)) for hx in hxs])</span><br><span class="line">					if all([abs(h_i) &lt; eps_2 for h_i in h]):</span><br><span class="line"></span><br><span class="line">						# Step 3(d)</span><br><span class="line"></span><br><span class="line">						if fx.subs(zip(xvars, xcurr)) &lt;= fx.subs(zip(xvars, v)):</span><br><span class="line">							alpha = alpha * gamma				# Search for lower values of alpha</span><br><span class="line">							break</span><br><span class="line">						else:</span><br><span class="line">							xcurr = v</span><br><span class="line">							flag = True</span><br><span class="line">							break</span><br><span class="line">					else:</span><br><span class="line">						alpha = alpha * gamma</span><br><span class="line">						break</span><br><span class="line">			</span><br><span class="line">			if flag == True:</span><br><span class="line">				break</span><br><span class="line"></span><br><span class="line">	print( &#x27;\n\nFinal solution obtained is: &#123;0&#125;&#x27;.format(xcurr))</span><br><span class="line">	print( &#x27;Value of the function at this point: &#123;0&#125;\n&#x27;.format(fx.subs(zip(xvars, xcurr))))</span><br><span class="line"></span><br><span class="line">	plt.plot(opt_sols, &#x27;ro&#x27;)								# Plot the solutions obtained after every iteration</span><br><span class="line">	plt.show()</span><br><span class="line">	print(d_list)</span><br><span class="line">	print(ans_list)</span><br><span class="line"></span><br><span class="line">if __name__ == &#x27;__main__&#x27;:</span><br><span class="line">	generalized_reduced_gradient()</span><br></pre></td></tr></table></figure>
+<p>参考：Singiresu S. Rao, Engineering optimization: theory and practice. John Wiley &amp; Sons, 2009.</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
   id="post-hello-world"
   class="article article-type-post"
   itemscope
@@ -350,57 +458,6 @@
        
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/" rel="tag">python</a></li></ul>
 
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-IEEE模板中使用tex编辑NOMENCLA-TURE"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2021/07/17/IEEE%E6%A8%A1%E6%9D%BF%E4%B8%AD%E4%BD%BF%E7%94%A8tex%E7%BC%96%E8%BE%91NOMENCLA-TURE/"
-    >IEEE模板中使用tex编辑NOMENCLATURE</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2021/07/17/IEEE%E6%A8%A1%E6%9D%BF%E4%B8%AD%E4%BD%BF%E7%94%A8tex%E7%BC%96%E8%BE%91NOMENCLA-TURE/" class="article-date">
-  <time datetime="2021-07-17T02:51:47.000Z" itemprop="datePublished">2021-07-17</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>参考模板 <a target="_blank" rel="noopener" href="https://www.overleaf.com/learn/latex/Nomenclatures">https://www.overleaf.com/learn/latex/Nomenclatures</a></p>
-<p>公示表在会议模板中并没有直接给出，在正文中加入相应代码后使用命令行产生nls文件即可。</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">makeindex conference_101719.nlo -s nomencl.ist  -o conference_101719.nls</span><br></pre></td></tr></table></figure>
-<p>再次编译tex即可展示</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
     </footer>
   </div>
 
@@ -711,7 +768,17 @@
 </script>
 
 <!-- Katex -->
-
+ 
+    
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.15.1/katex.min.css">
+        <script src="https://cdn.staticfile.org/KaTeX/0.15.1/katex.min.js"></script>
+        <script src="https://cdn.staticfile.org/KaTeX/0.15.1/contrib/auto-render.min.js"></script>
+        
+            <script src="https://cdn.staticfile.org/KaTeX/0.15.1/contrib/copy-tex.min.js"></script>
+            <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.15.1/contrib/copy-tex.min.css">
+        
+    
+ 
 <!-- busuanzi  -->
  
 <script src="/js/busuanzi-2.3.pure.min.js"></script>

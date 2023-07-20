@@ -183,6 +183,69 @@
     
     
     <article
+  id="post-两个一般性矩阵互相相似的条件"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/05/18/%E4%B8%A4%E4%B8%AA%E4%B8%80%E8%88%AC%E6%80%A7%E7%9F%A9%E9%98%B5%E4%BA%92%E7%9B%B8%E7%9B%B8%E4%BC%BC%E7%9A%84%E6%9D%A1%E4%BB%B6/"
+    >两个一般性矩阵互相相似的条件</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/05/18/%E4%B8%A4%E4%B8%AA%E4%B8%80%E8%88%AC%E6%80%A7%E7%9F%A9%E9%98%B5%E4%BA%92%E7%9B%B8%E7%9B%B8%E4%BC%BC%E7%9A%84%E6%9D%A1%E4%BB%B6/" class="article-date">
+  <time datetime="2020-05-18T09:08:28.000Z" itemprop="datePublished">2020-05-18</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>在复习的时候突然遇到一个问题，<strong>两个普通矩阵怎么判定相似</strong>。</p>
+<p>之前遇到的题目里面都是使用<strong>相似对角化</strong>的方法，这里就不在仔细介绍，总结就是如果当前矩阵的每一个特征值的几何重数和代数重数均相等，则可以相似于一个对角阵，如果两个矩阵相似于同一个对角阵，则这两个矩阵相似。</p>
+<p>$$<br>
+A \sim \Lambda \sim B<br>
+$$</p>
+<p>这样就要求A和B拥有同样的特征值，并且每一个特征值的几何重数等于代数重数，并且两矩阵对应特征值的几何重数也要相等。</p>
+<p>这样先然不是最简的条件，经过网上查询，发现两个矩阵相似不一定同时相似于一个对角阵，任意的矩阵都可以通过可逆变化变为约当标准型，Jordan Matrix。</p>
+<p>约当标准型是最简的解耦矩阵，对角阵可以理解为一种特殊的约当矩阵，即每一个约当块的大小为1。</p>
+<p>所以两矩阵相似的条件就变为了同时相似与一个约当矩阵了，而约当矩阵就要求约当快对应相等</p>
+<p>$$<br>
+A \sim J \sim B<br>
+$$</p>
+<p>所以我觉得最后的结论是，<strong>两矩阵相似的充要条件是两矩阵AB拥有同样的特征值，并且两矩阵每个特征值的几何重数和代数重数对应相等(几何重数不必等于代数重数)</strong>，两矩阵即可相似。</p>
+<p>（这个hexo的markdown编辑器居然不能解析latex公式，emm）</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" rel="tag">线性代数</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
   id="post-一道ctfweb题目"
   class="article article-type-post"
   itemscope
@@ -376,73 +439,6 @@ burp抓个包试试注入<br>
     <footer class="article-footer">
        
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kaggle/" rel="tag">kaggle</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-读芯术平台XSS"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/02/24/%E8%AF%BB%E8%8A%AF%E6%9C%AF%E5%B9%B3%E5%8F%B0XSS/"
-    >读芯术平台XSS</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2020/02/24/%E8%AF%BB%E8%8A%AF%E6%9C%AF%E5%B9%B3%E5%8F%B0XSS/" class="article-date">
-  <time datetime="2020-02-24T01:29:26.000Z" itemprop="datePublished">2020-02-24</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>闲的没事干去读芯术的微信公众号学习AI,发现评论区没有任何的过滤，而且电脑端右键可以查看源码</p>
-<p><img src="/images/xss_1.png" alt=""></p>
-<p>但是评论区的内容并没有执行的迹象，所以能否成功还不确定。</p>
-<p>一开始使用最普通的 alert</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;video src=test.mp4 onerror=alert(‘1’);&gt;//视频</span><br><span class="line">&lt;audio src=test.mp3 onerror=alert(‘1’);&gt;//音乐</span><br></pre></td></tr></table></figure>
-<p>发现不行，但是出现了图片的样式</p>
-<p><img src="/images/xss_2.png" alt=""></p>
-<p>这就说明了可以利用！！</p>
-<p>从前端随便摘抄了一段现有的弹窗代码</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;div class=&quot;chuangti&quot;&gt;</span><br><span class="line">	&lt;div class=&quot;top&quot;&gt;&lt;span&gt;自动化73班的果果帅不帅&lt;/span&gt;&lt;/div&gt;</span><br><span class="line">	&lt;dl class=&quot;neirong&quot;&gt;</span><br><span class="line">		&lt;dt&gt;</span><br><span class="line">			&lt;a class=&quot;quxiao anniu_lan&quot; href=&quot;JavaScript:;&quot; onclick=&quot;xptc_guanbi();&quot;&gt;很帅&lt;/a&gt;</span><br><span class="line">			&lt;a class=&quot;quxiao anniu_lan&quot; href=&quot;JavaScript:;&quot; onclick=&quot;xptc_ok();&quot;&gt;最帅&lt;/a&gt;</span><br><span class="line">		&lt;/dt&gt;</span><br><span class="line">		</span><br><span class="line">	&lt;/dl&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
-<p>执行成功</p>
-<p><img src="/images/xss_3.png" alt=""></p>
-<p><img src="/images/xss.jpg" alt=""><br>
-可惜的是本来可以更多的利用的，但是由于之前没有做过微信小程序的相关漏洞，也没做过微信小程序的抓包工作，没有做后续的信息收集和更深层的渗透，就暂且弄一个弹窗罢。考研要紧，考研要紧。</p>
-<h2 id="结尾">结尾</h2>
-<p>存储型xss漏洞很危险，每次点击和浏览网页的人都要承担该漏洞的风险，传播起来十分恐怖，但是平台的联系方式始终联系不上，给老师说老师也不鸟我。<br>
-<img src="/images/xss_4.png" alt=""></p>
-<p>祈祷平安。</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/xss/" rel="tag">xss</a></li></ul>
 
     </footer>
   </div>
@@ -754,7 +750,17 @@ burp抓个包试试注入<br>
 </script>
 
 <!-- Katex -->
-
+ 
+    
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.15.1/katex.min.css">
+        <script src="https://cdn.staticfile.org/KaTeX/0.15.1/katex.min.js"></script>
+        <script src="https://cdn.staticfile.org/KaTeX/0.15.1/contrib/auto-render.min.js"></script>
+        
+            <script src="https://cdn.staticfile.org/KaTeX/0.15.1/contrib/copy-tex.min.js"></script>
+            <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.15.1/contrib/copy-tex.min.css">
+        
+    
+ 
 <!-- busuanzi  -->
  
 <script src="/js/busuanzi-2.3.pure.min.js"></script>

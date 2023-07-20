@@ -183,6 +183,69 @@
     
     
     <article
+  id="post-盛水最多的容器-java动态规划"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/02/09/%E7%9B%9B%E6%B0%B4%E6%9C%80%E5%A4%9A%E7%9A%84%E5%AE%B9%E5%99%A8-java%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/"
+    >盛水最多的容器/接雨水-java动态规划</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/02/09/%E7%9B%9B%E6%B0%B4%E6%9C%80%E5%A4%9A%E7%9A%84%E5%AE%B9%E5%99%A8-java%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" class="article-date">
+  <time datetime="2020-02-09T13:50:11.000Z" itemprop="datePublished">2020-02-09</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%8A%9B%E6%89%A3/">力扣</a>
+  </div>
+   
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="盛水最多的容器">盛水最多的容器</h2>
+<p>题目描述<br>
+<img src="/images/dp_water.png" alt=""></p>
+<p>感觉对动态规划还是理解不够清楚，一开始想了半天还是全部遍历的方法，最好的方法其实是一次移动一个指针，height小的内移。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">maxArea</span><span class="params">(<span class="type">int</span>[] height)</span> &#123;</span><br><span class="line">        <span class="comment">//值大的不动，值小的向内移动</span></span><br><span class="line">        <span class="keyword">if</span>(height.length &lt; <span class="number">2</span>)<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">first</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">last</span> <span class="operator">=</span> height.length-<span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">cap</span> <span class="operator">=</span> Math.min(height[first],height[last])*(last-first);</span><br><span class="line">        <span class="type">int</span> tmp;</span><br><span class="line">        <span class="keyword">while</span>(first != last)&#123;</span><br><span class="line">            <span class="keyword">if</span>(height[first] &gt; height[last])&#123;</span><br><span class="line">                last -= <span class="number">1</span>;</span><br><span class="line">                tmp = Math.min(height[first],height[last])*(last-first);</span><br><span class="line">                <span class="keyword">if</span>(tmp &gt; cap)cap = tmp;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                first += <span class="number">1</span>;</span><br><span class="line">                tmp = Math.min(height[first],height[last])*(last-first);</span><br><span class="line">                <span class="keyword">if</span>(tmp &gt; cap)cap = tmp;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> cap;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><img src="/images/dp_water_2.png" alt=""></p>
+<h2 id="接雨水">接雨水</h2>
+<p><img src="/images/rain.png" alt=""></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">trap</span>(<span class="params">self, height: <span class="type">List</span>[<span class="built_in">int</span>]</span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">        <span class="comment"># 边界条件</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> height: <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">        n = <span class="built_in">len</span>(height)</span><br><span class="line">        maxleft = [<span class="number">0</span>] * n</span><br><span class="line">        maxright = [<span class="number">0</span>] * n</span><br><span class="line">        ans = <span class="number">0</span></span><br><span class="line">        <span class="comment"># 初始化</span></span><br><span class="line">        maxleft[<span class="number">0</span>] = height[<span class="number">0</span>]</span><br><span class="line">        maxright[n-<span class="number">1</span>] = height[n-<span class="number">1</span>]</span><br><span class="line">        <span class="comment"># 设置备忘录，分别存储左边和右边最高的柱子高度</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,n):</span><br><span class="line">            maxleft[i] = <span class="built_in">max</span>(height[i],maxleft[i-<span class="number">1</span>])</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(n-<span class="number">2</span>,-<span class="number">1</span>,-<span class="number">1</span>):</span><br><span class="line">            maxright[j] = <span class="built_in">max</span>(height[j],maxright[j+<span class="number">1</span>])</span><br><span class="line">        <span class="comment"># 一趟遍历，比较每个位置可以存储多少水</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">min</span>(maxleft[i],maxright[i]) &gt; height[i]:</span><br><span class="line">                ans += <span class="built_in">min</span>(maxleft[i],maxright[i]) - height[i]</span><br><span class="line">        <span class="keyword">return</span> ans</span><br></pre></td></tr></table></figure>
+<p>太妙了，就只计算我头顶有多少水，最后加起来就行了，简洁明了。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
   id="post-基金分析-定时邮件提示"
   class="article article-type-post"
   itemscope
@@ -343,66 +406,6 @@
     <footer class="article-footer">
        
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-四数之和"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/02/05/%E5%9B%9B%E6%95%B0%E4%B9%8B%E5%92%8C/"
-    >四数之和</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2020/02/05/%E5%9B%9B%E6%95%B0%E4%B9%8B%E5%92%8C/" class="article-date">
-  <time datetime="2020-02-05T14:37:50.000Z" itemprop="datePublished">2020-02-05</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h1>力扣18题</h1>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> List&lt;List&lt;Integer&gt;&gt; <span class="title function_">fourSum</span><span class="params">(<span class="type">int</span>[] nums, <span class="type">int</span> target)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (nums.length &lt; <span class="number">4</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">        &#125;</span><br><span class="line">        Arrays.sort(nums);</span><br><span class="line"></span><br><span class="line">        List&lt;List&lt;Integer&gt;&gt; results = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; nums.length; i++) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> i + <span class="number">1</span>; j &lt; nums.length; j++) &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">low</span> <span class="operator">=</span> j + <span class="number">1</span>, high = nums.length - <span class="number">1</span>;</span><br><span class="line">                <span class="type">int</span> <span class="variable">sub</span> <span class="operator">=</span> target - nums[i] - nums[j];</span><br><span class="line">                <span class="keyword">while</span> (low &lt; high) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (nums[low] + nums[high] &lt; sub) &#123;</span><br><span class="line">                        low++;</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[low] + nums[high] &gt; sub) &#123;</span><br><span class="line">                        high--;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        results.add(Arrays.asList(nums[i], nums[j], nums[low], nums[high]));</span><br><span class="line">                        <span class="keyword">if</span> ((nums[low] == nums[low + <span class="number">1</span>]) &amp;&amp; nums[high] == nums[high - <span class="number">1</span>]) &#123;</span><br><span class="line">                            low += <span class="number">2</span>;</span><br><span class="line">                            high -= <span class="number">2</span>;</span><br><span class="line">                        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                            low++;</span><br><span class="line">                            high--;</span><br><span class="line">                        &#125;</span><br><span class="line"></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> results.stream().distinct().collect(Collectors.toList());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>底下是一个更牛批的算法。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> List&lt;List&lt;Integer&gt;&gt; <span class="title function_">fourSum</span><span class="params">(<span class="type">int</span>[] nums,<span class="type">int</span> target)</span>&#123;</span><br><span class="line">        <span class="comment">/*定义一个返回值*/</span></span><br><span class="line">        List&lt;List&lt;Integer&gt;&gt; result=<span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">        <span class="comment">/*当数组为null或元素小于4个时，直接返回*/</span></span><br><span class="line">        <span class="keyword">if</span>(nums==<span class="literal">null</span>||nums.length&lt;<span class="number">4</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/*对数组进行从小到大排序*/</span></span><br><span class="line">        Arrays.sort(nums);</span><br><span class="line">        <span class="comment">/*数组长度*/</span></span><br><span class="line">        <span class="type">int</span> length=nums.length;</span><br><span class="line">        <span class="comment">/*定义4个指针k，i，j，h  k从0开始遍历，i从k+1开始遍历，留下j和h，j指向i+1，h指向数组最大值*/</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> k=<span class="number">0</span>;k&lt;length-<span class="number">3</span>;k++)&#123;</span><br><span class="line">            <span class="comment">/*当k的值与前面的值相等时忽略*/</span></span><br><span class="line">            <span class="keyword">if</span>(k&gt;<span class="number">0</span>&amp;&amp;nums[k]==nums[k-<span class="number">1</span>])&#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">/*获取当前最小值，如果最小值比目标值大，说明后面越来越大的值根本没戏*/</span></span><br><span class="line">            <span class="type">int</span> min1=nums[k]+nums[k+<span class="number">1</span>]+nums[k+<span class="number">2</span>]+nums[k+<span class="number">3</span>];</span><br><span class="line">            <span class="keyword">if</span>(min1&gt;target)&#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">/*获取当前最大值，如果最大值比目标值小，说明后面越来越小的值根本没戏，忽略*/</span></span><br><span class="line">            <span class="type">int</span> max1=nums[k]+nums[length-<span class="number">1</span>]+nums[length-<span class="number">2</span>]+nums[length-<span class="number">3</span>];</span><br><span class="line">            <span class="keyword">if</span>(max1&lt;target)&#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">/*第二层循环i，初始值指向k+1*/</span></span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> i=k+<span class="number">1</span>;i&lt;length-<span class="number">2</span>;i++)&#123;</span><br><span class="line">                <span class="comment">/*当i的值与前面的值相等时忽略*/</span></span><br><span class="line">                <span class="keyword">if</span>(i&gt;k+<span class="number">1</span>&amp;&amp;nums[i]==nums[i-<span class="number">1</span>])&#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">/*定义指针j指向i+1*/</span></span><br><span class="line">                <span class="type">int</span> j=i+<span class="number">1</span>;</span><br><span class="line">                <span class="comment">/*定义指针h指向数组末尾*/</span></span><br><span class="line">                <span class="type">int</span> h=length-<span class="number">1</span>;</span><br><span class="line">                <span class="comment">/*获取当前最小值，如果最小值比目标值大，说明后面越来越大的值根本没戏，忽略*/</span></span><br><span class="line">                <span class="type">int</span> min=nums[k]+nums[i]+nums[j]+nums[j+<span class="number">1</span>];</span><br><span class="line">                <span class="keyword">if</span>(min&gt;target)&#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">/*获取当前最大值，如果最大值比目标值小，说明后面越来越小的值根本没戏，忽略*/</span></span><br><span class="line">                <span class="type">int</span> max=nums[k]+nums[i]+nums[h]+nums[h-<span class="number">1</span>];</span><br><span class="line">                <span class="keyword">if</span>(max&lt;target)&#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">/*开始j指针和h指针的表演，计算当前和，如果等于目标值，j++并去重，h--并去重，当当前和大于目标值时h--，当当前和小于目标值时j++*/</span></span><br><span class="line">                <span class="keyword">while</span> (j&lt;h)&#123;</span><br><span class="line">                    <span class="type">int</span> curr=nums[k]+nums[i]+nums[j]+nums[h];</span><br><span class="line">                    <span class="keyword">if</span>(curr==target)&#123;</span><br><span class="line">                        result.add(Arrays.asList(nums[k],nums[i],nums[j],nums[h]));</span><br><span class="line">                        j++;</span><br><span class="line">                        <span class="keyword">while</span>(j&lt;h&amp;&amp;nums[j]==nums[j-<span class="number">1</span>])&#123;</span><br><span class="line">                            j++;</span><br><span class="line">                        &#125;</span><br><span class="line">                        h--;</span><br><span class="line">                        <span class="keyword">while</span>(j&lt;h&amp;&amp;i&lt;h&amp;&amp;nums[h]==nums[h+<span class="number">1</span>])&#123;</span><br><span class="line">                            h--;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(curr&gt;target)&#123;</span><br><span class="line">                        h--;</span><br><span class="line">                    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                       j++;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>作者：you-wei-wu<br>
-链接：<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/4sum/solution/ji-bai-9994de-yong-hu-you-dai-ma-you-zhu-shi-by-yo/">https://leetcode-cn.com/problems/4sum/solution/ji-bai-9994de-yong-hu-you-dai-ma-you-zhu-shi-by-yo/</a><br>
-来源：力扣（LeetCode）<br>
-著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
-</blockquote>
-<p>心态爆炸，我可能不会算法。这个题我写的代码量已经上百行了，看不下去了。</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/" rel="tag">java</a></li></ul>
 
     </footer>
   </div>
@@ -714,7 +717,17 @@
 </script>
 
 <!-- Katex -->
-
+ 
+    
+        <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.15.1/katex.min.css">
+        <script src="https://cdn.staticfile.org/KaTeX/0.15.1/katex.min.js"></script>
+        <script src="https://cdn.staticfile.org/KaTeX/0.15.1/contrib/auto-render.min.js"></script>
+        
+            <script src="https://cdn.staticfile.org/KaTeX/0.15.1/contrib/copy-tex.min.js"></script>
+            <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.15.1/contrib/copy-tex.min.css">
+        
+    
+ 
 <!-- busuanzi  -->
  
 <script src="/js/busuanzi-2.3.pure.min.js"></script>

@@ -6,7 +6,7 @@
   <link href="http://gwyxjtu.github.io/atom.xml" rel="self"/>
   
   <link href="http://gwyxjtu.github.io/"/>
-  <updated>2023-07-11T04:49:00.000Z</updated>
+  <updated>2023-07-20T08:04:14.397Z</updated>
   <id>http://gwyxjtu.github.io/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>等不等公交车？</title>
+    <link href="http://gwyxjtu.github.io/2023/07/20/%E7%AD%89%E4%B8%8D%E7%AD%89%E5%85%AC%E4%BA%A4%E8%BD%A6%EF%BC%9F/"/>
+    <id>http://gwyxjtu.github.io/2023/07/20/%E7%AD%89%E4%B8%8D%E7%AD%89%E5%85%AC%E4%BA%A4%E8%BD%A6%EF%BC%9F/</id>
+    <published>2023-07-20T06:43:02.000Z</published>
+    <updated>2023-07-20T08:04:14.397Z</updated>
+    
+    <content type="html"><![CDATA[<h1>等不等公交车？等多久公交？</h1><p>如果现在我们在公交车站等了一小会公交车了但公交车还没来，我们是继续等公交车呢还是打车走人。这个问题可能很简单，已经等了这么久了再等等吧，那如果我现在等了半小时还没来呢？又或者说等多久公交车最合适，等不到就打车走人。昨天下午在公交车站等车等了半小时的我陷入了沉思。。。</p><p><img src="/images/bus_or_not_1.jpeg" alt=""></p><h2 id="问题描述">问题描述</h2><p>为了得到一个等公交的策略，首先我们需要对公交车到达这个问题进行。首先会想到随机过程中描述离散时间到达的泊松过程，泊松过程符合以下标准：</p><ol><li>事件是相互独立的。一个事件的发生并不影响另一个事件发生的概率。</li><li>平均速率（每个时间段的事件）是恒定的。</li><li>两个事件不可能在同一时间发生。</li></ol><p>在随机过程课程中印象比较深对是<strong>独立增量</strong>和<strong>平稳增量</strong>，如果一个随机过程有独立增量和平稳增量的前提，就可以推出来是泊松过程。显然公交车可以进行这个假设，两辆公交车到达事件之间可能有一些联系吧（交通绿波这种），但是大致可以忽略不计；平稳增量过程显然，因为每号线公交车有一个平均班车时间。所以将公交车的到达时间构建成泊松过程。</p><p>现假如我在阿房宫公交站，现在有三种路线：</p><ul><li>公交A：平均意义下30分钟一趟，路程时间27分钟，2元。</li><li>公交B：平均意义下15分钟一趟，路程时间45分钟，2元。（由于需要腿一段路比较累，按照10元）</li><li>打车：随叫随到，路程时间10分钟。花费15元左右。</li></ul><p>显而易见我有三种乘车策略：</p><ol><li>死等公交A，等到时间$t$后打车。因为公交A直达，并且便宜，但是公交A三十分钟一趟比较慢。</li><li>死等公交B，等到时间$t$后打车。因为公交B班车快，也很便宜，但是体验不佳，得走好一段路。</li><li>哪个公交先到做哪个，等到时间$t$后打车。A，B谁先到站我做谁，而且这个策略似乎看起来更合理一些。</li><li>直接打车，或者等上一阵遭不住了打车跑路。</li></ol><p>现在就是两个问题了，问题一：给定预算下，用那种策略平均等待时间最少。问题二：给定忍耐的等待时间，等不到必须坐车，哪种策略cost最少。（当然这个cost里面加入了一点自己的体验，不想走路，所以这个cost还是很有意义的）</p><p>这两个问题其实是一回事，给一个平均意义cost随着忍耐时间$t$变化的曲线就好了。</p><h2 id="策略分析">策略分析</h2><p>假设等待时间从0开始到$t$，公交A的泊松过程参数$\lambda_1=1/30$，cost $c_1=2$；公交B的泊松过程参数$\lambda_2=1/15$，cost $c_2=10$；直接打车cost $c_0=15$。下面分析按照难易程度展开。</p><h3 id="策略1-忍不了一点点，直接打车">策略1:忍不了一点点，直接打车</h3><p>直接打车策略的cost显然不会随着时间改变，无论等多久，当决定打车时候，cost永远是 $c_0=15$。</p><h3 id="策略2-死等A-B公交，等到忍耐时间-t-后打车">策略2:死等A/B公交，等到忍耐时间$t$后打车</h3><p>这两个策略只有参数的差别，所以以A为案例进行分析。等到时间$t$的话，期间可能来0，1，2，3，。。。辆公交，但是我们其实只区分来没来，来了就能走，考虑泊松过程到达时间间隔与等待时间的分布：$P[T_1 &gt;t]=P[N(t)=0]=e^{−λt}$</p><table><thead><tr><th>事件</th><th>0~$t$时间内一辆A都没来</th><th>0~$t$时间内A公交到达1辆或以上</th></tr></thead><tbody><tr><td>概率</td><td>$e^{−λ_1t}$</td><td>1-$e^{−λ_1t}$</td></tr><tr><td>cost</td><td>$c_0$</td><td>$c_1$</td></tr></tbody></table><p>该策略平均cost随时间的函数为：$c_0<em>e^{−λ_1t}+c_1</em>(1-e^{−λ_1t})$</p><p>死等公交B到$t$同理</p><table><thead><tr><th>事件</th><th>0~$t$时间内一辆B都没来</th><th>0~$t$时间B公交到达1辆或以上</th></tr></thead><tbody><tr><td>概率</td><td>$e^{−λ_2t}$</td><td>1-$e^{−λ_2t}$</td></tr><tr><td>cost</td><td>$c_0$</td><td>$c_2$</td></tr></tbody></table><p>死等B公交到$t$的cost函数为</p><p>$$c_0<em>e^{−λ_2t}+c_2</em>(1-e^{−λ_2t})$$</p><h3 id="策略3-等到忍耐时间-t-A和B谁先来上谁，都没来打车">策略3:等到忍耐时间$t$,A和B谁先来上谁，都没来打车</h3><p>这里首先需要推导一个泊松过程到达先后的概率，$S^A_1,S^B_1$分别代表公交A和公交B第一辆到达的时间。</p><p>$$<br>\begin{aligned}<br>P\left(S_A^1&lt;S_B^2\right) &amp; =\int_0^{T} P\left(S_1^A&lt;S_1^B \mid S_1^A=t\right) d F_{\left(S_1^A\right)}(t) \<br>&amp; =\int_0^{T} P\left(N_2(t)=0\right) \lambda_1 e^{-\lambda_1 t} d t \<br>&amp; =\int_0^{T} \lambda_1 e^{-\left(\lambda_1+\lambda_2\right) t} d t \<br>&amp; =\frac{\lambda_1}{\lambda_1+\lambda_2}(1-e^{-\left(\lambda_1+\lambda_2\right) t})<br>\end{aligned}<br>$$</p><table><thead><tr><th>事件</th><th>0~$t$时间内A和B都没来</th><th>0~$t$时间内至少来了一辆，并且A比B来的早</th><th>0~$t$时间内至少来了一辆，并且B比A来的早</th></tr></thead><tbody><tr><td>概率</td><td>$e^{-\left(\lambda_1+\lambda_2\right) t}$</td><td>$\frac{\lambda_1}{\lambda_1+\lambda_2}(1-e^{-\left(\lambda_1+\lambda_2\right) t})$</td><td>$\frac{\lambda_2}{\lambda_1+\lambda_2}(1-e^{-\left(\lambda_1+\lambda_2\right) t})$</td></tr><tr><td>cost</td><td>$c_0$</td><td>$c_1$</td><td>$c_2$</td></tr></tbody></table><p>所以本策略的cost函数为</p><p>$$c_0<em>e^{-\left(\lambda_1+\lambda_2\right) t}+c_1</em>\frac{\lambda_1}{\lambda_1+\lambda_2}(1-e^{-\left(\lambda_1+\lambda_2\right) t})+c_2*\frac{\lambda_2}{\lambda_1+\lambda_2}(1-e^{-\left(\lambda_1+\lambda_2\right) t})$$</p><h2 id="结果分析">结果分析</h2><p>把上述策略平均意义下cost随最大忍耐时间$t$变化的图像画出来：<br><img src="/images/bus_or_not_2.jpeg" alt=""></p><p>结果显而易见，如果忍耐时间足够大，20分钟以内，那辆车先来上那辆，20分钟以后死等公交A了。</p><p>还有一些不那么重要的结论，首先是忍耐时间越长平均意义的cost越低，同时如果让公交B变得经济一些会显著降低策略3的平均cost，并且如果增开一路公交C也会显著降低平均cost。</p><h2 id="额外的问题？">额外的问题？</h2><p>昨天实际的场景时，我在隔壁魏里斯汉堡等餐的时候，透过玻璃窗子发现了路对面公交站一辆公交B开过去了，这时候我的策略又该怎样改变？如果我没看清是公交A还是公交B开过去了，我的策略又该怎样改变？如果开过去的公交可能既不属于公交A和公交B，可能是一个毫不相干的公交开过去了，我的策略又是否需要变？欢迎大家一起讨论聊一聊。<br><img src="/images/bus_or_not.png" alt=""></p><p>最后，经费充足的话这个问题就没有意义了，但是这个等车时候思考的过程以及回家后复习推导的过程更具意义。而且，15元的打车费真的对我很重要。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1&gt;等不等公交车？等多久公交？&lt;/h1&gt;
+&lt;p&gt;如果现在我们在公交车站等了一小会公交车了但公交车还没来，我们是继续等公交车呢还是打车走人。这个问题可能很简单，已经等了这么久了再等等吧，那如果我现在等了半小时还没来呢？又或者说等多久公交车最合适，等不到就打车走人。昨天下午在公交</summary>
+      
+    
+    
+    
+    
+    <category term="概率" scheme="http://gwyxjtu.github.io/tags/%E6%A6%82%E7%8E%87/"/>
+    
+  </entry>
   
   <entry>
     <title>概率和随机（一）</title>
@@ -467,34 +490,6 @@
     
     
     <category term="diary" scheme="http://gwyxjtu.github.io/tags/diary/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>poisson process 到达时间的条件分布的讨论</title>
-    <link href="http://gwyxjtu.github.io/2022/04/22/poisson-process-%E5%88%B0%E8%BE%BE%E6%97%B6%E9%97%B4%E7%9A%84%E6%9D%A1%E4%BB%B6%E5%88%86%E5%B8%83%E7%9A%84%E8%AE%A8%E8%AE%BA/"/>
-    <id>http://gwyxjtu.github.io/2022/04/22/poisson-process-%E5%88%B0%E8%BE%BE%E6%97%B6%E9%97%B4%E7%9A%84%E6%9D%A1%E4%BB%B6%E5%88%86%E5%B8%83%E7%9A%84%E8%AE%A8%E8%AE%BA/</id>
-    <published>2022-04-22T02:21:46.000Z</published>
-    <updated>2022-04-24T16:44:17.254Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="n-个事件的等待时间">$n$个事件的等待时间</h2><p>考察第$n$个事件的到达时间，也称为直到第$n$个事件的等待时间。（也称为poisson呼叫流）<br>$$<br>S_n=\sum_{i=1}^{n}T_i,\qquad n\ge 1<br>$$</p><p>$S_n$是n个到达之间之和，就是n个泊松分布之和，所以满足伽马分布。</p><p>$$<br>f_{S_n}(t)=\lambda e^{-\lambda t}\frac{(\lambda t)^{n-1}}{(n-1)!}<br>$$</p><h2 id="以-N-t-为条件的等待时间的条件分布">以$N(t)$为条件的等待时间的条件分布</h2><h3 id="求条件时间前的分布">求条件时间前的分布</h3><p>假设：直到时间$t$为止，泊松过程发生了一个事件。<br>目标：确定这个时间发生时间的分布<br>即，<br>$$<br>P{T_1&lt;s|N(t)=1}=\frac{P{T_1&lt;s,N(t)=1}}{P{N(t)=1}}  =\frac{P{[0,s)中1个事件,[s,t]中0个事件}}{P{N(t)=1}}<br>$$</p><p>$$<br>=\frac{\lambda se^{-\lambda s}e^{-\lambda (t-s)}}{\lambda t e^{-\lambda t}}=\frac{s}{t}<br>$$<br>满足均匀分布。</p><p>这个模型可以通俗的理解为，如果泊松过程已经知道了到t时刻到发生的总事件数目，那么事件在前面的t时间里面是均匀分布的。</p><h3 id="条件时间后的分布">条件时间后的分布</h3><p>现考察一到题目,N(t)是速率$\lambda$的泊松过程，现在求：<br>$$<br>E[S_4|N(1)=2]<br>$$<br>两种思路，第一种是用分布求解，一种是用泊松的无记忆性质，最终计算结果都是$1+\frac{2}{\lambda}$。所以目前出现问题。如果从1时刻开始，1后面的时间是小于$T_3+T_4$的，因为第二个事件发生距离1时刻有一定距离。所以本题不可以写成</p><p>$$<br>E[S_4|N(1)=2]=E[T_3+T_4|N(1)=2]+E[1|N(1)=2]<br>$$<br>应该写成<br>$$<br>E[S_4|N(1)=2]=E[1时刻后再发生两次事件的概率|N(1)=2]+E[1|N(1)=2]<br>$$</p><p>课本上提供了$N(t)=n$时候，前n个$S_n$的分布。该分布与n个在$(0,t)$上均匀分布的顺序统计量同分布。但是如果条件不是t时刻之前的总发生事件数目，而是n个时间的到达时间。即知道第n个时间到达的时间为t，那么n个事件该如何分布。</p><h2 id="以-S-N-为条件的到达时间的条件分布">以$S_N$为条件的到达时间的条件分布</h2><p>现考察$E[S_3|S_5=1]$和$E[S_3|N(1)=4]$。<br>$E[S_3|N(1)=4]$可以很好的理解为1时刻内发生四个事件，四个事件将时间分成均等的五块，所以$S_3$的值是0.6</p><p>$E[S_3|S_5=1]$可以理解为$(1-\Delta t)$时间内发生了四个时间，所以计算结果和前者一样。</p><p>既可以表示为$E[S_3|N(1-\Delta t)=4,N(\Delta=1)]$，由于$S_3$与$1-\Delta t$和$1$之间发生的事情独立，所以后者可以省略。</p><p>即最后得出结论，如果求的概率与最后一刻发生的事件独立，则$N(t)=n-1$和$S_n=t$作为条件是等价的。</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h2 id=&quot;n-个事件的等待时间&quot;&gt;$n$个事件的等待时间&lt;/h2&gt;
-&lt;p&gt;考察第$n$个事件的到达时间，也称为直到第$n$个事件的等待时间。（也称为poisson呼叫流）&lt;br&gt;
-$$&lt;br&gt;
-S_n=\sum_{i=1}^{n}T_i,\qquad n\ge 1&lt;br&gt;
-</summary>
-      
-    
-    
-    
-    
-    <category term="优化学习" scheme="http://gwyxjtu.github.io/tags/%E4%BC%98%E5%8C%96%E5%AD%A6%E4%B9%A0/"/>
-    
-    <category term="随机过程" scheme="http://gwyxjtu.github.io/tags/%E9%9A%8F%E6%9C%BA%E8%BF%87%E7%A8%8B/"/>
     
   </entry>
   
