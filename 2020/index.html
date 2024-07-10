@@ -63,318 +63,252 @@
         style="position: fixed; left: 0px; top: 0px; z-index: 99999; pointer-events: none;"></canvas>
       
     <main class="content on">
-      
-<section class="cover">
-    
-  <div class="cover-frame">
-    <div class="bg-box">
-      <img src="/images/cover1.jpg" alt="image frame" />
-    </div>
-    <div class="cover-inner text-center text-white">
-      <h1><a href="/">果果的博客</a></h1>
-      <div id="subtitle-box">
-        
-        <span id="subtitle"></span>
-        
-      </div>
-      <div>
-        
-        <img
-          src="/images/logo.png"
-          class="cover-logo"
-          alt="果果的博客"
-        />
-        
-      </div>
-    </div>
-  </div>
-  <div class="cover-learn-more">
-    <a href="javascript:void(0)" class="anchor"><i class="ri-arrow-down-line"></i></a>
-  </div>
-</section>
-
-
-
-<script src="https://cdn.staticfile.org/typed.js/2.0.12/typed.min.js"></script>
-
-
-<!-- Subtitle -->
-
-  <script>
-    try {
-      var typed = new Typed("#subtitle", {
-        strings: ['不吃西瓜🍉、不吃桃子🍑、雪梨🍐和石榴味道还不错.', '愿我如星君如月，夜夜流光相皎洁', '精彩才刚刚开始'],
-        startDelay: 0,
-        typeSpeed: 200,
-        loop: true,
-        backSpeed: 100,
-        showCursor: true
-      });
-    } catch (err) {
-      console.log(err)
-    }
-  </script>
-  
-<div id="main">
-  <section class="outer">
-  
-  <ul class="ads">
-    
-        <li>
-            <a target="_blank" rel="noopener" href="http://www.kezhi.tech/">
-                <img src="/images/kezhi.jpeg" width="100" alt="于钊的博客">
-            </a>
-        </li>
-    
-        <li>
-            <a target="_blank" rel="noopener" href="https://www.zhihu.com/people/william-guo-79">
-                <img src="https://pic2.zhimg.com/v2-4bf4425ca6162bb626e60a3a91c0222c_im.jpg?source=32738c0c" width="100" alt="zhihu">
-            </a>
-        </li>
-    
-</ul>
-  
-  
-  
-
-<div class="notice" style="margin-top:50px">
-    <i class="ri-heart-fill"></i>
-    <div class="notice-content" id="broad"></div>
-</div>
-<script type="text/javascript">
-    fetch('https://v1.hitokoto.cn')
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById("broad").innerHTML = data.hitokoto;
-        })
-        .catch(console.error)
-</script>
-
-<style>
-    .notice {
-        padding: 20px;
-        border: 1px dashed #e6e6e6;
-        color: #969696;
-        position: relative;
-        display: inline-block;
-        width: 100%;
-        background: #fbfbfb50;
-        border-radius: 10px;
-    }
-
-    .notice i {
-        float: left;
-        color: #999;
-        font-size: 16px;
-        padding-right: 10px;
-        vertical-align: middle;
-        margin-top: -2px;
-    }
-
-    .notice-content {
-        display: initial;
-        vertical-align: middle;
-    }
-</style>
-  
-  <article class="articles">
-    
-    
-    
-    
-    <article
-  id="post-spyder"
-  class="article article-type-post"
+      <section class="outer">
+  <article
+  id="page-"
+  class="article article-type-page"
   itemscope
   itemprop="blogPost"
   data-scroll-reveal
 >
   <div class="article-inner">
-    
-    <header class="article-header">
        
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/01/29/spyder/"
-    >spyder</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2020/01/29/spyder/" class="article-date">
-  <time datetime="2020-01-29T13:56:32.000Z" itemprop="datePublished">2020-01-29</time>
-</a>    
-    </div>
-      
     <div class="article-entry" itemprop="articleBody">
        
-  <h1>jsoup api</h1>
-<h2 id="爬虫学习">爬虫学习</h2>
-<p>6个包提供用于开发jsoup应用程序的类和接口。</p>
-<pre><code>org.jsoup
-org.jsoup.examples
-org.jsoup.helper
-org.jsoup.nodes
-org.jsoup.parser
-org.jsoup.safety
-org.jsoup.salect
-</code></pre>
-<p>主要类：</p>
-<pre><code>Jsoup 类提供了连接，清理和解析HTML文档的方法
-Document 获取HTML文档
-Element 获取、操作HTML节点
-</code></pre>
-<p>三种加载HTML的方法：</p>
-<pre><code>@Test
-public void test1() throws IOException &#123;
-    //从URL加载HTML
-    Document document = Jsoup.connect(&quot;http://www.baidu.com&quot;).get();
-    String title = document.title();
-    //获取html中的标题
-    System.out.println(&quot;title :&quot;+title);
+  <!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>Our Love Story</title>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<style type="text/css">
+		@font-face {
+			font-family: digit;
+			src: url('digital-7_mono.ttf') format("truetype");
+		}
+	</style>
+	<link href="css/default.css" type="text/css" rel="stylesheet">
+	<script type="text/javascript" src="js/jquery.js"></script>
+	<script type="text/javascript" src="js/garden.js"></script>
+    <script type="text/javascript" src="js/functions.js"></script>
+</head>
 
-    //从字符串加载HTML
-    String html = &quot;&lt;html&gt;&lt;head&gt;&lt;title&gt;First parse&lt;/title&gt;&lt;/head&gt;&quot;
-            + &quot;&lt;body&gt;&lt;p&gt;Parsed HTML into a doc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;
-    Document doc = Jsoup.parse(html);
-    title = doc.title();
-    System.out.println(&quot;title :&quot;+title);
+<body>
+	<div id="mainDiv">
+		<div id="content">
+			<div id="code">
+				<span class="comments">/**</span><br />
+				<span class="space"/><span class="comments">* We are both Fudan SSers and programmers,</span><br />
+				<span class="space"/><span class="comments">* so I write some code to celebrate our 1st anniversary.</span><br />
+				<span class="space"/><span class="comments">*/</span><br />
+				Boy i = <span class="keyword">new</span> Boy(<span class="string">"hackerzhou"</span>);<br />
+				Girl u = <span class="keyword">new</span> Girl(<span class="string">"MaryNee"</span>);<br />
+				<span class="comments">// Nov 2, 2010, I told you I love you. </span><br />
+				i.love(u);<br />
+				<span class="comments">// Luckily, you accepted and became my girlfriend eversince.</span><br />
+				u.accepted();<br />
+				<span class="comments">// Since then, I miss u every day.</span><br />
+				i.miss(u);<br />
+				<span class="comments">// And take care of u and our love.</span><br />
+				i.takeCareOf(u);<br />
+				<span class="comments">// You say that you won't be so easy to marry me.</span><br />
+				<span class="comments">// So I keep waiting and I have confidence that you will.</span><br />
+				<span class="keyword">boolean</span> isHesitate = <span class="keyword">true</span>;<br />
+				<span class="keyword">while</span> (isHesitate) {<br />
+				<span class="placeholder"/>i.waitFor(u);<br />
+				<span class="placeholder"/><span class="comments">// I think it is an important decision</span><br />
+				<span class="placeholder"/><span class="comments">// and you should think it over.</span><br />
+				<span class="placeholder"/>isHesitate = u.thinkOver();<br />
+				}<br />
+				<span class="comments">// After a romantic wedding, we will live happily ever after.</span><br />
+				i.marry(u);<br />
+				i.liveHappilyWith(u);<br />
+			</div>
+			<div id="loveHeart">
+				<canvas id="garden"></canvas>
+				<div id="words">
+					<div id="messages">
+						Minyue, I have fallen in love with you for
+						<div id="elapseClock"></div>
+					</div>
+					<div id="loveu">
+						Love u forever and ever.<br/>
+						<div class="signature">- hackerzhou</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="copyright">
+			Inspired by <a target="_blank" rel="noopener" href="http://www.openrise.com/lab/FlowerPower/">FlowerPower</a> project.<br />
+			Copyright © 2011 <a target="_blank" rel="noopener" href='http://hackerzhou.me'>hackerzhou.me</a> 2009-2011
+		</div>
+	</div>
+	<script type="text/javascript">
+		var offsetX = $("#loveHeart").width() / 2;
+		var offsetY = $("#loveHeart").height() / 2 - 55;
+		var together = new Date();
+		together.setFullYear(2010, 10, 2);
+		together.setHours(20);
+		together.setMinutes(0);
+		together.setSeconds(0);
+		together.setMilliseconds(0);
+		
+		if (!document.createElement('canvas').getContext) {
+			var msg = document.createElement("div");
+			msg.id = "errorMsg";
+			msg.innerHTML = "Your browser doesn't support HTML5!<br/>Recommend use Chrome 14+/IE 9+/Firefox 7+/Safari 4+"; 
+			document.body.appendChild(msg);
+			$("#code").css("display", "none")
+			$("#copyright").css("position", "absolute");
+			$("#copyright").css("bottom", "10px");
+		    document.execCommand("stop");
+		} else {
+			setTimeout(function () {
+				startHeartAnimation();
+			}, 5000);
 
-    //从文件加载HTML
-    doc = Jsoup.parse(new File(&quot;F:\\jsoup\\html\\index.html&quot;),&quot;utf-8&quot;);
-    title = doc.title();
-    System.out.println(&quot;title :&quot;+title);
-&#125;
-</code></pre>
-<p>获取html中的head，body,url等信息：</p>
-<pre><code>@Test
-public void test2() throws IOException &#123;
-    Document document = Jsoup.connect(&quot;http://www.baidu.com&quot;).get();
-    String title = document.title();
+			timeElapse(together);
+			setInterval(function () {
+				timeElapse(together);
+			}, 500);
 
-    System.out.println(&quot;title :&quot;+title);
-    //获取html中的head
-    System.out.println(document.head());
-    //获取html中的body
-    //System.out.println(document.body());
-
-    //获取HTML页面中的所有链接
-    Elements links = document.select(&quot;a[href]&quot;);
-    for (Element link : links)&#123;
-        System.out.println(&quot;link : &quot;+ link.attr(&quot;href&quot;));
-        System.out.println(&quot;text :&quot;+ link.text());
-    &#125;
-&#125;
-</code></pre>
-<p>获取URL元信息</p>
-<pre><code>@Test
-public void test3() throws IOException &#123;
-    Document document = Jsoup.connect(&quot;https://passport.lagou.com&quot;).get();
-
-    System.out.println(document.head());
-    //获取URL的元信息
-    String description = document.select(&quot;meta[name=description]&quot;).get(0).attr(&quot;content&quot;);
-    System.out.println(&quot;Meta description : &quot; + description);
-
-    String keywords = document.select(&quot;meta[name=keywords]&quot;).first().attr(&quot;content&quot;);
-    System.out.println(&quot;Meta keyword : &quot; + keywords);
-&#125;
-</code></pre>
-<p>search-detail</p>
-<p>根据class名称获取表单</p>
-<pre><code>@Test
-public void test4() throws IOException &#123;
-    Document document = Jsoup.connect(&quot;https://passport.lagou.com/login/login.html?signature=8ECBCDF2B86061432B425A0B94FC863B&amp;service=https%253A%252F%252Fwww.lagou.com%252F&amp;action=login&amp;serviceId=lagou&amp;ts=1547711303033&quot;).get();
-    //获取拉勾网登入页面的body
-    //System.out.println(document.body());
-    //根据class名称获取表单
-    Elements formElement = document.getElementsByClass(&quot;form_body&quot;);
-    System.out.println(formElement.html());
-    //获取URL的元信息
-    for (Element inputElement : formElement) &#123;
-        String placeholder = inputElement.getElementsByTag(&quot;input&quot;).attr(&quot;placeholder&quot;);
-        System.out.println(placeholder);
-    &#125;
-&#125;
-</code></pre>
-<h2 id="设计构思">设计构思</h2>
-<p>新建独立的package，实现完整的通用接口，在spring中通过定时触发来调用爬虫清洗数据。</p>
-<h3 id="需求">需求</h3>
-<ol>
-<li>
-<p>静态学习资源，(优先级低)</p>
-</li>
-<li>
-<p>每日更新学习资源，热评，或热点bug，或热点知识点，可以分类别整理(优先级高)</p>
-</li>
-</ol>
-<h3 id="接口设计">接口设计</h3>
-<ol>
-<li>interface message_spyder()//爬取数据以及清洗数据接口(与外部交互)</li>
-</ol>
-<p>//单关键词和多关键词检索？？？？</p>
-<p>[CSDN,Github,JianShu,博客园(有验证),菜鸟笔记…] * [Q&amp;A,知识点,Bug]</p>
-<ul>
-<li>String spyder_csdn(“String key”)//key为关键词，爬取CSDN,<a target="_blank" rel="noopener" href="https://bbs.csdn.net/topics/395579435">https://bbs.csdn.net/topics/395579435</a> //爬取话题最新问题。</li>
-</ul>
-<p>class=“search-list J_search”</p>
-<p>a herf 具体问题的连接</p>
-<ul>
-<li>String spyder_github(“String key”)//github爬虫方法</li>
-<li>String spyder_jianShu(String key)简书爬虫方法</li>
-<li>String link_still_live();//有可能链接失效，需要定义一个检查连接是否失效的功能,返回已经失效的连接的String</li>
-<li>String set_value_topic();//手动设置精华话题或文章，永久保存起来</li>
-<li>String search_url(String url,String key);//通过自定义url接口进行模糊搜索。(难度大)</li>
-</ul>
-<ol start="2">
-<li>interface message_manager()//存储数据以及更新数据接口(与数据库交互)</li>
-</ol>
-<ul>
-<li>
-<p>String get_abstract();//子链接主题，子链接内容摘要，子链接，时效</p>
-</li>
-<li>
-<p>String get_contents();//子链接内容，子链接完整标题</p>
-</li>
-</ul>
-<h3 id="数据库设计">数据库设计</h3>
-<p>以TEXT和url为主，图片以及其他的暂时不考虑。<br>
-可以清洗成功的，以String呈现，(无法清洗的，以URL呈现)。</p>
+			adjustCodePosition();
+			$("#code").typewriter();
+		}
+	</script>
+</body>
+</html>
  
       <!-- reward -->
+      
+      <div id="reword-out">
+        <div id="reward-btn">
+          Donate
+        </div>
+      </div>
       
     </div>
     
 
     <!-- copyright -->
     
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+          
+        </li>
+      </ul>
+    </div>
+    
     <footer class="article-footer">
        
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/" rel="tag">java</a></li></ul>
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
 
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://gwyxjtu.github.io/2020/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
     </footer>
   </div>
 
-    
+   
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.staticfile.org/valine/1.4.16/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "zBdCKnsBMIRCBXHahw9SYFv2-gzGzoHsz",
+    app_key: "yHNBwdRosASQOd3VYcO4zX4t",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
  
     
 </article>
 
-    
-  </article>
-  
-
-  
-  <nav class="page-nav">
-    
-    <a class="extend prev" rel="prev" href="/page/17/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="page-number" href="/page/17/">17</a><span class="page-number current">18</span>
-  </nav>
-  
 </section>
-</div>
-
       <footer class="footer">
   <div class="outer">
     <ul>

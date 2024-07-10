@@ -15,7 +15,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>关于果果 |  果果的博客</title>
+      <title> 果果的博客</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/ayer.png" />
@@ -65,27 +65,119 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="about-"
-  class="article article-type-about"
+  id="page-"
+  class="article article-type-page"
   itemscope
   itemprop="blogPost"
   data-scroll-reveal
 >
   <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  关于果果
-</h1>
- 
-
-      
-    </header>
        
     <div class="article-entry" itemprop="articleBody">
        
-  <p>你总有一天要跟所有的记忆相安无事握手言和，那个里面有你也有她，有她的青春也有你的年华。那个人永远的活在时间里了，你把她拉不出来，自己也回不去，就这样吧，让她安静的留在那里。她不会发福不会老去，不会穿着职业套装高跟鞋，不会带着家长里短柴油米醋的气息，她永远年轻永远漂亮穿着鲜艳长裙站在回忆里，对着你笑靥如花。</p>
+  <!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>Our Love Story</title>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<style type="text/css">
+		@font-face {
+			font-family: digit;
+			src: url('digital-7_mono.ttf') format("truetype");
+		}
+	</style>
+	<link href="css/default.css" type="text/css" rel="stylesheet">
+	<script type="text/javascript" src="js/jquery.js"></script>
+	<script type="text/javascript" src="js/garden.js"></script>
+    <script type="text/javascript" src="js/functions.js"></script>
+</head>
+
+<body>
+	<div id="mainDiv">
+		<div id="content">
+			<div id="code">
+				<span class="comments">/**</span><br />
+				<span class="space"/><span class="comments">* We are both PhD candidate in XJTU,</span><br />
+				<span class="space"/><span class="comments">* so I write some code to celebrate our story.</span><br />
+				<span class="space"/><span class="comments">*/</span><br />
+				Boy i = <span class="keyword">new</span> Boy(<span class="string">"Guo"</span>);<br />
+				Girl u = <span class="keyword">new</span> Girl(<span class="string">"Ping"</span>);<br />
+				<span class="comments">// Jun 8, 2024, We hold each other's hand. </span><br />
+				i.love(u);<br />
+				<span class="comments">// Luckily, you accepted and became my girlfriend.</span><br />
+				u.accepted();<br />
+				<span class="comments">// And take care of u and our love.</span><br />
+				i.takeCareOf(u);<br />
+				<span class="comments">// We study and live happily ever after.</span><br />
+				i.studyWith(u);<br />
+				i.liveHappilyWith(u);<br /> -->
+				<!-- <span class="comments">// You say that you won't be so easy to marry me.</span><br />
+				<span class="comments">// So I keep waiting and I have confidence that you will.</span><br />
+				<span class="keyword">boolean</span> isHesitate = <span class="keyword">true</span>;<br /> -->
+			<!-- 	<span class="keyword">while</span> (isHesitate) {<br />
+				<span class="placeholder"/>i.waitFor(u);<br />
+				<span class="placeholder"/><span class="comments">// I think it is an important decision</span><br />
+				<span class="placeholder"/><span class="comments">// and you should think it over.</span><br />
+				<span class="placeholder"/>isHesitate = u.thinkOver();<br />
+				}<br />
+				<span class="comments">// After a romantic wedding, we will live happily ever after.</span><br />
+				i.marry(u);<br />
+				i.liveHappilyWith(u);<br /> -->
+			</div>
+			<div id="loveHeart">
+				<canvas id="garden"></canvas>
+				<div id="words">
+					<div id="messages">
+						Ping, love u for
+						<div id="elapseClock"></div>
+					</div>
+					<div id="loveu">
+						forever and ever.<br/>
+						<div class="signature">- Guo</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- <div id="copyright">
+			Inspired by <a target="_blank" rel="noopener" href="http://www.openrise.com/lab/FlowerPower/">FlowerPower</a> project.<br />
+			Copyright © 2011 <a target="_blank" rel="noopener" href='http://hackerzhou.me'>hackerzhou.me</a> 2009-2011
+		</div> -->
+	</div>
+	<script type="text/javascript">
+		var offsetX = $("#loveHeart").width() / 2;
+		var offsetY = $("#loveHeart").height() / 2 - 55;
+		var together = new Date();
+		together.setFullYear(2024, 5, 8);
+		together.setHours(20);
+		together.setMinutes(0);
+		together.setSeconds(0);
+		together.setMilliseconds(0);
+		
+		if (!document.createElement('canvas').getContext) {
+			var msg = document.createElement("div");
+			msg.id = "errorMsg";
+			msg.innerHTML = "Your browser doesn't support HTML5!<br/>Recommend use Chrome 14+/IE 9+/Firefox 7+/Safari 4+"; 
+			document.body.appendChild(msg);
+			$("#code").css("display", "none")
+			$("#copyright").css("position", "absolute");
+			$("#copyright").css("bottom", "10px");
+		    document.execCommand("stop");
+		} else {
+			setTimeout(function () {
+				startHeartAnimation();
+			}, 5000);
+
+			timeElapse(together);
+			setInterval(function () {
+				timeElapse(together);
+			}, 500);
+
+			adjustCodePosition();
+			$("#code").typewriter();
+		}
+	</script>
+</body>
+</html>
  
       <!-- reward -->
       
