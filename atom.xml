@@ -6,7 +6,7 @@
   <link href="http://gwyxjtu.github.io/atom.xml" rel="self"/>
   
   <link href="http://gwyxjtu.github.io/"/>
-  <updated>2023-07-20T09:05:43.878Z</updated>
+  <updated>2024-07-10T03:44:38.416Z</updated>
   <id>http://gwyxjtu.github.io/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>使用litstudy进行文献自动分析</title>
+    <link href="http://gwyxjtu.github.io/2024/07/10/%E4%BD%BF%E7%94%A8litstudy%E8%BF%9B%E8%A1%8C%E6%96%87%E7%8C%AE%E8%87%AA%E5%8A%A8%E5%88%86%E6%9E%90/"/>
+    <id>http://gwyxjtu.github.io/2024/07/10/%E4%BD%BF%E7%94%A8litstudy%E8%BF%9B%E8%A1%8C%E6%96%87%E7%8C%AE%E8%87%AA%E5%8A%A8%E5%88%86%E6%9E%90/</id>
+    <published>2024-07-10T02:55:09.000Z</published>
+    <updated>2024-07-10T03:44:38.416Z</updated>
+    
+    <content type="html"><![CDATA[<h1>使用litstudy进行文献自动分析</h1><p><img src="/images/lit1.png" alt=""></p><h2 id="采集式学习？">采集式学习？</h2><p>由于某学院中期材料离谱的要求，充满形式主义色彩的采集式学习不得不进入同学们的生活，报告要求、ppt要求、评分准则都与采集式学习的质量有关：</p><pre><code>（4）结合项目实践和研究需要，是否开展了采集式的学习，对实践和研究是否提供了有效的支撑；</code></pre><p>自动文献分析的工具在此类需求上显得至关重要。</p><p><img src="/images/lit2.png" alt="采集式学习"></p><h2 id="文献批量自动分析">文献批量自动分析</h2><p>某些综述类论文为了提升调研论文的说服力，经常会展示文献调研的算法，在github上调研也发现了一些好用的自动文献整理和文献分析工具，比如Litstudy。该仓库基于python开发，主要有五个特性：</p><ul><li>从不同来源的科学文件中提取元数据。组合来自不同来源的数据，以标准化的接口呈现数据。</li><li>过滤、选择、删除重复数据和注释文档集合。</li><li>计算和绘制文档集的通用统计信息，例如关于作者、地点和出版年份的统计信息。</li><li>生成和绘制各种书目网络作为交互式可视化。</li><li>使用自然语言处理的主题发现允许自动发现热门主题。</li></ul><p>该仓库具体支持的文献来源如下表所示</p><table><thead><tr><th>Name</th><th>Title</th><th>Authors</th><th>Venue</th><th>Abstract</th><th>Citations</th><th>References</th></tr></thead><tbody><tr><td><a href="http://scopus.com/">Scopus</a></td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr><tr><td><a href="https://www.semanticscholar.org/">SemanticScholar</a></td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>* <sup>(count only)</sup></td><td>✓</td></tr><tr><td><a href="https://www.crossref.org/">CrossRef</a></td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>* <sup>(count only)</sup></td><td>✓</td></tr><tr><td><a href="https://dblp.org/">DBLP</a></td><td>✓</td><td>✓</td><td>✓</td><td></td><td></td><td></td></tr><tr><td><a href="https://arxiv.org/">arXiv</a></td><td>✓</td><td>✓</td><td></td><td>✓</td><td></td><td></td></tr><tr><td><a href="https://ieeexplore.ieee.org/">IEEE Xplore</a></td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>* <sup>(count only)</sup></td><td></td></tr><tr><td><a href="https://link.springer.com/">Springer Link</a></td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>* <sup>(count only)</sup></td><td></td></tr><tr><td>CSV file</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td></td><td></td></tr><tr><td>bibtex file</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td></td><td></td></tr><tr><td>RIS file</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td></td><td></td></tr></tbody></table><p>同时仓库也提供了一个Jupyter<a href="https://nlesc.github.io/litstudy/example.html">应用案例</a>。</p><img src="https://raw.githubusercontent.com/NLeSC/litstudy/master/docs/images/notebook.png" width = "100%"  align=center /><!-- [![Example notebook](https://raw.githubusercontent.com/NLeSC/litstudy/master/docs/images/notebook.png)](https://github.com/NLeSC/litstudy/blob/master/notebooks/example.ipynb) --><iframe src = "https://nbviewer.org/github/NLeSC/litstudy/blob/master/notebooks/example.ipynb" width = "100%"/>该仓库的可视化结果非常适合我们文献调研汇报工作和PPT汇报中绘图，安装方便上手简单，希望能帮助到有开题汇报或者中期汇报需求的同学。<h2 id="参考">参考</h2><pre><code>[1] Heldens, S., Sclocco, A., &amp; Dreuning, H. litstudy [Computer software]. https://doi.org/10.5281/zenodo.3386071</code></pre>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1&gt;使用litstudy进行文献自动分析&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&quot;/images/lit1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;h2 id=&quot;采集式学习？&quot;&gt;采集式学习？&lt;/h2&gt;
+&lt;p&gt;由于某学院中期材料离谱的要求，充满形式主义色彩的采集式学习不得不进入同学们的</summary>
+      
+    
+    
+    
+    
+    <category term="python, 采集式学习" scheme="http://gwyxjtu.github.io/tags/python-%E9%87%87%E9%9B%86%E5%BC%8F%E5%AD%A6%E4%B9%A0/"/>
+    
+  </entry>
   
   <entry>
     <title>等不等公交车？</title>
@@ -465,31 +490,6 @@
     
     
     
-    
-  </entry>
-  
-  <entry>
-    <title>青年的含义</title>
-    <link href="http://gwyxjtu.github.io/2022/05/04/%E9%9D%92%E5%B9%B4%E7%9A%84%E5%90%AB%E4%B9%89/"/>
-    <id>http://gwyxjtu.github.io/2022/05/04/%E9%9D%92%E5%B9%B4%E7%9A%84%E5%90%AB%E4%B9%89/</id>
-    <published>2022-05-04T07:57:57.000Z</published>
-    <updated>2022-05-16T03:32:55.509Z</updated>
-    
-    <content type="html"><![CDATA[<p>今天是2022年5月4日，青年节。</p><p><img src="/images/54.jpeg" alt=""></p><h2 id="青年的含义是什么">青年的含义是什么</h2><p>青年节，可能是每年除了生日和除夕，对我来说最有意义的一个日子了吧。走在路上不禁思考，青年的含义是什么。对自己的青年时间赶到迷茫，不妨看一看伟人们的青年时间都是如何度过的。</p><p>教员的青年时光做了很扎实的群众工作，同时写下了《中国社会各阶级的分析》、《湖南农民运动考察报告》等著名文章。同蔡和森等在长沙发起成立新民学会聚集了一批具有爱国革新思想的进步青年，其中不少人后来成为社会主义青年团和共产党的骨干。总的来说，结交志同道合的朋友，坐下扎实的社会调研和群众工作，青年时期过的非常充实了，令人敬佩。</p><p>梁启超在1895年同康有为一道联合各省公车上书，陈言时局利弊，掀起戊戌变法。失败之后，宣传新思想，新文化。在我看来，在当时的环境下能做出如此进步的尝试，不但需要有强大的思想定力和组织能力，还需要有巨大的勇气，值得学习。</p><p>在我看来，青年时期，尤其是读书时候，是人的一生创造力最强，也是最容易出成果的时候。我的很多朋友们和我一样，看到新事物就喜欢去钻研，去讨论，去检索交流学习。我心目中的青年，是这种具有钻研精神的，意志坚定，勇于担当，不破不立的人们。如果有一天我也变成了那种遇到困难就想着推给别人，遇到不会的工作总想着依靠别人，遇到任何任务都想着蒙混过关草草了事，那我就不再是我心目中的青年了，而变成了只会耍嘴皮子，论资排辈，指鹿为马固执己见的保守派了。</p><p>希望自己能在任何环境下都不断学习，保持自己的创造力，永远做一个敢担当敢创造的新青年。</p><p>2022年5月4日下午  于创新港图书馆</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;今天是2022年5月4日，青年节。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;/images/54.jpeg&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-&lt;h2 id=&quot;青年的含义是什么&quot;&gt;青年的含义是什么&lt;/h2&gt;
-&lt;p&gt;青年节，可能是每年除了生日和除夕，对我来说最有意义的一个日子了吧。走在路上不</summary>
-      
-    
-    
-    
-    
-    <category term="diary" scheme="http://gwyxjtu.github.io/tags/diary/"/>
     
   </entry>
   

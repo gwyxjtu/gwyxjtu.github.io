@@ -183,6 +183,107 @@
     
     
     <article
+  id="post-电网调度知识点（四）"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2023/04/20/%E7%94%B5%E7%BD%91%E8%B0%83%E5%BA%A6%E7%9F%A5%E8%AF%86%E7%82%B9%EF%BC%88%E5%9B%9B%EF%BC%89/"
+    >电网调度知识点（四）</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2023/04/20/%E7%94%B5%E7%BD%91%E8%B0%83%E5%BA%A6%E7%9F%A5%E8%AF%86%E7%82%B9%EF%BC%88%E5%9B%9B%EF%BC%89/" class="article-date">
+  <time datetime="2023-04-20T02:52:24.000Z" itemprop="datePublished">2023-04-20</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1>电网故障分析及处理</h1>
+<h2 id="电网震荡">电网震荡</h2>
+<p>系统振荡包括：同步、异步、低频、次同步振荡等。</p>
+<p>同步振荡：当发电机输入或输出功率变化时，功角δ将随之变化，但由于机组转动部分的惯性，δ不能立即达到新的稳态值，需要经过若干次在新的δ值附近振荡之后，才能稳定在新的δ下运行。</p>
+<p>同步振荡原因：</p>
+<ul>
+<li>（1）输电线路功率超过极限造成静态稳定破坏；</li>
+<li>（2）电网发生短路故障，切除大容量的发电、输电或变电设备，负荷发生较大突变等造成电网暂态稳定破坏；</li>
+<li>（3）输变电设备跳闸后，系统间联系阻抗突然增大，引起动稳定破坏；</li>
+<li>（4）大容量机组跳闸或失磁，系统联络线负荷增大或使系统电压严重下降，造成稳定破坏；</li>
+<li>（5）电网发生非同期并列。</li>
+</ul>
+<p>处理方法：</p>
+<ul>
+<li>（1）已经振荡的发电厂可不待调度指令立即增加发电机励磁提高电压，退出机组的AGC、AVC装置，但不得危及设备安全，必要时可适当降低发电机有功。</li>
+<li>（2）处于送端的机组适当降低有功出力，处于受端的机组增加有功出力。</li>
+<li>（3）若正在进行线路或主变停运等操作时，应立即暂停操作。</li>
+<li>（4）尽快查找并去除振荡源。着重了解本厂是否存在强迫振荡源（如发电机组非同期并网、发电机组调速器、励磁调节器有异常等）。若有，应立即消除调速器或励磁调节器的故障（故障励磁调节器可暂时倒备励）。如一时无法消除，则解列发电机组。</li>
+<li>（5）在采取以上措施后，应报告调度值班人员，听侯调度指令。</li>
+</ul>
+<h2 id="输电断面功率越限及设备过负荷处置">输电断面功率越限及设备过负荷处置</h2>
+<ol>
+<li>受端电网发电厂增加出力，并提高电压。</li>
+<li>送端电网发电厂降低出力，并提高电压。</li>
+<li>受端电网限电。</li>
+<li>改变电网运行方式，调整潮流分布。</li>
+<li>涉及多级调控机构调管范围的输电断面，由最高一级调控机构按照既定原则统一进行指挥调整。</li>
+<li>变压器过负荷允许值按国家电网公司《变压器运行规范》执行。变压器的故障过负荷允许值按现场规程执行，如现场无规程，可按国家电网公司《变压器运行规范》标准执行。</li>
+</ol>
+<p>断面潮流：是指在一个较大的电网中，在某一方式下，由几条线路或变压器所组成的一束通道，从一个区域或电气距离相近的几个节点向另一个区域或电气距离相近的几个节点潮流输送是有极限的，通道中任一元件退出潮流输送总量并不显著变化、各元件在输送潮流时相互关联。</p>
+<h2 id="风电场等新能源电厂调度">风电场等新能源电厂调度</h2>
+<p>发电调度</p>
+<ol>
+<li>风电场、光伏电站应按照有关标准和规定，装设气象观测设备，建立功率预测系统，开展中长期（月、年）、短期、超短期发电功率预测，预测精度应满足相关标准要求。</li>
+<li>风电场、光伏电站应根据气象观测资料、趋势预测结果，编制中长期（月、季、年）发电计划建议，并按要求报省调和相关地调。调度根据场站上报的发电计划建议，结合全网电力电量平衡分析和电网约束条件等情况，按照清洁能源优先调度原则，制定风电及光伏发电计划，作为安排年度、月度发电计划的依据。</li>
+<li>风电场、光伏电站应根据短期发电功率测结果结合设备检修等情况，编制包括发电功率曲线的日发电计划建议，并按要求报省调和相关地调。调度根据场站上报的日发电计划建议，结合相关网架送出能力、系统调峰能力及安全约束条件，按照清洁能源优先调度原则，制定风电及光伏日发电计划。</li>
+<li>风电场、光伏电站应按照电网设备检修有关规定将年度、月度、日前设备检修计划建议报省调和相关地调，统一纳入调度设备停电计划管理。新能源发电厂内部设备检修安排应尽可能安排在风、光资源较差时段，并与电网有关检修计划相结合。</li>
+<li>在没有电网安全约束的情况下，应保证风电场、光伏电站等可再生能源电力全额上网。在电网调峰能力不足时，可安排风电场、光伏电站参与系统调峰。</li>
+<li>风电场、光伏电站必须接入调度自动控制系统。正常情况下，风电场、光伏电站有功/无功功率的实时控制通过自动化系统自动完成。风电场、光伏电站配置的有功/无功功率控制系统，应能够接收并自动执行调度发送的有功/无功功率控制信号，技术性能满足调度要求。在下列特定情况下，风电场、光伏电站应根据调度指令来控制其输出的有功功率：<br>
+电网故障或特殊运行方式下要求降低风电场、光伏电站有功功率，以防止输电线路超稳定极限运行或者线路过载，确保电力系统安全稳定；<br>
+当电网频率过高，常规电厂调频容量不足时，可降低风电场、光伏电站有功功率。</li>
+<li>调度机构对风电场、光伏电站机组出力可采用下列调度控制模式之一，具体采取哪一种模式根据电网实际运行需要确定。</li>
+</ol>
+<ul>
+<li>最大出力模式：指调度给风电场、光伏电站下达全场最大出力曲线，对低于最大出力曲线的情况不限制。</li>
+<li>恒出力模式：指调度给风电场、光伏电站下达全场出力曲线为一恒定值。</li>
+<li>无约束模式：指调度对风电、光伏实时出力没有限制，风电场、光伏电站可以根据风力情况自行调整出力。</li>
+<li>联络线调整模式：指调度根据风电场、光伏电站相关送出潮流约束情况，下达风电、光伏出力曲线。</li>
+<li>旋转备用模式：指调度根据电网安全运行要求，在下达风电场、光伏电站出力曲线时，留装机可调容量20％的旋转备用。</li>
+</ul>
+<h1>电网运行方式</h1>
+<p><img src="../images/ele_sche.png" alt=""></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%94%B5%E7%BD%91%E8%B0%83%E5%BA%A6/" rel="tag">电网调度</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
   id="post-电网调度知识点（三）"
   class="article article-type-post"
   itemscope
@@ -677,115 +778,13 @@ member variable is not equal to GRB.Callback.MULTIOBJ</p>
 </article>
 
     
-    <article
-  id="post-科研工作的七个问题"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/03/21/%E7%A7%91%E7%A0%94%E5%B7%A5%E4%BD%9C%E7%9A%84%E4%B8%83%E4%B8%AA%E9%97%AE%E9%A2%98/"
-    >科研工作的七个问题</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/03/21/%E7%A7%91%E7%A0%94%E5%B7%A5%E4%BD%9C%E7%9A%84%E4%B8%83%E4%B8%AA%E9%97%AE%E9%A2%98/" class="article-date">
-  <time datetime="2023-03-21T02:30:37.000Z" itemprop="datePublished">2023-03-21</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <blockquote>
-<p>一个人至少应该做三个题目，一个题目是你可以毕业的，一个题目是能够对得起人家帮你交的学费。还有一个题目可能是你为了找工作，或者因为各种原因，你自己感兴趣。你应该做你感兴趣的问题，把你最主要的时间放在那个上面，当然并不意味其他的事情就一概不管。</p>
-</blockquote>
-<h1>陆宝森老师：研究中的七个问题</h1>
-<h2 id="What’s-the-problem">What’s the problem?</h2>
-<p>应当一句话讲明白自己的工作实在干什么。尤其是在做汇报的时候，开场五分钟以内务必要让听众明白研究的问题是什么，如果讲了很久听众还是不明白做的内容，反而是没有用的报告。</p>
-<h2 id="Why-is-the-problem-important">Why is the problem important</h2>
-<p>为什么这个问题重要，应当陈述一些问题重要的客观原因。可以理解为四个面向？到底面向的哪一方面。或者能解决那些有意义的实际问题</p>
-<h2 id="Why-is-the-problem-difficult">Why is the problem difficult?</h2>
-<p>理解为困难与挑战，科研是为了解决工程中难以解决的问题，需要从更深理性认识来推理论证。找到问题的客观困难所在</p>
-<h2 id="What-is-the-state-of-the-art">What is the state of the art?</h2>
-<p>你站在这里闭上眼睛，你的脑海当中应当浮现出一个地球。在这个地球上面，每一个大洲，跟你做的这个问题最相关的研究组在哪里。每个组里面能说出代表人名字，在什么年代，这才叫做好了。如果你跳出来说，老师我做这个问题前无古人后无来者，我不信。因为我也是咱们这个学科的，你们做出一个这样的问题，多多少少都有别人的工作跟你有关系。要你说脑袋当中什么都没有，是因为你懒，你没有去充分做好文献调研。</p>
-<p>之前的调研总停留在内容阶段，对科研团队都不够了解，再就是只知道国内东南和清华的两个课题组，别的调研的也不够。文献调研工作做的实在是太差劲了。</p>
-<h2 id="What-is-your-magic-touch">What is your magic touch?</h2>
-<p>既然这件事很重要又很困难，很多厉害的人物尝试解决，却都没能解决，为什么你解决了？what is your magic touch？你的一篇文章就只用讲一个故事。同学们可能会讲，你太小看我做的贡献，一篇文章写不完。可以，那你写几篇文章，一篇文章讲一件事。what is your magic touch？一句话说清楚你的贡献是什么。</p>
-<p>这也是被老师批评的点，哎没有一个核心的点。研究要聚焦要深入，不是写招标文件。</p>
-<h2 id="What-are-the-main-results">What are the main results?</h2>
-<p>也是这次写的最烂的地方之一。算力结果应当支撑观点，不能只是浮于表面的展示，除了数据的展示还要分析其规律，最后找到原因阐明结论。应当先想明白自己要阐述什么结论，再去找对应的数据进行支撑。</p>
-<h2 id="What-are-the-assumptions">What are the assumptions?</h2>
-<p>模型的假设，也是后续工作推进的地方，后续将一步步把假设放松，研究更普适的方法。</p>
-<h1>写论文的的模式</h1>
-<blockquote>
-<p>七股文，还是七个问题，是对刚才那七个问题回答的再组织。其实我的文章不多，大家可以去看我的主页。如果你想要发很多文章，我觉得你不应该跟着我做学生，也不应该来这里听我的经验教训。我有的是很多教训，没有太多成功经验。不过我看过许多好文章，所以可以给大家分享一下好文章大概是什么架构。</p>
-</blockquote>
-<blockquote>
-<p>第一个部分是Introduction。大概一页两栏，用A4纸写的话大约就是两页。分为四段：第一段：What’s the problem？Why is the problem important? 问题是什么？为什么问题很重要。第二段，Why is the problem difficult？为什么问题很难？要阐述清楚问题的难点。第三段，简要提一下综述，What is the state of the art? 然后说What is your magic touch? 你的工作为什么解决了前面的问题，可能前人的工作可能忽视了这样那样的问题。再简要介绍一下What are your main results? 列点说明你针对这个问题做的突破。最后一段阐述论文整体的组织结构。</p>
-</blockquote>
-<blockquote>
-<p>第二个部分是Literature  Review。文献综述，大约一栏到两栏, A4纸半页到一页会比较合理。这部分详细回答“What is the state of the art? ”，是梳理学术脉络非常好的机会。你为什么要写这篇文章，你写了文章给谁看，谁会拿去用，你都要在这一部分指出来，所以需要梳理清楚学术脉络。其次，这部分能展示你很牛，show how smart you are。我上周听了一个讲座，已经完全忘了主讲人做的工作是什么，但他前面五分钟彻底打动了我。他那么年轻，对于这样一个古老的方向，居然了解那么多，听起来就像是一本活历史，让我很佩服。若干年之后可能不会有人记住他讲了什么，但是我会永远记住这个人。写文章也是，他能展示你是否清晰的知道，对于同一个问题有不同的工具去处理。他能展示你对本领域历史的了解，对当前各学派的认识，以及你对自己的工作与既有工作关系的梳理。一个好的文献综述，能够把你的文章挂在学科树一个非常合适的枝叶上，这不单单是帮助 Associate Editor确定评审人，编辑去送审，也能帮助读者去搜索的时候，能够非常迅速地定位到你的这份工作。</p>
-</blockquote>
-<blockquote>
-<p>第三个部分是Problem Formulation，这可能要花一些功夫，一页到两页。你应该完整地回答“what is the problem”。不是一句话，你应该详细地去介绍数学上定量上怎么去了解，一定要用数学，不要有那么多文字。你要用一些篇幅，把你的问题用数学形式化地表达出来，可以附图去展示整个系统的架构，帮助人家了解你所研究的问题跟既有问题的关系。你可以引用其他采用类似问题模型的论文。指出谁跟你的工作有关系？你是不是第一个做这个问题的人？如果你不是，你用了人家的工作又没有引用，这很麻烦。你们应该有学过，这属于学术不端。就算是画图，两个人想的东西也绝对会不一样，不可抄袭。</p>
-</blockquote>
-<blockquote>
-<p>第四个部分是Main Results。这是论文是最主要的部分，应当占你全文2/3左右的内容。《TAC》的文章一般最长十二页，短的话一般有八页，至少应该有2/3的内容是这个东西。这是“what are the main results?”的完整阐述，更应该讲清楚“what are the assumptions？”。这是论文的核心，应该有定理，证明，可以有算法描述。上周末我刚看了一个学生给我发的毕业论文，看完以后直接说这个不用毕业了。主体部分占全文比例太少，前面花那么多笔墨写背景写别人的工作，论文有多少是你自己的工作？要是少于全文的2/3，不用去送审了，就是自取其辱。</p>
-</blockquote>
-<blockquote>
-<p>第五个部分是Numerical Experiments。如果你的主要工作全是数字实验结果，“Main Results”都是“Numerical Experiments”。很好，这是一个非常好的信号，说明你的工作做的不到位，文章不该投。Main Results是让你们写定理，而“Numerical Experiments”是说实际应用。有的人的数值算例可能偏多一点，就需要用其他方法进行对比，请大家务必注意。之后是挑选算例，尽量挑选一些比较公认的算法，benchmark，要选择数据量丰富的实际问题。针对参数的变化，测量误差，模型偏差等等，多个层面组织不同组的数值实验，去分析它会如何影响你的结果。</p>
-</blockquote>
-<blockquote>
-<p>最后是Conclusion。比较简单，不用很长。大约1/4页，A4双栏的半栏就够了。简要地回顾你解决了什么问题，你是怎么解决的，你主要做了什么样的贡献。后面的人如果在这个方向接着做，应当做什么？千万不要跟引言和摘要相同，他们有不同的作用。引言是让人家读完之后能知道你的问题是否重要，摘要是读完之后知道这篇文章值不值得往下读，而总结是我读完了会决定要不要在你这个方向继续往下研究。</p>
-</blockquote>
-<h1>一些总结</h1>
-<blockquote>
-<p>我觉得你们应该学会两件东西。第一件是作报告。第二件就是选题。选题是品位，是让你判断什么问题重要？什么问题不重要？这个能力非常重要，非常关键。如果你能够形式化提出一个问题，而且这个问题提对了，就算你自己不会写，可以跟别人合作。会有聪明人帮助你一起去解决这个问题，但是前提是你在研究一个重要问题。</p>
-</blockquote>
-<p>做报告的能力确实需要增强，选题的能力更关键，体现自己的学术品位。</p>
-<blockquote>
-<p>如果你的文章被拒了，真的不要太灰心。因为不断地听到反馈意见，改变自己，寻找正确的研究方向，是我们应当一直做下去的事。</p>
-</blockquote>
-<p>一时的成败无关紧要，最重要的是不断的学习和不断的提升。</p>
-<h2 id="参考">参考</h2>
-<p>[1] 清华大学小研在线. (2018, December 11). 学术人生 | 贾庆山老师对研究生做学术的几点建议. <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Rgmx0CGlJnw853JAh05DwQ">https://mp.weixin.qq.com/s/Rgmx0CGlJnw853JAh05DwQ</a></p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E5%AD%97%E5%B7%A5%E4%BD%9C/" rel="tag">文字工作</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
   </article>
   
 
   
   <nav class="page-nav">
     
-    <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
+    <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
   </nav>
   
 </section>
@@ -796,7 +795,7 @@ member variable is not equal to GRB.Callback.MULTIOBJ</p>
     <ul>
       <li>
         Copyrights &copy;
-        2015-2023
+        2015-2024
         <i class="ri-heart-fill heart_icon"></i> galaxy
       </li>
     </ul>

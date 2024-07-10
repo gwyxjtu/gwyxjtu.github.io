@@ -183,6 +183,58 @@
     
     
     <article
+  id="post-mac更换office默认语言"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/09/14/mac%E6%9B%B4%E6%8D%A2office%E9%BB%98%E8%AE%A4%E8%AF%AD%E8%A8%80/"
+    >mac更换office默认语言</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/09/14/mac%E6%9B%B4%E6%8D%A2office%E9%BB%98%E8%AE%A4%E8%AF%AD%E8%A8%80/" class="article-date">
+  <time datetime="2022-09-14T08:50:29.000Z" itemprop="datePublished">2022-09-14</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>打开终端，输入如下切换至英文</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">defaults write com.microsoft.Word AppleLanguages &#x27;(&quot;en&quot;)&#x27;</span><br><span class="line">defaults write com.microsoft.Excel AppleLanguages &#x27;(&quot;en&quot;)&#x27;</span><br><span class="line">defaults write com.microsoft.Powerpoint AppleLanguages &#x27;(&quot;en&quot;)&#x27;</span><br></pre></td></tr></table></figure>
+<p>若要切回中文.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">defaults write com.microsoft.Word AppleLanguages &#x27;(&quot;zh_CN&quot;)&#x27;</span><br><span class="line">defaults write com.microsoft.Excel AppleLanguages &#x27;(&quot;zh_CN&quot;)&#x27;</span><br><span class="line">defaults write com.microsoft.Powerpoint AppleLanguages &#x27;(&quot;zh_CN&quot;)&#x27;</span><br></pre></td></tr></table></figure> 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%83%A1%E4%B9%B1%E6%90%9E/" rel="tag">胡乱搞</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
   id="post-使用mac的shadowsocks共享局域网"
   class="article article-type-post"
   itemscope
@@ -453,136 +505,13 @@
 </article>
 
     
-    <article
-  id="post-HBase-知识点"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/08/13/HBase-%E7%9F%A5%E8%AF%86%E7%82%B9/"
-    >HBase 知识点</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/08/13/HBase-%E7%9F%A5%E8%AF%86%E7%82%B9/" class="article-date">
-  <time datetime="2022-08-13T14:55:20.000Z" itemprop="datePublished">2022-08-13</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h1>HBase数据模型</h1>
-<h2 id="什么是HBase">什么是HBase</h2>
-<p>HBase是开源的NoSQL分布式数据库，是阿帕奇软件基金会的项目之一。HBase参考谷歌BigTable设计，对稀疏表提供更高的存储空间使用率和读写效率。HBase采用存储计算分离架构，存储层基于HDFS存储数据，提供容错机制和可靠性，计算层提供灵活快速的水平扩展、负载均衡和故障恢复能力。</p>
-<p>一个分布式系统最多只能同时满足一致性（Consistency）（all nodes see the same data at the same time）、可用性（Availability）（Reads and writes always succeed）和分区容错性（Partition tolerance）（the system continues to operate despite arbitrary message loss or failure of part of the system）这三项中的两项，HBase提供强一致语义，在CAP理论中属于CP系统。</p>
-<p>HBase和关系型数据库的差异如下表所示。<br>
-<img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d9c17d246d5b44939acaca139658bb80~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></p>
-<h2 id="HBase的数据模型">HBase的数据模型</h2>
-<p>HBase以column family组织数据，以rowkey索引数据。其中列族需要在试用期那预先创建，列名不需要预先生命，因此支持半结构化数据模型。支持保留多个版本的数据，通过（行键+列族+列名+版本号）定位具体的值。</p>
-<h2 id="HBase数据模型的优缺点">HBase数据模型的优缺点</h2>
-<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e3f2f7bffb18476682296005e00d86c6~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></p>
-<h1>HBase架构设计</h1>
-<p>主要组件设计：</p>
-<ol>
-<li>HMaster：元数据管理，集群调度，保活。</li>
-<li>RegionServer：提供数据读写服务，每个实例负责若干个互不重叠rowkey区间内的数据。</li>
-<li>ThriftServer：提供Thrift API读写的代理层。</li>
-</ol>
-<p>组件依赖：</p>
-<ol>
-<li>Zookeeper：分布式一致性共识协作管理，例如HMaster选主，人物分发，元数据变更管理等。</li>
-<li>HDFS：分布式存储系统。</li>
-</ol>
-<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ca55d3d1bf564075b5c7174cb4aabecf~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></p>
-<h2 id="HMaster职责">HMaster职责</h2>
-<ol>
-<li>管理RegionServer实例生命周期，保证服务可用性。</li>
-<li>协调RegionServer数据故障恢复，保证数据正确性。</li>
-<li>集中管理集群元数据，执行负载均衡。</li>
-<li>定期巡检元数据，调整数据分布，清理废弃数据等</li>
-<li>处理用户主动发起的元数据操作。</li>
-</ol>
-<h2 id="RegionServer职责">RegionServer职责</h2>
-<ol>
-<li>提供部分rowkey区间数据读写服务</li>
-<li>如果负责meta表，向科五段SDK提供rowkey位置信息。</li>
-<li>认领Hmaster发布的故障恢复任务</li>
-<li>处理HMaster下达的元数据操作。</li>
-</ol>
-<h2 id="Zookeeper职责">Zookeeper职责</h2>
-<ol>
-<li>HMaster登记信息，对active/backup分工达成共识</li>
-<li>RegionServer登记信息，失联时HMaster保活处理</li>
-<li>登记meta表位置信息，供SDK查询读写位置信息。</li>
-<li>供HMaster和RegionServer写作处理分布式任务</li>
-</ol>
-<h2 id="Region负载均衡">Region负载均衡</h2>
-<p>定期巡检各个RegionServer上的region数量，保持region的数量均匀分布在各个RegionServer上。<br>
-简单负载均衡具体步骤：</p>
-<ol>
-<li>根据总Region数量和RegionServer数量计算平均region数目，设定弹性上下界避免不必要的操作。</li>
-<li>将RegionServer按照region数量降序排序，对region数量超出上限的选取要牵出的region并按创建时间从新到老排序</li>
-</ol>
-<p>随机负载均衡</p>
-<ol>
-<li>随机尝试不同的region放置策略，根据提供的cost function计算不同策略的分值排名</li>
-<li>cost计算将下列指标纳入统计：region负载，表负载，数据本地性，Memstore大小，HFile大小</li>
-<li>根据配置加权计算最终cost。</li>
-</ol>
-<p>FavoredNodeLoadBalancer</p>
-<ol>
-<li>用于充分利用本地读写HDFS文件来优化读写性能。</li>
-<li>每个region会指定优选的3个RegionServer地址，同时会告知HDFS在这些优选节点放置该region的数据</li>
-<li>即使第一节点出现故障，HBase也可以将第二节点提升为第一节点，保证稳定的读时延。</li>
-</ol>
-<h2 id="HMaster恢复流程">HMaster恢复流程</h2>
-<h3 id="HMaster自身恢复流程">HMaster自身恢复流程</h3>
-<ol>
-<li>监听到/hbase/active-master临时节点被删除的时间，触发主逻辑。</li>
-<li>选主成功后执行HMaster启动流程，从持久化存储读取未完成的procedures从之前状态继续执行</li>
-<li>故障HMaster实例恢复后发现主节点已经存在，继续监听/hbase/active-master</li>
-</ol>
-<h3 id="调度RegionServer的故障恢复流程">调度RegionServer的故障恢复流程</h3>
-<ol>
-<li>AssignmentManager从procedure列表中找出Region-in- Transition状态的region继续调度过程</li>
-<li>RegionServerTracker从Zookeeper梳理online状态的RegionServer列表，结合ServerCrashProcedure列表，HDFS中WAL目录里alive/splitting状态RegionServer记录，获取掉线RegionServer的列表。</li>
-</ol>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
   </article>
   
 
   
   <nav class="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/3/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/5/">下一页</a>
+    <a class="extend prev" rel="prev" href="/page/3/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/5/">下一页</a>
   </nav>
   
 </section>
@@ -593,7 +522,7 @@
     <ul>
       <li>
         Copyrights &copy;
-        2015-2023
+        2015-2024
         <i class="ri-heart-fill heart_icon"></i> galaxy
       </li>
     </ul>
