@@ -49,7 +49,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
-<!-- hexo injector head_end end --><style>mjx-container[jax="SVG"] {
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="果果的博客" type="application/atom+xml">
+<style>mjx-container[jax="SVG"] {
   direction: ltr;
 }
 
@@ -161,8 +162,7 @@ mjx-container[display="true"] {
 mjx-container[display="true"] + br {
   display: none;
 }
-</style><link rel="alternate" href="/atom.xml" title="果果的博客" type="application/atom+xml">
-</head>
+</style></head>
   </html>
 </html>
 
@@ -293,6 +293,232 @@ mjx-container[display="true"] + br {
     
     
     
+    
+    <article
+  id="post-MOE架构解读"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2025/03/29/MOE%E6%9E%B6%E6%9E%84%E8%A7%A3%E8%AF%BB/"
+    >MOE架构解读</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2025/03/29/MOE%E6%9E%B6%E6%9E%84%E8%A7%A3%E8%AF%BB/" class="article-date">
+  <time datetime="2025-03-29T09:20:25.000Z" itemprop="datePublished">2025-03-29</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h3 id="MOE-基本原理">MOE 基本原理</h3>
+<p><img src="/images/MOE-1.jpg" alt=""><br>
+MOE由两个主要的部件构成：第一个是专家expert，每个专家代表一个就诊网络；第二个是路由router，门控网络，通过开关将输入的token路由到不同的专家。<br>
+MOE结构里面每一层都有很多专家和路由，每一层的专家和路由数量都可以调整。<br>
+<img src="/images/MOE-2.jpg" alt=""><br>
+回顾transformer架构，每个输入都是一个token，每个token输入到position embedding，然后通过多层decoder堆叠，最后输出token。<br>
+<img src="/images/MOE-3.jpg" alt=""></p>
+<p>其中每个decoder内部如下所示：<br>
+<img src="/images/MOE-4.jpg" alt=""><br>
+首先需要数据归一化，随后进入多头注意力机制，然后进入残差连接，最后进入稠密的前馈神经网络。<br>
+MOE就是把稠密的前馈神经网络变成了稀疏的前馈神经网络，通过门控网络来选择哪些专家来处理输入的token。<br>
+<img src="/images/MOE-5.jpg" alt=""></p>
+<p>每次通过路由选择下一层经过哪一个专家<br>
+<img src="/images/MOE-5.jpg" alt=""></p>
+<p>MOE的核心是把FFNN替换成多个系数的FFN，每一个FFN都是一个专家。</p>
+<h3 id="路由原理">路由原理</h3>
+<p>路由是用来选择专家的，由FFNN和softmax组成，如下图所示。<br>
+<img src="/images/MOE-6.jpg" alt=""><br>
+softmax会输出每一个专家的概率，最后用一个或多个专家来权和输入的token。</p>
+<h3 id="稀疏架构和稠密架构">稀疏架构和稠密架构</h3>
+<p>Transformer是一个稠密的架构，每个输入都需要经过所有的专家。MOE是一个分为稠密MOE和稀疏MOE的架构。</p>
+<p>稠密MOE是每个输入都需要经过所有的专家。稀疏MOE是每个输入只需要经过一部分的专家。输出时候只激活部分专家<br>
+MOE的一般输入是具体的矩阵，包括包括(b,s,h)，其中b是batch size，s是sequence length，h是hidden size。<br>
+输入首先经过FFN路由层，输出到H(x)层在经过softmax，计算得到专家的概率分布。随后通过门控网络选择一部分专家来处理输入的token。<br>
+<img src="/images/MOE-7.jpg" alt=""></p>
+<h3 id="负载均衡-load-balancing">负载均衡 load balancing</h3>
+<p>在deepseek里面专家为256个，在训练时候每个专家的训练速度不一样，pathway会跟倾向于选择算的快的专家，导致算的快的专家学的多，算的慢的专家学的较少，因此引入load balance让每个专家的训练速度一样。</p>
+<ul>
+<li>
+<p>Keep Top-k<br>
+这里通过 keep Top-k 策略来实现。引入噪声矩阵，来抑制某个专家选择过多时候的得分。<br>
+<img src="/images/MOE-8.jpg" alt=""><br>
+通过在每一层的时候引入噪声矩阵，实现整个网络的负载均衡。</p>
+</li>
+<li>
+<p>辅助损失<br>
+为了进一步提升负载均衡能力，引入auxiliary loss。通过将每个token的专家选择分布求和，来计算每个专家的平均选择次数，然后计算每个专家的平均选择次数和平均选择次数的差值，计算辅助损失，并将其加入到总的损失函数中。</p>
+</li>
+<li>
+<p>专家容量<br>
+专家容量同样是为了解决训练负载均衡问题。<br>
+每个专家在输进去token之前加入每个专家最大出力的token数量，通过增加容量来提升训练稳定性，让专家之间训练更加寻哼</p>
+</li>
+</ul>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
+  id="post-优化大模型学习笔记-ORLM"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2025/03/29/%E4%BC%98%E5%8C%96%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-ORLM/"
+    >优化大模型学习笔记-ORLM</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2025/03/29/%E4%BC%98%E5%8C%96%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-ORLM/" class="article-date">
+  <time datetime="2025-03-29T08:16:16.000Z" itemprop="datePublished">2025-03-29</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1>ORLM</h1>
+<h2 id="大模型带来的技术革命下，优化的行业壁垒还能撑多久？">大模型带来的技术革命下，优化的行业壁垒还能撑多久？</h2>
+<p>虽然目前优化技术受限于其高度定制化的建模和强非线性导致的计算复杂度，短时间内大模型难以实现端到端的建模和求解，从而无法取代优化算法。但目前由两方面我认为是当前优化领域需要提前预判的技术风险：</p>
+<h4 id="1-推理大模型-行业知识库的跨领域优化建模方法">1.推理大模型+行业知识库的跨领域优化建模方法</h4>
+<p>系统工程作为自动化的一个二级学科，核心竞争力就在于学科融合，换句话说就是比领域的人更懂优化，比优化的人更懂业务，这一部分融合的能力是很容易被大模型的海量知识库所取代的。目前现有的推理大模型加上行业知识库和案例库，建立的优化模型可以完全媲美人工优化模型（参考我们做的EnergyLLM能源领域垂直大模型），后续靠行业信息差吃饭的系统工程又能有多少生命力呢。</p>
+<h4 id="2-GPU算力-并行启发式的暴力优化求解算法">2.GPU算力+并行启发式的暴力优化求解算法</h4>
+<p>我们再用求解器求解大规模MIP的时候通常可以注意到，第一个可行解的日志的左边通常是H而不是*。这意味着现有的gurobi、COPT甚至SCIP等求解器的初始可行解大部分是从启发式方法得到的，但启发式面临参数问题，不同的参数通常计算的效率差距非常大而且不具备梯度特性无法精准调参。然而随着GPU算力不算增强，显卡最擅长的就是并行计算，现在英伟达推出的cuOPT正是使用多种群并行的启发式大力出奇迹。大规模组合优化问题在未来只能说很难保证不被取代，后续研究优化算法那么多甚至可能还不如几张显卡用启发式暴力求解了。<br>
+<img src="/images/orlm-1.jpg" alt=""></p>
+<h2 id="research-gap">research gap</h2>
+<p>现有的优化领域大模型存在以下缺陷：</p>
+<ol>
+<li>建模能力有限：现有的大模型通常在逻辑约束和非线性约束方面有限，无法应对复杂的优化问题。</li>
+<li>优化模型额训练数据的质量不足：数据的范围和质量与模型的能力密切相关，但目前优化领域缺少高质量建模数据，限制了大模型的高级建模能力。</li>
+<li>数据隐私考虑：基于API成都闭源大模型可能导致数据泄露，尤其是在一些工业应用领域。</li>
+<li>测试集相对同质：目前已有的数据集市2023年的NL4OPT比赛，但是这个数据集只关注简单的线性规划部分，复杂度较低，规模较小，很难与实际中的场景类比。</li>
+</ol>
+<h2 id="主要内容">主要内容</h2>
+<p>为了解决上述问题，ORLM提出了一个生成优化建模数据的半自动框架，可以增强大模型的建模能力：</p>
+<ol>
+<li>OR-Instruct数据生成框架 ：<br>
+提出了数据集应当满足的四个准则，基于这些准则设计了OR-Instruct框架，该框架可以自动生成优化模型的训练数据。该框架使用迭代增强框架如下图所示。<br>
+首先手机686个实际工业场景，并把他们放置到训练data pool。根据这些数据使用扩展（expansion）和增强（Augmentation）两种技术生成更多场景的建模问题。最后使用启发式框架来筛选明显的低质量数据，往复循环直至训练数据集达到预期数量。<br>
+<img src="/images/orlm-2.jpg" alt=""></li>
+<li>性能测试：为了验证OR-Instruct的性能，提出了<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/CardinalOperations/IndustryOR">Industry Benchmark</a>。该benchmark使用13个不同工业场景，包括5中问题方式和3中难度。</li>
+<li>使用OR-Instruct产生的数据对开源大模型7B级别的模型进行了微调，并把这些模型训练成了 operation research language model（ORLM）。</li>
+</ol>
+<h2 id="OR-Instruct">OR-Instruct</h2>
+<p>优化大模型数据集的四个准则：</p>
+<ol>
+<li>Comprehensive Coverage：数据集应该覆盖优化领域的所有问题，包括供应链、仓库、物流等等行业；不同的问题类型应当满足，包括LP、MIP、QP、NLP、RMP等；不同的问题难度应当满足，包括简单、中等、困难。</li>
+</ol>
+<ul>
+<li>初始化数据集：使用686个实际工业场景作为初始数据集。</li>
+<li>扩展数据集:首先使用 GPT-4生成100个优化模型的实际应用场景。每次迭代使用data pool中的三个案例作为in-context prompt。每一轮迭代中使用两个real-world scenarios和一个data pool的案例。</li>
+<li>增强数据集：增强策略主要是为了提升算法求解的多样性，包括：
+<ul>
+<li>目标函数和约束条件的变换：增加、删除、替换目标函数和约束。</li>
+<li>重新描述问题：第二种增强方法为了提升LLM应对不同prompt的鲁棒性，将同一个优化问题的不同描述形式。</li>
+<li>融合多重建模技巧：结合包括大M法，辅助变量、等多种建模技巧。</li>
+</ul>
+</li>
+<li>后处理和筛选：纠正和过滤生成的低质量数据。使用一个正则匹配函数来发现语法错误，最后需要消除重复的问题。</li>
+</ul>
+<h2 id="Results">Results</h2>
+<p>结论部分不在多余描述，主要对比了以下几个层面</p>
+<ol>
+<li>Data generation quality。</li>
+<li>Model Finetuning and Inference。主要是一些hyper parameters参数</li>
+<li>Evaluation and Baselines。
+<ul>
+<li>Evaluation Benchmarks: NL4OPT MAMO两个数据集，</li>
+<li>Baselines：
+<ul>
+<li>GPT-4</li>
+<li>GPT-3.5</li>
+<li>GPT-3<br>
+对比不同数据集和不同模型的准确率</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>定制化增强: 针对MILP问题构建定50个基础问题，并将其加入seed data pool。在几轮迭代后生成了2000个训练问题。这两千个数据可以极大的提升ORLM在MILP上的表现。</li>
+</ol>
+<p>更细节的对比包括不同难度数据上不同模型的表现，不同增强方法的表现对比，以及消融实验。最后展示了一些推理参数的设置对结果的影响。</p>
+<h2 id="Future-Direction">Future Direction</h2>
+<h3 id="潜在的应用场景">潜在的应用场景</h3>
+<ol>
+<li>提升优化方法在工业领域的地位：<br>
+大模型可以避免很多优化方法现有的问题，比如：
+<ul>
+<li>优化模型在实际场景中不够robust，无法应对额外的约束条件，当环境更换时候模型无法迅速适应。</li>
+<li>优化项目极度依赖专家来定制化目标函数和约束条件。对于某些定制化场景，优化专家与业务的沟通变得非常困难。</li>
+</ul>
+</li>
+<li>运筹学教学</li>
+<li>数学建模竞赛</li>
+<li>减少求解器的学习成本</li>
+</ol>
+<h3 id="未来的研究热点">未来的研究热点</h3>
+<ol>
+<li>结合RLHF来提升模型的泛化能力</li>
+<li>数据集结构重构：数据合成策略对于像 RLHF 这样的强化学习技术来说是不够的，RLHF 需要以偏好列表形式的训练数据。对于每个问题，必须根据偏好对多个响应进行排序。此外，在优化问题的背景下，将实际的最优解纳入训练集将使更多的技术成为可能。构建这样的数据集可能需要用户的反馈或开发新的数据合成方法，以更好地满足这些需求。</li>
+<li>数据精炼和利用：权衡训练开销和模型效果的工作。如果获得一种数据精炼策略，可以用少量的训练开销获得更好的模型效果，这将是一个非常有价值的研究方向。</li>
+</ol>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
     
     <article
   id="post-使用litstudy进行文献自动分析"
@@ -638,222 +864,6 @@ mjx-container[display="true"] + br {
 </article>
 
     
-    <article
-  id="post-概率和随机"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/07/09/%E6%A6%82%E7%8E%87%E5%92%8C%E9%9A%8F%E6%9C%BA/"
-    >概率和随机（一）</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/07/09/%E6%A6%82%E7%8E%87%E5%92%8C%E9%9A%8F%E6%9C%BA/" class="article-date">
-  <time datetime="2023-07-09T10:55:49.000Z" itemprop="datePublished">2023-07-09</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h2 id="随机的魅力">随机的魅力</h2>
-<p>这篇博客的题目是概率和随机，随机性是一种客观存在现象，与生俱来具有一种未知性和神秘感，描述和处理随机性是多年以来人们不断追求的目标。如果有人说他能完全解决随机性引发的问题，那可能他就是科幻电影或者神话传说里类似先知的角色了。与其说解决随机性问题，不如说刻画随机性现象更准确一些，现实中我们只能通过对随机性进行精准刻画来将随机性考虑在内，以备不时之需。所以本篇博客后续的内容和后续的博客也是围绕随机性的刻画描述来展开的。</p>
-<p>自动化的课程培养方案中有非常多关于统计、概率和随机的课程，能选的课差不多我都选过，包括有本科孙德龙老师讲授的概率论，研究生阶段晁颖老师讲授的数理统计、程晓青老师讲授随机过程和翟桥柱老师讲授的泛函分析。甚至连思修老师也曾经提过一个观点：跟任何人交流其实是在和他过往的经历打交道。这也是典型的贝叶斯观点，我也非常认可。但由于我的学艺不精浅尝辄止，这些课程的知识域映射到我的脑子里&quot;almost everywhere&quot;只剩下一些碎片化的点，比如能记起来概率的定义、随机变量的定义、贝叶斯和频率学派的争论、概率测度空间等等，但概念之间的关联却毫无印象，没有形成一个完整的知识体系。</p>
-<p>在现阶段的学习中整理之前学过的知识，就当是一种记录和复习了，本篇博客主要记录三类内容，第一部分是概率的发展历史，我一直对数学史有着一些独特的兴趣，可能是因为数学内容如听不懂又比较喜欢，所以也只能关注关注数学史了。第二部分是一些概率的基础内容，第三部分是贝叶斯学派的基本思想，通过对比和举例将以前学过的知识具象化和串联起来。后续的博客可能会持续更新一些描述和处理随机性相关的方法。</p>
-<h2 id="概率的发展历史">概率的发展历史</h2>
-<p>概率起源于15世纪到16世纪意大利的一数学家对某些靠运气的游戏中的特定概率进行计算，但概率论起源于17世纪中期，1654 年，一个名叫 A.G.C. de M´er´e 的法国贵族写了一本小册子，名叫《De Ratiociniis in Ludo Aleae》(可译为《关于机会游戏的计算》), 这是关于概率论的第一本书。</p>
-<p>18世纪期间的主要贡献者是 J. Bernolli (1654—1705) 与 A. de Moivre (1667—1754). Bernoulli 在概率论领域的代表作是《Ars Conjectandi》(可译为《猜测的艺术》)，De Moivre 是一位法国数学家，但是大部分时间他住在英国. De Moivre 开创了概率论的现代方法：1718 年发表了《The Doctrine of Chance》. 在此书中统计独立性的定义首次出现.</p>
-<p>19世纪个期间的主要贡献者是 P. S. M. Laplace (1749—1827), S. D. Poisson (1781—1840), C. F.Gauss (1777—1855), P. L. Chebyshev (1821—1894), A. A. Markov (1856—1922)与 A. M. Lyapunov (1857—1918). 这个时期的研究主要围绕极限定理展开.</p>
-<p>20 世纪可称为概率论发展的现代时期，本时期开始于概率论的公理化.在这个方向上的早期贡献者有 S. N. Berstein (1880—1968), R. von Mises (1883—1)与 E. Borel (1871—1956). 1933 年，俄罗斯著名数学家 A. N. olmogorov出版了他的伟大专著《Foundations of the Theory of Probability》. 其中，他为概率论建立了目前广泛采纳的公理化体系.</p>
-<h2 id="概率的公理化定义">概率的公理化定义</h2>
-<p>概率公理化定义中的概率空间和测度空间定义非常相似，也有着非常明显的对应关系，这也是理解概率非常关键的过程。概率是度量“事件发生可能性”的大小，但不是每个事件都可以定义其概率，因此需要首先描述样本和事件。（没有概率的事件对应不可测集，涉及选择公理等，暂不举例）</p>
-<p>概率空间由三部分构成：</p>
-<ol>
-<li>$\Omega$为样本空间，是所有可能出现的结果的集合</li>
-<li>$\mathbf{F}$为事件空间，是所有事件的集合，事件是样本空间的子集，基本事件是样本空间里的元素。</li>
-<li>$\mathbf{P}$是概率函数，是从事件空间到[0,1]实数轴上的映射。</li>
-</ol>
-<p>随机变量我理解是本科概率论最难最核心的地方，尤其是一些随机变量函数分布的求解，类似于通过$X$概率密度求解$X^2,1/X,(X-\hat{X})$的概率密度函数，需要一些类似于积分换元的变换技巧。随机变量在本科课本的定义中是分为了离散型和连续型随机变量，理解为事件到实数的映射，离散型是在有限个可能取值或可数个可能取值，连续则是在若干个区间取值。离散型通常考虑$P{X=a}$发生的概率，连续型则是$P{a&lt;X&lt;b}$的概率，同时连续性随机变量的概率密度函数被称为 probability density function。</p>
-<p>实际上测度论是概率论的理论基础，概率的很多概念都和测度论中相对应，可以理解测度论是一个抽象类，概率论是其中的一个实例。</p>
-<p>概率度量的是事件发生的可能性，事件对应到测度里面就是<strong>集合</strong>，需要考察事件的全体，对应到测度论就是<strong>集合系</strong>，所有类似的对应关系大致如下表，</p>
-<table>
-<thead>
-<tr>
-<th>概率空间</th>
-<th>测度空间</th>
-<th>备注</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>事件</td>
-<td>集合</td>
-<td></td>
-</tr>
-<tr>
-<td>样本空间</td>
-<td>全集</td>
-<td></td>
-</tr>
-<tr>
-<td>事件域</td>
-<td>集合系</td>
-<td>集合系必须符合Borel $\sigma-$代数定义</td>
-</tr>
-<tr>
-<td>概率函数</td>
-<td>测度函数</td>
-<td>从事件域中的事件映射到实数/从$\sigma-$代数中的集合映射到实数</td>
-</tr>
-<tr>
-<td>随机变量</td>
-<td>可测函数</td>
-<td>将概率空间三元素映射到实数空间上</td>
-</tr>
-</tbody>
-</table>
-<p>事件的概率就涉及到事件的组合运算，对应集合的交、并、差、余，所以必须保证集合<strong>可列次</strong>运算后仍不能超出全体范围。这样的集合系被称为$\sigma-$代数，$\sigma-$代数的基本概念是：</p>
-<ol>
-<li>集合系包含全集；</li>
-<li>每个集合的余集在集合系；</li>
-<li>任意可列个集合的并集在集合系。</li>
-</ol>
-<p>满足这三条基本定义就可以推出：空集，可列次交、并、差、上限集、下限集运算后都在集合系。</p>
-<p>随机变量对应的就是实值可测函数。建立了样本空间（事件全体）到实数轴的映射。同时基本事件经过复杂运算生成的事件，映射到实数轴就是实数轴上Borel $\sigma-$代数中的集合。因此度量事件发生可能性的大小就只需要度量“实数轴上Borel$\sigma-$代数的集合”就可以。</p>
-<p>随机变量的测度角度定义如下：设$(\Omega,\mathbf{F},\mathbf{P})$是概率测度空间，若对实数轴上的Borel$\sigma-$代数中任一集合B，都有${\omega\in \Omega:X(\omega)\in B}\in \mathbf{F}$，（也可以理解为${\omega\in \Omega:X(\omega)&lt;=x}\in \mathbf{F},\forall x$）则称$X(\omega)$为随机变量，记作$X$。</p>
-<p>随机变量就是建立了“随机事件”到“实数轴上Borel $\sigma-$代数”的一种对应，并且保证了建立了这种对应的随机事件都是可以定义概率测度的。</p>
-<h2 id="贝叶斯观点">贝叶斯观点</h2>
-<p>“亡羊补牢、前车之鉴、引古证今”，“苟日新，日日新，又日新”这一系列传统成语和名言中都蕴含着一个道理，那就是从已知的事件中学习知识。从经验中能得到什么教训？如何才能认识这个世界？正是贝叶斯理论研究的内容。这一小节主要描述三个部分，从三门游戏引出贝叶斯的应用，在复习贝叶斯推断中常见的两类错误的概念，最后介绍贝叶斯学派和频率学派的观点差异。</p>
-<h3 id="三门游戏">三门游戏</h3>
-<p>源于很早之前的娱乐电视节目，面前有ABC三扇门，其中一扇门背后放着一辆轿车，如果门后面有轿车，就归你所有。</p>
-<p>显而易见中奖概率是$\frac{1}{3}$，但有意思的是，做出选择后，主持人会在另外两扇门中打开一扇门，打开的这一扇门背后一定没有汽车，现在会有一个机会要不要改变主意，还是坚持最初的选择。</p>
-<p>如果不换的话，中奖概率依然是$\frac{1}{3}$，换了之后中奖概率就变成了$\frac{\frac{1}{3}}{\frac{1}{2}}=\frac{2}{3}$，所以从贝叶斯的观点来说换的话可以提升中奖概率。</p>
-<p>频率观点则是做大量实验，模拟一万次的情况看看各自中奖数目是多少。当然经过实验后换门的概率确实上升到了$\frac{2}{3}$。</p>
-<p>从总体来看贝叶斯和频率学派结果是一样的，但如果现场主持人在打开B门的时候有一些犹豫，如果B门后面没有奖品主持人会毫不犹豫的打开B门，又或者犹豫B还是C的时候说明两个门后面都没有奖品，所以A的概率大一些不要换。又或者电视台的表弟告诉你主持人都有预案，根据每个选项做出选择。面临这种复杂的情况频率学派无法针对每一次都模拟大量实验，而贝叶斯方法提供的是一种随着信息不断增多而不断调整自己策略的方法。</p>
-<h3 id="第一类错误和第二类错误">第一类错误和第二类错误</h3>
-<table>
-<thead>
-<tr>
-<th>决策</th>
-<th>阳性</th>
-<th>阴性</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>阳性</td>
-<td>真阳性TP</td>
-<td>假阳性FP</td>
-</tr>
-<tr>
-<td>阴性</td>
-<td>假阴性FN</td>
-<td>真阴性TN</td>
-</tr>
-</tbody>
-</table>
-<p>在评价一种检测方法时，人们经常用的两个概念是灵敏度（sensitivity）和特异度（specificity）。如果用TP、TN、FP、FN分别表示真阳性、真阴性、假阳性、假阴性样本的个数。</p>
-<ul>
-<li>灵敏度Sn=$\frac{TP}{TP+FN}$:真正的阳性样本中有多少比例能被正确检测出来（方法能够把阳性样本正确识别出来的能力）</li>
-<li>特异度Sp=$\frac{TN}{TN+FP}$:真正的阴性样本中有多少比例没有被误判（方法能够把阴性样本正确判断出来的能力）</li>
-</ul>
-<p>第一类错误率用$\alpha$表示，指真实的阴性样本中被错误判断为阳性的比例；第二类错误率用 $\beta$表示，指真实的阳性样本中被错误判断为阴性的比例。第一类错误可以理解为误报，第二类理解为漏报。</p>
-<p>统计推断或者贝叶斯决策通常要同时考虑这两类错误，通常限定一类错误为指定值，另一类错误率最小。</p>
-<h3 id="Frequentist-and-Bayesian">Frequentist and Bayesian</h3>
-<p>频率学派和贝叶斯学派对于“在应用中，某个随机事件的概率该如何被赋值？”这个问题有著不同的看法：频率主义者根据随机事件发生的频率，或者总体样本里面的发生的个数来赋值概率；贝叶斯主义者则根据未知的命题来赋值概率。</p>
-<p>贝叶斯学派对概率的解释可以看作是命题逻辑的扩展，可以使用假设进行推理。同时贝叶斯的观点是给一个假设（hypothesis）分配一个概率（probability），而在频率学派的推理中，一个假设通常是在没有分配概率的情况下进行测试的。</p>
-<p>经常会有人说频率是客观的，贝叶斯是主观的概率，但事实上贝叶斯是基于一系列主观先验的客观推理，逻辑过程是非常客观的。如果频率学派是客观概率，但频率的前提假设是一切信息全知，这也是一个很强的主观假设。频率法和贝叶斯对信息是否全知的预设不同，它们解决的不是一类问题。</p>
-<p>频率法适合解决普遍的通用的群体性的问题，比如生育率，飞机失事率等，最终获得普适概率。而贝叶斯适合解决变化的、个体的、无法重复的概率问题，可以描述随着信息知识更新过程中某个假设的状态。并且通常可以将两个方法结合，使用频率获得先验概率，在使用贝叶斯计算每个证据的权重。</p>
-<p>总的来说，两种学派的主要差别在于探讨「不确定性」这件事的立足点不一样，频率学派试图对「事件」本身建模，认为「事件本身就具有客观的不确定性」；贝叶斯学派不去试图解释「事件本身的随机性」，而是从观察事件的「观察者」角度出发，认为不确定性来源于「观察者」的「知识不完备」，在这种情况下，通过已经观察到的「证据」来描述最有可能的「猜的过程」，因此，在贝叶斯框架下，同一件事情对于知情者而言就是「确定事件」，对于不知情者而言就是「随机事件」，随机性并不源于事件本身是否发生，而只是描述观察者对该事件的知识状态。频率法和贝叶斯方法本身都是客观的，在使用的过程中都或多或少产生一些主观性。</p>
-<h2 id="参考材料">参考材料</h2>
-<p>[1] <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/23629928">https://zhuanlan.zhihu.com/p/23629928</a></p>
-<p>[2] <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/43721834">https://www.zhihu.com/question/43721834</a></p>
-<p>[3] <a target="_blank" rel="noopener" href="http://www.tup.tsinghua.edu.cn/upload/books/yz/058550-01.pdf">http://www.tup.tsinghua.edu.cn/upload/books/yz/058550-01.pdf</a></p>
-<p>[4] <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/389629204/answer/1171421706">https://www.zhihu.com/question/389629204/answer/1171421706</a></p>
-<p>[5] <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Bayesian_probability">https://en.wikipedia.org/wiki/Bayesian_probability</a></p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%95%B0%E5%AD%A6%E5%8F%B2/" rel="tag">数学史</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-Failed-to-connect-to-github-com-port-443-after-21076ms-Timed-out"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2023/06/09/Failed-to-connect-to-github-com-port-443-after-21076ms-Timed-out/"
-    >Failed to connect to github.com port 443 after 21076ms: Timed out</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2023/06/09/Failed-to-connect-to-github-com-port-443-after-21076ms-Timed-out/" class="article-date">
-  <time datetime="2023-06-09T03:31:17.000Z" itemprop="datePublished">2023-06-09</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>Failed to connect to <a target="_blank" rel="noopener" href="http://github.com">github.com</a> port 443 after 21076 ms: Timed out</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global http.proxy http://127.0.0.1:1080</span><br></pre></td></tr></table></figure>
-<p>端口写上本地的自己的端口，避免冲突，比如我用的是1087端口</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%83%A1%E4%B9%B1%E6%90%9E/" rel="tag">胡乱搞</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
   </article>
   
 
@@ -871,7 +881,7 @@ mjx-container[display="true"] + br {
     <ul>
       <li>
         Copyrights &copy;
-        2015-2024
+        2015-2025
         <i class="ri-heart-fill heart_icon"></i> galaxy
       </li>
     </ul>

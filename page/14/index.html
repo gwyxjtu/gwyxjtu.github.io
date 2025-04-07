@@ -183,6 +183,156 @@
     
     
     <article
+  id="post-一道ctfweb题目"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/26/%E4%B8%80%E9%81%93ctfweb%E9%A2%98%E7%9B%AE/"
+    >一道ctfweb题目</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/04/26/%E4%B8%80%E9%81%93ctfweb%E9%A2%98%E7%9B%AE/" class="article-date">
+  <time datetime="2020-04-25T17:04:17.000Z" itemprop="datePublished">2020-04-26</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>这道题目是模仿其他人的思路做的，相当于复现吧。</p>
+<p>就一个登陆界面。目录也没扫出来。无源码泄露。<br>
+burp抓个包试试注入<br>
+输入单引号 返回请停止输入危险字符/单词!<br>
+用双引号试了下。没反应。应该就是单引号的注入</p>
+<p>猜测后台语句为</p>
+<pre><code>select token from user where username='' and password=''
+</code></pre>
+<p>sql with group语句绕过审核密保问题</p>
+<p><img src="/images/black_web_2.png" alt=""></p>
+<p>打开进去发现有数据备份的功能，所以猜测可能存在mysql任意读取漏洞</p>
+<p><img src="/images/black_web_4.png" alt=""></p>
+<p>然后发现有写马的功能，尝试抓包分析</p>
+<p><img src="/images/black_web_5.png" alt=""></p>
+<p>抓取通信发现有两次通信，其中一次是json.php。后台的代码可能是</p>
+<pre><code>scandir($_GET['page'].'/webshell/')
+</code></pre>
+<p>这里参考答案使用php版本低的问题进行%00截断和目录穿越绕过，读取到根目录的信息，里面就有flag和入群的口令了。</p>
+<p><img src="/images/black_web_1.png" alt=""></p>
+<p>最后用mysql任意读取读取到flag</p>
+<p><img src="/images/black_web_3.png" alt=""></p>
+<p>心情：今天无意间发现当年跟我一起刷buu的哥们已经进WM战队了，哎，可惜我没坚持下来啊，8说了，考研完了一定捡回来ctf这个爱好。</p>
+<p>参考：过客 . 某群入群题2［EB/OL］．<a target="_blank" rel="noopener" href="https://guokeya.github.io/post/Y59x961oO/">https://guokeya.github.io/post/Y59x961oO/</a></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ctf/" rel="tag">ctf</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
+  id="post-西安交大本科生健康平台存储xss漏洞"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/21/%E8%A5%BF%E5%AE%89%E4%BA%A4%E5%A4%A7%E6%9C%AC%E7%A7%91%E7%94%9F%E5%81%A5%E5%BA%B7%E5%B9%B3%E5%8F%B0%E5%AD%98%E5%82%A8xss%E6%BC%8F%E6%B4%9E/"
+    >西安交大本科生健康平台存储xss漏洞</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/04/21/%E8%A5%BF%E5%AE%89%E4%BA%A4%E5%A4%A7%E6%9C%AC%E7%A7%91%E7%94%9F%E5%81%A5%E5%BA%B7%E5%B9%B3%E5%8F%B0%E5%AD%98%E5%82%A8xss%E6%BC%8F%E6%B4%9E/" class="article-date">
+  <time datetime="2020-04-21T15:47:58.000Z" itemprop="datePublished">2020-04-21</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="起因">起因</h2>
+<p>起因是想要写一个自动填写这个健康平台的脚本，每天被导员催着实在是不爽。无意间打开了个人纪录查看的界面。</p>
+<p><img src="/images/xjtu_xss_1.png" alt=""></p>
+<p>可以看出来这里存在明显的注入。于是拿出了尘封已久的burp。</p>
+<h2 id="第一次利用">第一次利用</h2>
+<p>最明显的思路是利用div标签的属性，闭合前一个的双引号，然后在后面加上onclick或者onmouseenter的事件属性。</p>
+<p>直接开始抓包，整个的通信结构其实并不复杂，开启应用时请求json形式表格，然后点鸡确认时候请求一个flowkey作为单次通信标志(其实没有时间限制，经过测试)。</p>
+<p><img src="/images/xjtu_xss_2.png" alt=""></p>
+<p>确认后点鸡提交，提交时直接发送全部表格的json形式文件，这里有一个技巧是搜索手机号，在整个数据包中只发现了唯一的手机号，于是可以断定该处的上下文部分就是提交的表格数据(其余的部分可能是验证信息)</p>
+<p><img src="/images/xjtu_xss_3.png" alt=""></p>
+<p>这个是明显的数据结构。要利用就要闭合双引号，想闭合引号还不简单</p>
+<pre><code>&quot; onclick=alert('果果最帅')//
+</code></pre>
+<p>直接开整，然后暴毙，因为json数据包中解析了引号，所以这个不是人家后端的问题，是在数据包的构造上就出了问题。</p>
+<p>于是现在问题集中在了，怎样不使用引号来闭合前一个引号。</p>
+<p>首先想到的是HTMLEncode，测试后直接暴毙，插进去的没有问题，但是不解析。具体的效果截图没有了，导员发现我在搞事情后直接给我把我之前插的代码全弄没了。后来搜一下发现HTML编码是用来防止xss的。除了编码，还有一个思路就是。。</p>
+<h2 id="第二次利用">第二次利用</h2>
+<p>除了闭合双引号，还有一个方法就是闭合尖括号。思路的来源是，除了div的tittle标签里面插入了可执行代码之外，地下的文字也加入了，所以不如直接暴力把div标签闭合掉。</p>
+<p>这次测试的主要难点是每天只能提交一次，之前好多看起来有效的payload都失效了，很离谱，最离谱的是<code>&lt;script&gt;</code>标签不执行，保存下来本地点开才能执行，可能他们前端有一些安全策略吧，超纲了。</p>
+<p>这里直接省略中间做过的一万次测试，包括插入哔哩哔哩播放器和其他乱起八糟的东西，后来发现是不能有双引号，哔哩哔哩播放器那里主要是出现了冒号，之后的任务是思考如何绕过这个冒号。。。。。。。</p>
+<p>最后测试的payload是</p>
+<pre><code>//&gt;&lt;/div&gt;&lt;img src='http://ggalaxy.top/file/mm.php'  onclick='alert(`果果最帅`)'&gt;&lt;div&gt;
+</code></pre>
+<p><img src="/images/xjtu_xss.jpg" alt=""></p>
+<p><img src="/images/xjtu_xss_5.png" alt=""></p>
+<h2 id="还有可以做的地方">还有可以做的地方</h2>
+<p>可以注入一些更可恶的代码，现在的问题是冒号没有办法绕过了，style属性就不大行。之后再说吧。</p>
+<p>希望早点开学吧，在家里快闲出病了。</p>
+<p>参考：moxiaoxi . XSS测试备忘录［EB/OL］．<a target="_blank" rel="noopener" href="https://momomoxiaoxi.com/2017/10/10/XSS/">https://momomoxiaoxi.com/2017/10/10/XSS/</a></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/xss/" rel="tag">xss</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
   id="post-keras预训练模型手动下载"
   class="article article-type-post"
   itemscope
@@ -303,110 +453,6 @@
 </article>
 
     
-    <article
-  id="post-嫖百度的easyDL"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/02/21/%E5%AB%96%E7%99%BE%E5%BA%A6%E7%9A%84easyDL/"
-    >嫖百度的easyDL</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2020/02/21/%E5%AB%96%E7%99%BE%E5%BA%A6%E7%9A%84easyDL/" class="article-date">
-  <time datetime="2020-02-21T07:29:29.000Z" itemprop="datePublished">2020-02-21</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>百度的ezdl实验，进去玩玩，希望能学到点东西，用群里的数据，用百度的公有云，白嫖快乐。<br>
-接口调用的代码如下</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> base64,json,cv2</span><br><span class="line">file_path = <span class="string">&#x27;test.jpg&#x27;</span><span class="comment">#这里输入图片的地址即可</span></span><br><span class="line">access_token = <span class="string">&#x27;&#x27;</span></span><br><span class="line">host = <span class="string">&#x27;https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&amp;client_id=szbFpD6Kkuv6Edgwsq4SpNn8&amp;client_secret=Gqlr50aK8hgyZo6rGiL3nviyQrjBVV2M&amp;&#x27;</span></span><br><span class="line">response = requests.get(host)</span><br><span class="line"><span class="keyword">if</span>(response):</span><br><span class="line">	con = response.json()</span><br><span class="line">	access_token = con[<span class="string">&#x27;access_token&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_file_content</span>(<span class="params">file_path</span>):</span><br><span class="line">	<span class="keyword">with</span> <span class="built_in">open</span>(file_path, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> fb:</span><br><span class="line">		<span class="keyword">return</span> fb.read()</span><br><span class="line"><span class="keyword">if</span> access_token != <span class="string">&#x27;&#x27;</span>:</span><br><span class="line">	image = get_file_content(file_path)</span><br><span class="line">	image_base64 = base64.b64encode(image)</span><br><span class="line">	image_base64_utf8 = <span class="built_in">str</span>(image_base64, encoding = <span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">	request_url = <span class="string">&quot;https://aip.baidubce.com/rpc/2.0/ai_custom/v1/detection/galaxy_rubbish&quot;</span></span><br><span class="line"></span><br><span class="line">	request_url += <span class="string">&quot;?access_token=&quot;</span> + access_token</span><br><span class="line">	s = json.dumps(&#123;<span class="string">&#x27;image&#x27;</span>:image_base64_utf8&#125;)</span><br><span class="line">	response = requests.post(request_url, data = s, headers = &#123;<span class="string">&#x27;Content-Type&#x27;</span>:<span class="string">&#x27;application/json&#x27;</span>&#125;)</span><br><span class="line">	content = response.json()</span><br><span class="line">	results = content[<span class="string">&#x27;results&#x27;</span>]</span><br><span class="line">	<span class="built_in">print</span>(results)</span><br><span class="line">	image = cv2.imread(file_path)</span><br><span class="line">	cv2.namedWindow(<span class="string">&quot;capture&quot;</span>,<span class="number">0</span>)</span><br><span class="line">	cv2.resizeWindow(<span class="string">&quot;capture&quot;</span>, <span class="number">1200</span>,<span class="number">1200</span>)</span><br><span class="line">	font = cv2.FONT_HERSHEY_SIMPLEX</span><br><span class="line">	<span class="keyword">for</span> con <span class="keyword">in</span> results:</span><br><span class="line">		x1 = con[<span class="string">&#x27;location&#x27;</span>][<span class="string">&#x27;left&#x27;</span>]</span><br><span class="line">		x2 = x1+con[<span class="string">&#x27;location&#x27;</span>][<span class="string">&#x27;width&#x27;</span>]</span><br><span class="line">		y1 = con[<span class="string">&#x27;location&#x27;</span>][<span class="string">&#x27;top&#x27;</span>]</span><br><span class="line">		y2 = y1+con[<span class="string">&#x27;location&#x27;</span>][<span class="string">&#x27;height&#x27;</span>]</span><br><span class="line">		image = cv2.rectangle(image,(x1,y1),(x2,y2),(<span class="number">0</span>,<span class="number">255</span>,<span class="number">0</span>),<span class="number">5</span>)</span><br><span class="line">		image = cv2.putText(image,con[<span class="string">&#x27;name&#x27;</span>]+<span class="built_in">str</span>(con[<span class="string">&#x27;score&#x27;</span>])[:<span class="number">6</span>],(x1,y2+<span class="number">20</span>),font,<span class="number">1.2</span>,(<span class="number">255</span>,<span class="number">255</span>,<span class="number">255</span>),<span class="number">2</span>)</span><br><span class="line">	cv2.imshow(<span class="string">&quot;capture&quot;</span>, image)</span><br><span class="line">	cv2.waitKey(<span class="number">0</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><img src="images/ezdl.png" alt=""></p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Opencv/" rel="tag">Opencv</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-豆瓣的存储xss"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/02/21/%E8%B1%86%E7%93%A3%E7%9A%84%E5%AD%98%E5%82%A8xss/"
-    >豆瓣的存储xss</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2020/02/21/%E8%B1%86%E7%93%A3%E7%9A%84%E5%AD%98%E5%82%A8xss/" class="article-date">
-  <time datetime="2020-02-20T17:08:31.000Z" itemprop="datePublished">2020-02-21</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p><img src="/images/douban.png" alt=""></p>
-<p>跟着大佬玩一玩</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%83%A1%E4%B9%B1%E6%90%9E/" rel="tag">胡乱搞</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
   </article>
   
 
@@ -424,7 +470,7 @@
     <ul>
       <li>
         Copyrights &copy;
-        2015-2024
+        2015-2025
         <i class="ri-heart-fill heart_icon"></i> galaxy
       </li>
     </ul>

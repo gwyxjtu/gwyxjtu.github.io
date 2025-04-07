@@ -183,6 +183,150 @@
     
     
     <article
+  id="post-理解gurobi求解器日志"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/05/21/%E7%90%86%E8%A7%A3gurobi%E6%B1%82%E8%A7%A3%E5%99%A8%E6%97%A5%E5%BF%97/"
+    >理解gurobi求解器日志</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/05/21/%E7%90%86%E8%A7%A3gurobi%E6%B1%82%E8%A7%A3%E5%99%A8%E6%97%A5%E5%BF%97/" class="article-date">
+  <time datetime="2022-05-21T02:19:34.000Z" itemprop="datePublished">2022-05-21</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>学习和了解gurobi求解器日志对于理解算法和数学模型有很大帮助，所以加以记录。本文主要记录了simplex和MIP的求解日志。</p>
+<h1>Header</h1>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Optimize a model with 755 rows, 2756 columns and 8937 nonzeros</span><br><span class="line">Model fingerprint: 0x22935346</span><br><span class="line">Variable types: 0 continuous, 2756 integer (0 binary)</span><br></pre></td></tr></table></figure>
+<p>展示了模型的大小以及整数变量数目。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Coefficient statistics:</span><br><span class="line">  Matrix range     [1e+00, 1e+04]</span><br><span class="line">  Objective range  [1e+00, 1e+04]</span><br><span class="line">  Bounds range     [1e+00, 1e+00]</span><br><span class="line">  RHS range        [1e+00, 1e+04]</span><br></pre></td></tr></table></figure>
+<p>这个信息给出了一个非常粗略的指示，说明您在解决模型时是否可以预期数值问题。</p>
+<h1>Simplex Logging</h1>
+<p>单纯形日志有三部分，presolve部分，求解过程和总结部分</p>
+<h2 id="Presolve-Section">Presolve Section</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Presolve removed 2349 rows and 3378 columns</span><br><span class="line">Presolve time: 0.04s</span><br><span class="line">Presolved: 3722 rows, 8852 columns, 30908 nonzeros</span><br></pre></td></tr></table></figure>
+<p>第一步是使用presolve算法简化模型。<br>
+示例输出显示，presolve能够删除2349行和3378列，这需要0.04秒。预解部分的最后一行显示了预解后模型的大小。这是传递给simplex优化器的模型的大小。请注意，为该模型计算的解决方案在simplex完成后会自动转换为原始问题的解决方案(在这个过程中通常称为uncrush)，但这个uncrush步骤是透明的，不会产生日志输出。</p>
+<h2 id="Progress-Section">Progress Section</h2>
+<p><img src="images/gurobi1.png" alt=""></p>
+<p>在每个输出行五列显示单纯形迭代执行的数量,当前的目标函数值,原始的不可行性的程度(计算违反约束的绝对值之和),对偶不可行性的程度(计算违反对偶约束的绝对值之和),和花费的时间(以挂钟时间计算)。Gurobi求解器中默认的单纯形算法是对偶单纯形，它试图在执行单纯形轴心来改进目标的同时保持对偶可行性。</p>
+<h2 id="Summary-Section">Summary Section</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Solved in 20370 iterations and 5.75 seconds</span><br><span class="line">Optimal objective  1.126639304e+07</span><br></pre></td></tr></table></figure>
+<p>字面意思</p>
+<h1>MIP Logging</h1>
+<p>日志也是分为三部分the presolve section, the simplex progress section, and the summary section.</p>
+<h2 id="Presolve-Section-2">Presolve Section</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Presolve removed 0 rows and 3 columns</span><br><span class="line">Presolve time: 0.01s</span><br><span class="line">Presolved: 12 rows, 148 columns, 1615 nonzeros</span><br><span class="line">Variable types: 1 continuous, 147 integer (145 binary)</span><br></pre></td></tr></table></figure>
+<p>在本例中，presolve能够删除3列。最后两行显示了传递给分支切割算法的模型的大小以及剩余变量的类型。</p>
+<h2 id="Progress-Section-2">Progress Section</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Found heuristic solution: objective 157344.61033</span><br></pre></td></tr></table></figure>
+<p>这句话说明gurobi在root relaxation 之前用启发式找到了一个整数可行解<br>
+<img src="images/gurobi2.png" alt=""></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Root relaxation: objective 3.889390e+04, 50 iterations, 0.00 seconds</span><br></pre></td></tr></table></figure>
+<p>第二个是root relaxation，如果这一步耗费时间比较长，会自动将log展开</p>
+<p><img src="images/gurobi3.png" alt=""><br>
+Nodes部分(前两列)提供了关于搜索进展的一般定量信息。第一列显示到目前为止已经探索的分支和剪切节点的数量，而第二列显示搜索树中仍未探索的叶子节点的数量。有时，输出行开头会有一个H或<em>字符。这表明通过MIP启发式(H)或分支(</em>)找到了一个新的可行解。</p>
+<p>Current Node部分提供了在分支和切割树中研究的特定节点的信息。它显示了相关松弛的目标，分支和切割树中节点的深度，以及在相关松弛中具有非整数值的整数变量的数量。（松弛变量的数目）</p>
+<p>Objective Bounds部分提供了一个可行解的最重要的目标值的信息(即，当前可行解的目标值)，以及搜索树的叶子节点提供的当前目标边界。最佳目标值总是在这两个值之间。本节的第三栏(差距)显示了两个客观边界之间的相对差距。当此间隙小于MIPGap参数时，优化终止。</p>
+<p>日志的Work部分提供了到该点为止已经执行了多少工作的信息。第一列显示了分枝和切割树中每个节点执行的单纯形迭代的平均次数。最后一列显示自解算开始以来所经过的时间。</p>
+<p>注意，所研究的节点计数通常在较长一段时间内保持为0。这意味着Gurobi MIP求解器正在处理根节点。Gurobi求解器通常会在根节点上花费大量的精力，生成切割平面并尝试各种启发式方法，以减少后续的分支和切割树的大小。</p>
+<h2 id="Summary-Section-2">Summary Section</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Cutting planes:</span><br><span class="line">  Gomory: 1</span><br><span class="line">  MIR: 17</span><br><span class="line"></span><br><span class="line">Explored 313128 nodes (1741251 simplex iterations) in 4.80 seconds</span><br><span class="line">Thread count was 8 (of 8 available processors)</span><br><span class="line">Solution count 7: 40005.1 40697.1 41203.6 ... 157345</span><br><span class="line"></span><br><span class="line">Optimal solution found (tolerance 1.00e-04)</span><br><span class="line">Best objective 4.000505414200e+04, best bound 4.000505414200e+04, gap 0.0000%</span><br></pre></td></tr></table></figure>
+<p>在这个示例中，Gurobi求解器只需要不到5秒的时间就可以将模型求解到最优，并且它使用了8个线程(线程数可以通过threads参数进行限制)。最佳可行解目标与最佳界之间的差距为0.0%，这产生了一个最优终止状态，因为实现的差距小于默认MIPGap参数值。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Gurobi/" rel="tag">Gurobi</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
+  id="post-“勒贝格传“"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/05/18/%E2%80%9C%E5%8B%92%E8%B4%9D%E6%A0%BC%E4%BC%A0%E2%80%9C/"
+    >勒贝格传</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/05/18/%E2%80%9C%E5%8B%92%E8%B4%9D%E6%A0%BC%E4%BC%A0%E2%80%9C/" class="article-date">
+  <time datetime="2022-05-18T12:31:53.000Z" itemprop="datePublished">2022-05-18</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1>实变函数和泛函分析</h1>
+<p>最近学习实变函数和泛函分析，在翟老师的讲解下学习了之前数学家的工作，翟老师也说，实变函数是上世纪才系统性完善的，是近代的数学，很值得我们学习。而且我们学习的都是这些数学大师一生中最精彩的工作，仔细研读可以学到很多数学思想。</p>
+<p>为了理解翟老师课上的一些知识，我便在淘宝下单了周民强的实变函数论，翻开附录发现竟有一章是勒贝格传，读传记是我学习数学的一大乐趣之一。故做一些记录。</p>
+<p>勒贝格1875年6月28日生于法国的博伟，1941年7月26日卒于巴黎。勒贝格的父亲是一名印刷厂职工，酷爱读书，颇有教养。在父亲的影响下，勒贝格从小勤奋好学，成绩优秀，特别擅长计算。不幸，父亲去世过早。家境衰落，勒贝格在学校老师的帮助下进入中学，后又转入巴黎，1894年考入高等师范学校。大学毕业后，勒贝格在校图书馆工作了两年。在这期间，出版了E.波雷尔关于点集测度的新方法的《函数论讲义》，特别是研究生R.贝尔发表了关于不连续实变函数理论的第一篇论文，这些成功的研究工作说明在上述崭新的领域中进行开拓挥霍的何等重要的成就，因而激发了勒贝格的热情。从1899年到1902年勒贝格在南锡的一所中学任教，虽然工作繁忙，但仍孜孜不倦的研究实变函数，理论，并于1902年发表了博士论文“积分、长度与面积”。在这篇文章中，勒贝格厂里了后来以他的名字命名的积分理论。伺候，他开始在大学任教，并出版了一系列重要著作：《积分法和原函数分析讲义》；《三角级数讲义》。接着，勒贝格又陆续发表了许多关于函数的微分、积分理论的研究成果，勒贝格于1921年获得法兰西血压u呢教授称号，一年作为C.若尔当的后记人被选为巴黎科学院院士。</p>
+<p>勒贝格对数学的主要贡献属于积分论领域，这是实变函数理论的中心课题。19世纪以来，微积分开始进入严密话的阶段。1854年，B.黎曼引入了以他的名字命名的积分，这一理论的应用范围主要是连续函数，随着K.威尔斯特拉斯和G.康托尔工作的温室，在数学中出现了许多奇怪的函数与现象，致使黎曼积分理论暴漏出较大的局限性。几乎与这一理论发展的同时，人就已经广泛的开展了对积分理论的改造工作。当时，关于积分论的工作主要集中于无穷集合的性质的探讨，而无处稠密的集合具有正的外容度性质的发现，使集合的测度概念在积分论的研究中占有重要地位。积分的几何意义是曲线围成的面积，黎曼积分的定义是建立在对区间长度的分割的基础上的。因此，人们自然会考虑如何吧长度、面积等概念扩充到更广泛的点集类上，从而吧积分的概念置于集合测度理论的框架之中。这一思想的重要性在于使人们认识到：几何的测度与可测性的推广将意味着函数的积分与可积性的推广。勒贝格积分正式建立在勒贝格测度理论的基础上，是黎曼积分的扩充。</p>
+<p>勒贝格曾对他的积分思想做过一个生动有趣的描述：“我必须偿还一笔钱。如果我从口袋中随意地摸出来各种不同面值的钞票，逐一的还给债主直到全部还清，这就是黎曼积分法，不过我还有另外一种做法，就是把钱全部拿出来并吧相同棉质的钞票放在一起，然后再付给应还的数目，这就是我的积分法。”</p>
+<p>早在19世纪初期，由J.傅立叶在关于三角级数的工作中提出：当一个有界函数可以表示为一个三角级数时，该级数是它的傅里叶级数吗？这一问题与一个无穷级数是否可以逐项积分有着密切的关系。傅立叶当时曾认为在其和为有界函数时这一运算是正确的，从而给上述问题肯定的答复。然而到了19世纪末，人们认识到逐项积分并不总是可行的，甚至对于黎曼可积函数的一致有界的技术也是这样，因为由该级数所表示的函数不一定是黎曼可积的。这个问题促使勒贝格在新的积分理论中获得了一个十分重要的结果：<strong>控制收敛定理</strong>。作为一个特殊情形他指出，勒贝格可积的一致有界技术都可以逐项进行积分，从而支持了傅里叶的结论。逐项积分在本质上就是积分号下取极限的问题，他是积分理论中经常遇到的最重要的运算之一。从而这一定理的创立显示了勒贝格积分理论的极大优越性。</p>
+<p>勒贝格的一生都献给了数学事业。在1922年被推举为院士的时候，他的著作和论文已经达到90种之多，内容出了积分理论外，还设计集合与函数的构成、变分学、曲面面积以及纬数理论等重要课题，在人生的最后20年中，勒贝格的研究工作仍然十分活跃并反映出广泛的兴趣，不过作品的内容大都涉及教育、历史和初等几何。</p>
+<p>勒贝格的工作是对20世纪科学领域的一个重大贡献，但和科学史上每种新思想的出现一样，并不是没有遇到阻力的。原因就是勒贝格的研究中扮演了重要角色的那些不连续函数和不可微函数被认为是违反了所谓的完美性法则，是数学中的“变态和不健康”部分。因此，他的工作收到了某些数学家的冷淡，甚至有人曾企图阻止他关于一篇讨论不可微曲面的论文的发表。勒贝格曾经感叹：“我被称为是一个没有导数的函数的那种人了。”然而，不论人们的主观愿望如何，这些具有种种奇艺性质的对象都自动地进入了研究者曾企图避开他们都问题之中。勒贝格充满信心地指出：“使得自己在这种研究中变得迟钝了的那些人，是在浪费他们的时间，而不是在从事有用的工作。”</p>
+<p>如果有能力写一些关于泛函分析的知识类博客，推一些自己很欣赏的定理公式，那必然是更好的。可惜能力不允许，时间也不允许，只能记录一些大师的传记来表达自己的敬意了。</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
   id="post-青年的含义"
   class="article article-type-post"
   itemscope
@@ -331,137 +475,6 @@ $E[S_3|N(1)=4]$可以很好的理解为1时刻内发生四个事件，四个事�
 </article>
 
     
-    <article
-  id="post-图书馆"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/04/19/%E5%9B%BE%E4%B9%A6%E9%A6%86/"
-    >图书馆</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/04/19/%E5%9B%BE%E4%B9%A6%E9%A6%86/" class="article-date">
-  <time datetime="2022-04-19T11:04:01.000Z" itemprop="datePublished">2022-04-19</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>来到创新港有快一年时间了，最近才爱上去图书馆学习的。图书馆跟工位比起来好像也没什么好的地方，工位桌子还大，而且工位还提供纯净水，电脑甚至还有双屏，但为什么图书馆的吸引力这么大呢？想了想，有三个原因。第一个原因，可能是因为很喜欢图书馆里面这种陌生人社会的氛围。之前中特老师讲到，中国传统的村落社会一直是一种熟人社会，因为村子里的人基本上都认识，而现在逐渐转为了陌生人社会，一个小区里的人，甚至一栋楼上的人都可能互不认识。图书馆可能是这种陌生人社会气氛的最完美的体现，同学们之间的距离甚至不超过半米，翻书的声音彼此都能听到，但是却互相不认识。这种感觉很奇妙，虽然可能坐在你同桌的同学跟你学的根本不是一门学科，可能你在算积分的同时她在阅读小说，但是这种图书馆的气氛却将同学们联系起来，虽然当我们真正遇到学习困难的时候也不可能去问同桌，但是这种气氛给我们一种心理暗示，周围的同学都很努力，我有不会的问题肯定可以解决。我很享受这种陌生的感觉。</p>
-<p>除了桌子，我比较喜欢每次离开图书馆的感觉，这也是今天我写这篇日记的原因。每次离开图书馆就会回想起自己今天在图书馆的所学所得，今天是去图书馆复习随机过程的，吧泊松和马尔可夫的笔记做完了，同时听了一些张颢老师讲的课，能把泊松过程讲的这么丝滑的，可能没有第二个老师了吧。今天还去图书馆转了转人文社科区的书架，看了几片小小说，希望我能在毕业前吧图书馆每个书架摆的书的类型都记住，现在大概能记住优化书，积分书和语言类书的位置。每次去图书馆的体验都很足，离开的时候心里的满足感是无可替代的。</p>
-<p>除此之外，可能是由于本科去图书馆的习惯吧，对图书馆的桌子情有独钟，发现各类学校的图书馆都有一个共同的特点，桌子虽然不大，但是都有挂书包的地方和电源。本科经常去兴庆钱图的咖啡厅，同时3楼的“湖景座”也是我喜欢去的地方，桌子是各有特色。兴庆钱图咖啡厅的桌子大致分为三类，一类是吧台旁边的方桌，有电源，空间足，但是缺点是离点餐的吧台太近了，噪音大、第二类是南侧贴墙的小圆桌，也有电源，但是桌子空间稍微小一些，好处是噪声小、第三类就是中间没有电源的桌子，一般是去的晚了没别的座位了就会坐中间，方桌子，空间大，不用电脑的读书写作业简直完美。创新港图书馆的桌子目前我只体验了一种，就是中间大区域的四人桌，体验非常好，旁边设置两个插销，而且还有挂书包的地方，可以说条件已经是比兴庆咖啡厅的更好了。跟同桌之间的空间也是足够的，不至于像之兴庆忘了一个地方的桌子， 学习时候两个人胳膊碰胳膊，没点社交能力都不好意思自习了。</p>
-<p>与其说对图书馆的桌子记忆犹新，不如说怀念自己在图书馆桌子上的那一段时光。看到北四楼的方形木桌，就会想起自己考研时候独自复习的那段时光；看到图书馆三楼的白色湖景桌，就会想起大二的下午上自习的时光；看到咖啡厅的小圆桌，就会想起大三和自己一起复习期末考试的同学。每天第一个披萨半价的活动在大三的时候就没有了，一起学习的同学们也各奔东西了，我也很少有机会去兴庆的咖啡厅了，只剩下图书馆还在那里，为一届又一届的学生们留下回忆。</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/diary/" rel="tag">diary</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-Possion-processd中的泊松差分布"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/04/17/Possion-processd%E4%B8%AD%E7%9A%84%E6%B3%8A%E6%9D%BE%E5%B7%AE%E5%88%86%E5%B8%83/"
-    >Poisson process中的泊松差分布</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/04/17/Possion-processd%E4%B8%AD%E7%9A%84%E6%B3%8A%E6%9D%BE%E5%B7%AE%E5%88%86%E5%B8%83/" class="article-date">
-  <time datetime="2022-04-17T02:24:42.000Z" itemprop="datePublished">2022-04-17</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h2 id="随机过程笔记">随机过程笔记</h2>
-<p>记录听张颢老师随机过程课的所学所得</p>
-<h3 id="泊松差过程">泊松差过程</h3>
-<p>假设$N_1(t)$和$N_2(t)$是强度分别为$\lambda_1,\lambda_2$的独立的两个泊松过程，那么$N(t) = N_1(t)-N_2(t)$是否为泊松过程，如果不是，$N(t)$的分布函数是什么。</p>
-<p>首先根据泊松过程的定义，计数过程必须是大于等于0的正整数，而$P(N(t)\leq 0)\geq 0$，所以不是泊松过程。<br>
-下面通过母函数求分布函数。<br>
-$$<br>
-G_{N(t)}(z) = E(z^{N(t)}) = E(z^{N_1(t)})\cdot E(z^{-N_2(t)})<br>
-$$<br>
-$$<br>
-=G_{N_1(t)}(z) \cdot G_{N_2(t)}(\frac{1}{z}) =exp(\lambda_1t(z-1))\cdot exp(\lambda_2t(\frac{1}{z}-1))<br>
-$$</p>
-<p>到这一步需要从机理进行思考，由于两个泊松过程相减可以理解为两个不同效果的泊松过程想加，如果只考虑事件的发生而不考虑事件的效益，则事件的发生仍是泊松过程，加上效益，则是复合泊松过程。所以需要从上式中提出$\lambda_1+\lambda_2$的项</p>
-<p>$$<br>
-=exp((\lambda_1+\lambda_2)t(\frac{\lambda_1}{\lambda_1+\lambda_2}z+\frac{\lambda_2}{\lambda_1+\lambda_2}z^{-1}-1))<br>
-$$</p>
-<p>由上式看出，复合泊松的效益为两点分布</p>
-<p>$$<br>
-Y_i\sim \begin{pmatrix}<br>
-1 &amp; -1  \newline<br>
-\frac{\lambda_1}{\lambda_1+\lambda_2} &amp; \frac{\lambda_2}{\lambda_1+\lambda_2}<br>
-\end{pmatrix}<br>
-$$</p>
-<p>$$<br>
-G_{Y}(z)  = \frac{\lambda_1}{\lambda_1+\lambda_2}z+\frac{\lambda_2}{\lambda_1+\lambda_2}z^{-1}<br>
-$$</p>
-<p>所以泊松差过程可以理解为效应函数为两点分布$Y$的复合泊松过程。</p>
-<p>经过检索，该类泊松差过程称为Skellam distribution。</p>
-<p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Skellam_distribution">https://en.wikipedia.org/wiki/Skellam_distribution</a></p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BC%98%E5%8C%96%E5%AD%A6%E4%B9%A0/" rel="tag">优化学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9A%8F%E6%9C%BA%E8%BF%87%E7%A8%8B/" rel="tag">随机过程</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
   </article>
   
 
@@ -479,7 +492,7 @@ $$</p>
     <ul>
       <li>
         Copyrights &copy;
-        2015-2024
+        2015-2025
         <i class="ri-heart-fill heart_icon"></i> galaxy
       </li>
     </ul>

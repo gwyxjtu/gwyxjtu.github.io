@@ -183,6 +183,164 @@
     
     
     <article
+  id="post-kmeans聚类手动实现-python版"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/11/19/kmeans%E8%81%9A%E7%B1%BB%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0-python%E7%89%88/"
+    >kmeans聚类手动实现-python版</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/11/19/kmeans%E8%81%9A%E7%B1%BB%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0-python%E7%89%88/" class="article-date">
+  <time datetime="2020-11-19T15:05:31.000Z" itemprop="datePublished">2020-11-19</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="聚类算法">聚类算法</h2>
+<p>是在没有给定划分类别的情况下，根据数据的相似度进行分组的一种方法，分组的原则是组内距离最小化而组间距离最大化。</p>
+<p>K-means算法是典型的基于距离的非层次聚类算法，在最小化误差函数的基础上将数据划分为预定的K类别，采用距离作为相似性的评级指标，即认为两个对象的距离越近，其相似度越大。</p>
+<h2 id="kmeans流程">kmeans流程</h2>
+<p>算法过程：</p>
+<ol>
+<li>从N个样本数据中随机选取K个对象作为初始的聚类质心。</li>
+<li>分别计算每个样本到各个聚类中心的距离，将对象分配到距离最近的聚类中。</li>
+<li>所有对象分配完成之后，重新计算K个聚类的质心。</li>
+<li>与前一次的K个聚类中心比较，如果发生变化，重复过程2，否则转过程5.</li>
+<li>当质心不再发生变化时，停止聚类过程，并输出聚类结果。</li>
+</ol>
+<h2 id="数据集介绍">数据集介绍</h2>
+<p>使用sklearn自带的鸢尾花数据集</p>
+<pre><code>from sklearn.datasets import load_iris
+data = load_iris()
+</code></pre>
+<p>即可导入数据。</p>
+<p>数据集中的特征包括：</p>
+<pre><code>print(&quot;鸢尾花数据集的返回值：\n&quot;, iris)
+# 返回值是一个继承自字典的Bench
+print(&quot;鸢尾花的特征值:\n&quot;, iris[&quot;data&quot;])
+print(&quot;鸢尾花的目标值：\n&quot;, iris.target)
+print(&quot;鸢尾花特征的名字：\n&quot;, iris.feature_names)
+print(&quot;鸢尾花目标值的名字：\n&quot;, iris.target_names)
+print(&quot;鸢尾花的描述：\n&quot;, iris.DESCR)
+</code></pre>
+<p>我们这里只使用目标是和特征值，这个特征值经过print是一个四维向量。<br>
+鸢尾花的target只包括三种花，所以k=3时候理论上最佳。编写代码的时候将target一并写入数组进行组合，这样在聚类完成后进行验证分类的错误率来衡量算法好坏。</p>
+<h2 id="代码简介">代码简介</h2>
+<p>代码除了调用数据集和划分数据集使用到了sklearn的库函数之外，其余全部使用python自带的list结构或set结构和numpy相关函数实现。</p>
+<h3 id="主函数">主函数</h3>
+<p>第一次随机选取核心，就取数据集的前k个分别作为中心</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">def main(x,y,k,max_iter,interrupte_distance = 0):</span><br><span class="line">	#x是数据集，y是标签，k是聚类数目,终止距离和最大迭代数目.</span><br><span class="line">	#第一步初始化ak</span><br><span class="line">	a=[]</span><br><span class="line">	a_check = []#用于之后检查准确率</span><br><span class="line">	for i in range(k):</span><br><span class="line">		a.append([x.pop(0)])</span><br><span class="line">		a_check.append([y.pop(0)])</span><br><span class="line">	#初始化完了，来一遍第一次</span><br><span class="line">	for i in range(len(x)):</span><br><span class="line">		dist = []</span><br><span class="line">		for num in range(k):</span><br><span class="line">			dist.append(calc_distance(a[num][0],x[i]))</span><br><span class="line">		min_index = indexofMin(dist)</span><br><span class="line">		a[min_index].append(x[i])</span><br><span class="line">		a_check[min_index].append(y[i])</span><br><span class="line">	check_print(a,a_check)</span><br><span class="line">	#c初始化完成，a是一个k*特征数，的矩阵，a_check是检查矩阵。</span><br><span class="line">	for i in range(max_iter):</span><br><span class="line">		print(&#x27;\n------------&#x27;)</span><br><span class="line">		print(&#x27;第&#x27;+str(i+1)+&#x27;次循环&#x27;)</span><br><span class="line">		main_loop(a,a_check,interrupte_distance)</span><br></pre></td></tr></table></figure>
+<h3 id="主循环">主循环</h3>
+<p>先检查终止条件是否满足。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">def main_loop(a,a_check,interrupte_distance=0):</span><br><span class="line">	#a的一重下表是k，a_check跟着最后算准确率.第二下标是数据集。</span><br><span class="line">	k = len(a)</span><br><span class="line">	ll = len(a[0][0])#特征的数量</span><br><span class="line"></span><br><span class="line">	## a的第一个是上次的质心</span><br><span class="line">	#计算质心</span><br><span class="line">	a_array = np.array(a)</span><br><span class="line">	heart_calc = []</span><br><span class="line">	flag_interrupt = 0</span><br><span class="line">	for i in range(k):</span><br><span class="line">		heart_calc.append([])</span><br><span class="line"></span><br><span class="line">	#print(len())</span><br><span class="line">	#print(a[2])</span><br><span class="line">	#exit(0)</span><br><span class="line">	for i in range(k):</span><br><span class="line">		#对a[i]求均值了</span><br><span class="line">		for j in range(ll):</span><br><span class="line">			#print(a[i][:][j][1])</span><br><span class="line">			#print(i,j)</span><br><span class="line">			#heart_calc[i].append(np.mean(a[i][:][j]))</span><br><span class="line">			heart_calc[i].append(middle_mean(a,i,j))</span><br><span class="line">		if calc_distance(heart_calc[i],a[i][0])&gt;interrupte_distance:</span><br><span class="line">			flag_interrupt = 1</span><br><span class="line">	if flag_interrupt == 0:</span><br><span class="line">		#满足距离要求</span><br><span class="line">		return 0</span><br><span class="line"></span><br><span class="line">	#聚类中心算完,并且不满足距离要求,开始迭代</span><br><span class="line"></span><br><span class="line">	for i in range(k):</span><br><span class="line">		for j in range(len(a[i])):</span><br><span class="line">			tmp = a[i].pop(0)</span><br><span class="line">			tmp_lab = a_check[i].pop(0)</span><br><span class="line">			tmp_index = find_heart_index(heart_calc,tmp)</span><br><span class="line">			a[tmp_index].append(tmp)</span><br><span class="line">			a_check[tmp_index].append(tmp_lab)</span><br><span class="line">	print(&#x27;中心点坐标：&#x27;)</span><br><span class="line">	print(heart_calc)</span><br><span class="line">	check_print(a,a_check)		</span><br><span class="line">	return a,a_check</span><br></pre></td></tr></table></figure>
+<h2 id="实验结果">实验结果</h2>
+<p>当k=3时候，输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">初始化错误率：0.35</span><br><span class="line">初始化方差：0.2637878757089331</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">------------</span><br><span class="line">第1次循环</span><br><span class="line">中心点坐标：</span><br><span class="line">[[5.173076923076924, 3.661538461538462, 1.4653846153846157, 0.27692307692307694], [6.528333333333333, 2.986666666666667, 5.255000000000001, 1.8366666666666667], [5.161764705882353, 2.8058823529411767, 2.85, 0.776470588235294]]</span><br><span class="line">错误率：0.20833333333333334</span><br><span class="line">方差：0.12704004558840606</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">------------</span><br><span class="line">第2次循环</span><br><span class="line">中心点坐标：</span><br><span class="line">[[4.9975000000000005, 3.47, 1.4625, 0.2475], [6.495238095238095, 2.9777777777777783, 5.204761904761905, 1.8126984126984127], [5.447058823529411, 2.5529411764705885, 3.7588235294117647, 1.1588235294117646]]</span><br><span class="line">错误率：0.15</span><br><span class="line">方差：0.126100321239607</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">------------</span><br><span class="line">第3次循环</span><br><span class="line">中心点坐标：</span><br><span class="line">[[4.9975000000000005, 3.47, 1.4625, 0.2475], [6.583928571428572, 3.001785714285714, 5.310714285714285, 1.8678571428571427], [5.545833333333333, 2.620833333333333, 3.9333333333333336, 1.2208333333333334]]</span><br><span class="line">错误率：0.125</span><br><span class="line">方差：0.12874688121486713</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">------------</span><br><span class="line">第4次循环</span><br><span class="line">中心点坐标：</span><br><span class="line">[[4.9975000000000005, 3.47, 1.4625, 0.2475], [6.609433962264151, 3.020754716981132, 5.350943396226417, 1.8962264150943395], [5.61111111111111, 2.625925925925926, 4.007407407407407, 1.237037037037037]]</span><br><span class="line">错误率：0.10833333333333334</span><br><span class="line">方差：0.13044657523262912</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">------------</span><br><span class="line">第5次循环</span><br><span class="line">中心点坐标：</span><br><span class="line">[[4.9975000000000005, 3.47, 1.4625, 0.2475], [6.631372549019607, 3.0156862745098034, 5.3803921568627455, 1.911764705882353], [5.641379310344826, 2.662068965517242, 4.048275862068966, 1.2551724137931033]]</span><br><span class="line">错误率：0.10833333333333334</span><br><span class="line">方差：0.13267293238109287</span><br></pre></td></tr></table></figure>
+<h2 id="实验结论">实验结论</h2>
+<p>整体来看，由于kmeans主要使用的是距离来分类，导致算法迅速收敛，一般两三个循环就可以收敛到最终结果了，即使一开始的中心点是随机选取的。</p>
+<p>从实验结果可以看出，k=3和k=4时候差距不大，如果在增加k，效果就会变得不佳。由于k=4比三多一类，所以每一类内部的样本个数会变少，所以方差会略低与k=3。</p>
+<h2 id="完整代码">完整代码</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">from sklearn.datasets import load_iris</span><br><span class="line">from sklearn.model_selection import train_test_split</span><br><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line">def indexofMin(arr):</span><br><span class="line">	minindex = 0</span><br><span class="line">	currentindex = 1</span><br><span class="line">	while currentindex &lt; len(arr):</span><br><span class="line">		if arr[currentindex] &lt; arr[minindex]:</span><br><span class="line">			minindex = currentindex</span><br><span class="line">		currentindex += 1</span><br><span class="line">	return minindex</span><br><span class="line">def get_var(a):</span><br><span class="line">	#狗屁需求还要弄什么密度,用方差来反映离散程度吧</span><br><span class="line">	l = len(a)</span><br><span class="line">	ans = []</span><br><span class="line">	for i in range(l):</span><br><span class="line">		ans.append(np.array(a[i]).var(axis=0))</span><br><span class="line">	return ans</span><br><span class="line">def calc_distance(list_a,list_b):</span><br><span class="line">	l = len(list_a)</span><br><span class="line">	#约束是最小均方误差MSE</span><br><span class="line">	ans = 0</span><br><span class="line">	for i in range(l):</span><br><span class="line">		ans += pow(list_a[i] - list_b[i],2)</span><br><span class="line">	return np.sqrt(ans)</span><br><span class="line"></span><br><span class="line">def main(x,y,k,max_iter,interrupte_distance = 0):</span><br><span class="line">	#x是数据集，y是标签，k是聚类数目,终止距离和最大迭代数目.</span><br><span class="line">	#第一步初始化ak</span><br><span class="line">	a=[]</span><br><span class="line">	a_check = []#用于之后检查准确率</span><br><span class="line">	for i in range(k):</span><br><span class="line">		a.append([x.pop(0)])</span><br><span class="line">		a_check.append([y.pop(0)])</span><br><span class="line">	#初始化完了，来一遍第一次</span><br><span class="line">	for i in range(len(x)):</span><br><span class="line">		dist = []</span><br><span class="line">		for num in range(k):</span><br><span class="line">			dist.append(calc_distance(a[num][0],x[i]))</span><br><span class="line">		min_index = indexofMin(dist)</span><br><span class="line">		a[min_index].append(x[i])</span><br><span class="line">		a_check[min_index].append(y[i])</span><br><span class="line">	check_print(a,a_check)</span><br><span class="line">	#c初始化完成，a是一个k*特征数，的矩阵，a_check是检查矩阵。</span><br><span class="line">	for i in range(max_iter):</span><br><span class="line">		print(&#x27;\n------------&#x27;)</span><br><span class="line">		print(&#x27;第&#x27;+str(i+1)+&#x27;次循环&#x27;)</span><br><span class="line">		main_loop(a,a_check,interrupte_distance)</span><br><span class="line"></span><br><span class="line">def middle_mean(l,i,j):</span><br><span class="line">	#妈的heart_calc[i].append(np.mean(a[i][:][j]))用不了，why doesnt np work?</span><br><span class="line">	tmp =[]</span><br><span class="line">	for ii in range(len(l[i])):</span><br><span class="line">		tmp.append(l[i][ii][j])</span><br><span class="line">	return np.mean(tmp)</span><br><span class="line"></span><br><span class="line">def main_loop(a,a_check,interrupte_distance=0):</span><br><span class="line">	#a的一重下表是k，a_check跟着最后算准确率.第二下标是数据集。</span><br><span class="line">	k = len(a)</span><br><span class="line">	ll = len(a[0][0])#特征的数量</span><br><span class="line"></span><br><span class="line">	## a的第一个是上次的质心</span><br><span class="line">	#计算质心</span><br><span class="line">	a_array = np.array(a)</span><br><span class="line">	heart_calc = []</span><br><span class="line">	flag_interrupt = 0</span><br><span class="line">	for i in range(k):</span><br><span class="line">		heart_calc.append([])</span><br><span class="line"></span><br><span class="line">	#print(len())</span><br><span class="line">	#print(a[2])</span><br><span class="line">	#exit(0)</span><br><span class="line">	for i in range(k):</span><br><span class="line">		#对a[i]求均值了</span><br><span class="line">		for j in range(ll):</span><br><span class="line">			#print(a[i][:][j][1])</span><br><span class="line">			#print(i,j)</span><br><span class="line">			#heart_calc[i].append(np.mean(a[i][:][j]))</span><br><span class="line">			heart_calc[i].append(middle_mean(a,i,j))</span><br><span class="line">		if calc_distance(heart_calc[i],a[i][0])&gt;interrupte_distance:</span><br><span class="line">			flag_interrupt = 1</span><br><span class="line">	if flag_interrupt == 0:</span><br><span class="line">		#满足距离要求</span><br><span class="line">		return 0</span><br><span class="line"></span><br><span class="line">	#聚类中心算完,并且不满足距离要求,开始迭代</span><br><span class="line"></span><br><span class="line">	for i in range(k):</span><br><span class="line">		for j in range(len(a[i])):</span><br><span class="line">			tmp = a[i].pop(0)</span><br><span class="line">			tmp_lab = a_check[i].pop(0)</span><br><span class="line">			tmp_index = find_heart_index(heart_calc,tmp)</span><br><span class="line">			a[tmp_index].append(tmp)</span><br><span class="line">			a_check[tmp_index].append(tmp_lab)</span><br><span class="line">	print(&#x27;中心点坐标：&#x27;)</span><br><span class="line">	print(heart_calc)</span><br><span class="line">	check_print(a,a_check)		</span><br><span class="line">	return a,a_check</span><br><span class="line">def check_print(a,a_check):</span><br><span class="line">	sum_num = 0</span><br><span class="line">	wrong_num = 0</span><br><span class="line">	for i in range(len(a_check)):</span><br><span class="line">		tmp = max(a_check[i],key = a_check.count)</span><br><span class="line">		for j in a_check[i]:</span><br><span class="line">			sum_num+=1</span><br><span class="line">			if j != tmp:</span><br><span class="line">				wrong_num += 1</span><br><span class="line">	#print(a_check)</span><br><span class="line">	print(&quot;错误率：&quot;+str(wrong_num/sum_num))</span><br><span class="line">	print(&quot;方差：&quot;+str(np.mean(get_var(a))))</span><br><span class="line">	print()</span><br><span class="line">def find_heart_index(heart,undef):</span><br><span class="line">	#heart是各个中心节点,undef是待确定的特征</span><br><span class="line">	k = len(heart)</span><br><span class="line">	#print(heart)</span><br><span class="line">	min_index = 0</span><br><span class="line">	min_dis = 100000</span><br><span class="line">	for i in range(k):</span><br><span class="line">		tmp_dis = calc_distance(undef,heart[i])</span><br><span class="line">		#print(tmp_dis)</span><br><span class="line">		if(tmp_dis&lt;min_dis):</span><br><span class="line">			min_index = i</span><br><span class="line">			min_dis = tmp_dis</span><br><span class="line">	#print(&#x27;min&#x27;)</span><br><span class="line">	#print(min_index)</span><br><span class="line">	return min_index</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">if __name__ == &#x27;__main__&#x27;:</span><br><span class="line">	data = load_iris()</span><br><span class="line"></span><br><span class="line">	#print(data.keys())</span><br><span class="line">	x_train, x_test, y_train, y_test = train_test_split(data.data, data.target,test_size=0.2, random_state=222)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	#print(&quot;测试集的目标值：\n&quot;, y_train)</span><br><span class="line">	main(x_train.tolist(),y_train.tolist(),4,5)</span><br></pre></td></tr></table></figure> 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
+  id="post-实轴上开环零极点之间的分离会和点问题-1"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/11/04/%E5%AE%9E%E8%BD%B4%E4%B8%8A%E5%BC%80%E7%8E%AF%E9%9B%B6%E6%9E%81%E7%82%B9%E4%B9%8B%E9%97%B4%E7%9A%84%E5%88%86%E7%A6%BB%E4%BC%9A%E5%92%8C%E7%82%B9%E9%97%AE%E9%A2%98-1/"
+    >实轴上开环零极点之间的分离会和点问题</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/11/04/%E5%AE%9E%E8%BD%B4%E4%B8%8A%E5%BC%80%E7%8E%AF%E9%9B%B6%E6%9E%81%E7%82%B9%E4%B9%8B%E9%97%B4%E7%9A%84%E5%88%86%E7%A6%BB%E4%BC%9A%E5%92%8C%E7%82%B9%E9%97%AE%E9%A2%98-1/" class="article-date">
+  <time datetime="2020-11-03T16:57:11.000Z" itemprop="datePublished">2020-11-04</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="问题">问题</h2>
+<p>判断题：</p>
+<p>若实轴上某开环极点与开环零点之间具有根轨迹，那么他们之间肯定没有分离汇合点。</p>
+<p>答案：错，可以有分离汇合点，反例如下。</p>
+<h2 id="例子">例子</h2>
+<pre><code>sys =
+ 
+     s + 1
+  -----------
+  s^3 + 9 s^2
+</code></pre>
+<p><img src="/images/root_1.png" alt=""></p>
+<p>或者</p>
+<pre><code>sys =
+ 
+     s + 2
+  ------------
+  s^3 + 20 s^2
+</code></pre>
+<p><img src="/images/root_2.png" alt=""></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
   id="post-图书馆预约脚本新版个人版-requests"
   class="article article-type-post"
   itemscope
@@ -372,354 +530,6 @@ Labview中加入NImyrio的digital in，同时设置myrio的端口，我们这里
 </article>
 
     
-    <article
-  id="post-互联网加工作小结"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/07/09/%E4%BA%92%E8%81%94%E7%BD%91%E5%8A%A0%E5%B7%A5%E4%BD%9C%E5%B0%8F%E7%BB%93/"
-    >互联网加工作小结</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2020/07/09/%E4%BA%92%E8%81%94%E7%BD%91%E5%8A%A0%E5%B7%A5%E4%BD%9C%E5%B0%8F%E7%BB%93/" class="article-date">
-  <time datetime="2020-07-09T04:37:43.000Z" itemprop="datePublished">2020-07-09</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h2 id="起因">起因</h2>
-<p>腾飞杯虽然得到了电子信息赛道的特奖，但是对于我个人来说还是有一些遗憾，对项目也是很不舍得，希望能做到更好！</p>
-<p>这里展示一下自己所作的内容，其中部分源代码暂时不能开发，等评奖结束后可以开源，目前包括csdn异步http和异步mysql爬虫，哔哩哔哩批量视频爬虫等。</p>
-<h3 id="开工前的期望">开工前的期望</h3>
-<h4 id="后端和爬虫">后端和爬虫</h4>
-<ol>
-<li>爬取的范围更为广阔，搜索撸棒性更强。</li>
-<li>保留原文格式，方便读者阅读。</li>
-</ol>
-<h4 id="前端">前端</h4>
-<ol>
-<li>晃动问题，不能让所有节点完全离开界面，不能让用户找不到节点的位置，这个是腾飞杯版本的最难受的地方。</li>
-</ol>
-<h4 id="驱动">驱动</h4>
-<ol>
-<li>模式切换问题，切换操作过于复杂。</li>
-</ol>
-<h2 id="总工作量">总工作量</h2>
-<ol>
-<li>前期图书馆预约和维持脚本，并尝试团队维持脚本，虽然最后由于稳定性原因没有推广。</li>
-<li>新版数据库设计，关系表和内容表分离，提高效率。</li>
-<li>配合小明的爬虫写了一套异步数据库接口，和小明的异步http爬虫配合不错，最终分四天大致上完全部数据。</li>
-<li>提供少量python的数据库调试接口，这个比较简略。</li>
-<li>完善后端java中socket和前端通信部分，升级为新版数据库所对应的版本，目录升级为二级目录，内容更为丰富。</li>
-<li>调试前端，debug。</li>
-<li>节点关系表存储设计和接口。</li>
-</ol>
-<p>部分后端的AI推荐算法相关工作等待若哥和钱龙完成，我这里使用random代替。</p>
-<h2 id="新版爬虫数据系统设计-v2">新版爬虫数据系统设计_v2</h2>
-<h3 id="搜索正文存储表-spyder-main-table">搜索正文存储表  spyder_main_table</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">id</th>
-<th style="text-align:center">keyword</th>
-<th style="text-align:center">link</th>
-<th style="text-align:center">tittle</th>
-<th style="text-align:center">abstract</th>
-<th style="text-align:center">content</th>
-<th style="text-align:center">child_len</th>
-<th style="text-align:center">value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">int</td>
-<td style="text-align:center">char 50</td>
-<td style="text-align:center">char 100</td>
-<td style="text-align:center">char 200</td>
-<td style="text-align:center">TEXT</td>
-<td style="text-align:center">TEXT</td>
-<td style="text-align:center">int</td>
-<td style="text-align:center">int</td>
-</tr>
-<tr>
-<td style="text-align:center">主键</td>
-<td style="text-align:center">搜索的关键词</td>
-<td style="text-align:center">本文连接</td>
-<td style="text-align:center">文章标题</td>
-<td style="text-align:center">内容摘要（第一轮的摘要在搜索界面存储）</td>
-<td style="text-align:center">内容全文</td>
-<td style="text-align:center">子链接的总个数</td>
-<td style="text-align:center">节点权重价值，目前没有使用</td>
-</tr>
-</tbody>
-</table>
-<h3 id="搜索内容表-t-spyder-main-content">搜索内容表 t_spyder_main_content</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">id</th>
-<th style="text-align:center">content</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">主键</td>
-<td style="text-align:center">内容</td>
-</tr>
-</tbody>
-</table>
-<h3 id="子链接存储表-spyder-child-table">子链接存储表  spyder_child_table</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">id</th>
-<th style="text-align:center">parent_link</th>
-<th style="text-align:center">link</th>
-<th style="text-align:center">tittle</th>
-<th style="text-align:center">abstract</th>
-<th style="text-align:center">content</th>
-<th style="text-align:center">child_len</th>
-<th style="text-align:center">value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">int</td>
-<td style="text-align:center">char 100</td>
-<td style="text-align:center">char 200</td>
-<td style="text-align:center">char 200</td>
-<td style="text-align:center">TEXT</td>
-<td style="text-align:center">TEXT</td>
-<td style="text-align:center">int</td>
-<td style="text-align:center">int</td>
-</tr>
-<tr>
-<td style="text-align:center">主键</td>
-<td style="text-align:center">父连接地址，作为搜索子链接的索引</td>
-<td style="text-align:center">当前连接</td>
-<td style="text-align:center">当前连接标题</td>
-<td style="text-align:center">当前链接摘要(之后的摘要在父文末就有，展开连接后存储新的连接内容)</td>
-<td style="text-align:center">当前连接内容</td>
-<td style="text-align:center">子链接数目</td>
-<td style="text-align:center">权重</td>
-</tr>
-</tbody>
-</table>
-<h3 id="推荐内容表-t-spyder-child-content">推荐内容表 t_spyder_child_content</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">id</th>
-<th style="text-align:center">content</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">主键</td>
-<td style="text-align:center">内容</td>
-</tr>
-</tbody>
-</table>
-<h3 id="评论存储表-t-spyder-comment-table">评论存储表  t_spyder_comment_table</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">link</th>
-<th style="text-align:center">target</th>
-<th style="text-align:center">nick_name</th>
-<th style="text-align:center">write_time</th>
-<th style="text-align:center">content</th>
-<th style="text-align:center">value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">char 200</td>
-<td style="text-align:center">char 200</td>
-<td style="text-align:center">TEXT</td>
-<td style="text-align:center">datetime</td>
-<td style="text-align:center">TEXT</td>
-<td style="text-align:center">int</td>
-</tr>
-<tr>
-<td style="text-align:center">链接</td>
-<td style="text-align:center">回复的用户昵称，如果没有回复，就存博客链接</td>
-<td style="text-align:center">用户昵称</td>
-<td style="text-align:center">评论时间</td>
-<td style="text-align:center">评论内容</td>
-<td style="text-align:center">评分</td>
-</tr>
-</tbody>
-</table>
-<h3 id="主菜单表，从大keyword映射到小keyword-t-spyder-menu">主菜单表，从大keyword映射到小keyword  t_spyder_menu</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">main_keyword</th>
-<th style="text-align:center">keyword</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">主菜单节点</td>
-<td style="text-align:center">子keyword</td>
-</tr>
-</tbody>
-</table>
-<h3 id="视频url映射表-t-spyder-url">视频url映射表 t_spyder_url</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">keyword</th>
-<th style="text-align:center">url</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">关键词</td>
-<td style="text-align:center">视频地址</td>
-</tr>
-</tbody>
-</table>
-<p>预估搜索子链接，广搜，深度三轮左右，两轮也行。如果当前连接是最后一轮，child_len为0.</p>
-<p>子链接存储的数据结构</p>
-<h2 id="爬虫设计思路：">爬虫设计思路：</h2>
-<ol>
-<li>
-<p>每次get新的连接，在当前索引中存储当前连接的内容，和子链接的数目，然后根据页面的索引，去子链接的表里面存储，当前页面可以存子链接的标题和摘要，展开子链接内容后存子链接的content。</p>
-</li>
-<li>
-<p>可以递归爬取三层子链接</p>
-</li>
-<li>
-<p>子链接需要检验重复，就连接编号不能一致，可能会用到ignore</p>
-</li>
-<li>
-<p>ignore查重可能会导致不公平性，比如第一个搜索的节点没有重复内容，第二个就会出现重复内容，最后一个可能百分之七八十都是重复的，效率很低，关联方法可以优化。</p>
-</li>
-</ol>
-<h3 id="关于爬虫想到的两个问题：">关于爬虫想到的两个问题：</h3>
-<ol>
-<li>
-<p>子节点不均衡的问题，(目前想到的办法是设置上限，或者设计多对多的关系，感觉怪怪的)</p>
-</li>
-<li>
-<p>优秀博客筛选：<br>
-内容长度大于一定限制<br>
-标题不能含有特殊标签<br>
-内容，标题，阅读量和发表时间。</p>
-</li>
-</ol>
-<h2 id="bilibili视频爬虫">bilibili视频爬虫</h2>
-<p>视频爬虫，哔哩哔哩，两个问题，一个是总存储量，即爬不爬第二页，第二个是弹幕，可以爬.</p>
-<p>使用阿里云存储对象，</p>
-<h2 id="关键词表单">关键词表单</h2>
-<p>[‘C语言学习’,‘java学习’,‘python’,‘机器学习’,‘Kubernetes’,‘前端’,‘计算机网络’]<br>
-[‘C语言指针’,‘C语言结构体’,‘C语言数组’,‘C函数’,‘C语言标准库’,‘C语言算法’,‘C语言内存管理’,‘C语言字符串’,‘C语言实例’,‘C语言错误处理’,‘java数据结构’,‘Java排序算法’,‘java注解’,‘java基础’,‘jvm’,‘java框架’,‘数据库基础’,‘java高并发’,‘java泛型’,‘java反射’,‘python基础’,‘python面向对象’,‘python异步’,‘python文件系统’,‘python异常处理’,‘python数据科学’,‘pythonweb库’,‘python爬虫’,‘python机器学习’,‘python图像处理’,‘计算机视觉’,‘自然语言处理’,‘社会网络分析’,‘推荐算法’,‘数据挖掘’,‘模型诊断’,‘强化学习’,‘模型融合’,‘搜索引擎’,‘统计学习方法’,‘kubernetes环境’,‘kubernetes基础概念’,‘kubernetes基本架构’,‘kubernetes基本调度流程’,‘kubernetes API’,‘kubernetes Master’,‘kubernetes扩展’,‘kubebuilder’,‘kubernetes存储’,‘kubectl’,‘Ajax’,‘HTML’,‘CSS’,‘JavaScript’,‘Dom’,‘HTML5’,‘VUE’,‘React’,‘Angular’,‘jQuery’,‘物理层’,‘数据链路层’,‘网络层’,‘传输层’,‘应用层’,‘网络安全’,‘无线网路’,‘HTTP协议’,‘TCP’,‘DNS’,‘数字认证’]</p>
-<h2 id="socket通信">socket通信</h2>
-<p>这里的思路是让java后端和python代码隔离，交互只能通过数据库，否则日后维护将更加困难<br>
-get_menu这里，必须维护一个手动版的初始节点</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-mysql-win10密码忘记修改"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/07/02/mysql-win10%E5%AF%86%E7%A0%81%E5%BF%98%E8%AE%B0%E4%BF%AE%E6%94%B9/"
-    >mysql win10密码忘记修改</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2020/07/02/mysql-win10%E5%AF%86%E7%A0%81%E5%BF%98%E8%AE%B0%E4%BF%AE%E6%94%B9/" class="article-date">
-  <time datetime="2020-07-02T01:33:48.000Z" itemprop="datePublished">2020-07-02</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h2 id="起因">起因</h2>
-<p>需要本地数据库加速爬虫速度</p>
-<h2 id="操作">操作</h2>
-<p>首先停止mysql服务</p>
-<pre><code>net stop mysql
-</code></pre>
-<p>杀进程也可以，不过比较麻烦。</p>
-<p>第二部找到安装目录地下的data文件，我一开始想要重置，总给我error说data文件夹下已经有数据，我就直接把data文件夹删除了。</p>
-<p>第三步，执行重置操作</p>
-<pre><code>mysqld --initialize --user=root --console
-</code></pre>
-<p>重置后会给一个临时密码</p>
-<p><img src="/images/mysql_1.png" alt=""></p>
-<p>第四步，使用刚给的临时密码正常登录</p>
-<pre><code>mysql -u root -p
-</code></pre>
-<p><img src="/images/mysql_2.png" alt=""></p>
-<p>第五步，重置密码</p>
-<pre><code> alter user user() identified by &quot;yourpasswd&quot;;
-</code></pre>
-<p>user表重置一下。完事，这下终于知道自己的密码是啥了。</p>
-<p><img src="/images/mysql_3.png" alt=""></p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
   </article>
   
 
@@ -737,7 +547,7 @@ get_menu这里，必须维护一个手动版的初始节点</p>
     <ul>
       <li>
         Copyrights &copy;
-        2015-2024
+        2015-2025
         <i class="ri-heart-fill heart_icon"></i> galaxy
       </li>
     </ul>

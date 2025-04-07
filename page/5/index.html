@@ -183,6 +183,212 @@
     
     
     <article
+  id="post-分支定界求解MIP的复现"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/08/27/%E5%88%86%E6%94%AF%E5%AE%9A%E7%95%8C%E6%B1%82%E8%A7%A3MIP%E7%9A%84%E5%A4%8D%E7%8E%B0/"
+    >分支定界(隐枚举)求解MIP的复现</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/08/27/%E5%88%86%E6%94%AF%E5%AE%9A%E7%95%8C%E6%B1%82%E8%A7%A3MIP%E7%9A%84%E5%A4%8D%E7%8E%B0/" class="article-date">
+  <time datetime="2022-08-27T13:01:52.000Z" itemprop="datePublished">2022-08-27</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1>分支定界求解MIP的复现</h1>
+<h2 id="算法思想">算法思想</h2>
+<p>分支定界法是本科运筹学课程中学习的求解整数规划的算法之一，分支定界算法的核心思想就是分枝和剪枝。当我们不考虑所求解必须是整数这个条件时，用单纯形法可求出最优解，但是这个解往往不全是整数，因此我们采用剪枝的方式一点一点缩小范围，直到所求解为整数解。</p>
+<ul>
+<li>分枝定界法是一种基于“树”结构的搜索或遍历方法</li>
+<li>分枝定界法中的整数性判断不会在本质上引起数值困难</li>
+<li>定界是为了避免无效的分枝搜索，恰当的分枝有助于更好定界</li>
+<li>分枝定界法是部分枚举而不是穷举</li>
+</ul>
+<h2 id="算法程序结构和代码">算法程序结构和代码</h2>
+<p>算法由初始化节点，更新上界，更新下界，增加约束获得子问题，求解子问题几部分构成。具体就是在算法主循环中维护一个节点队列和一个等待处理的变量队列，每次循环中出队列一个节点，进行初步计算和判定上下界，并进行减枝，如果顺利计算，则从变量队列中出下一个变量进行分枝，将变量中增加cut后的两个节点push入节点队列，进入下一循环。终止条件是需要分枝计算的变量队列为空。</p>
+<p>测试代码和算法class如下。具体使用方式如测试代码所示，输入gurobi.model的建立好的模型和模型中的零一量的namelist即可（后面是用getvarbyname处理的，因此输入的是字符串）。</p>
+<h3 id="测试代码">测试代码</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> gurobipy <span class="keyword">as</span> gp</span><br><span class="line"><span class="keyword">from</span> gurobipy <span class="keyword">import</span> GRB</span><br><span class="line"><span class="keyword">from</span> branch_and_bound_class <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">model = gp.Model(<span class="string">&quot;mip1&quot;</span>)</span><br><span class="line">x = model.addVars(<span class="number">10</span>, name = <span class="string">&#x27;x&#x27;</span>, vtype = GRB.BINARY)</span><br><span class="line"></span><br><span class="line">model.setObjective(-x[<span class="number">0</span>]  -x[<span class="number">1</span>]  -<span class="number">2</span>*x[<span class="number">2</span>]  -<span class="number">2</span>*x[<span class="number">8</span>] - x[<span class="number">9</span>], GRB.MINIMIZE)</span><br><span class="line">model.addConstr(x[<span class="number">0</span>] + <span class="number">2</span>*x[<span class="number">1</span>] + <span class="number">3</span>*x[<span class="number">2</span>] + <span class="number">5</span>*x[<span class="number">3</span>] + <span class="number">3</span>*x[<span class="number">4</span>] &lt;= <span class="number">8</span>, <span class="string">&quot;c0&quot;</span>)</span><br><span class="line">model.addConstr(<span class="number">2</span>*x[<span class="number">3</span>] + <span class="number">2</span>*x[<span class="number">4</span>] + <span class="number">3</span>*x[<span class="number">5</span>] + <span class="number">5</span>*x[<span class="number">6</span>] + <span class="number">3</span>*x[<span class="number">7</span>] &lt;= <span class="number">10</span>, <span class="string">&quot;c1&quot;</span>)</span><br><span class="line">model.addConstr(x[<span class="number">7</span>] + x[<span class="number">8</span>] + <span class="number">3</span>*x[<span class="number">9</span>] &lt;= <span class="number">4</span>, <span class="string">&quot;c2&quot;</span>)</span><br><span class="line">model.addConstr(<span class="number">2</span>*x[<span class="number">0</span>] + x[<span class="number">2</span>] + <span class="number">3</span>*x[<span class="number">7</span>] + <span class="number">3</span>*x[<span class="number">8</span>] + <span class="number">2</span>*x[<span class="number">9</span>] &lt;= <span class="number">8</span>, <span class="string">&quot;c3&quot;</span>)</span><br><span class="line">model.addConstr(x[<span class="number">7</span>] + x[<span class="number">8</span>] + <span class="number">3</span>*x[<span class="number">9</span>] &gt;= <span class="number">1</span>, <span class="string">&quot;c4&quot;</span>)</span><br><span class="line">model.addConstr(<span class="number">2</span>*x[<span class="number">4</span>] + <span class="number">2</span>*x[<span class="number">5</span>] + x[<span class="number">6</span>] + <span class="number">5</span>*x[<span class="number">7</span>] + <span class="number">3</span>*x[<span class="number">8</span>] &gt;= <span class="number">4</span>, <span class="string">&quot;c5&quot;</span>)</span><br><span class="line"><span class="comment"># model.optimize()</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">candidate_vars = [<span class="string">&#x27;x[0]&#x27;</span>,<span class="string">&#x27;x[1]&#x27;</span>,<span class="string">&#x27;x[2]&#x27;</span>,<span class="string">&#x27;x[3]&#x27;</span>,<span class="string">&#x27;x[4]&#x27;</span>,<span class="string">&#x27;x[5]&#x27;</span>,<span class="string">&#x27;x[6]&#x27;</span>,<span class="string">&#x27;x[7]&#x27;</span>,<span class="string">&#x27;x[8]&#x27;</span>,<span class="string">&#x27;x[9]&#x27;</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">solve(model,candidate_vars)</span><br></pre></td></tr></table></figure>
+<h3 id="算法class">算法class</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gurobipy <span class="keyword">as</span> gp</span><br><span class="line"><span class="keyword">from</span> gurobipy <span class="keyword">import</span> GRB</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;branch and bound code</span></span><br><span class="line"><span class="string">输入gurobi的MIP模型 目前仅仅支持binary variable</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Node</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, model, upper_bound, lower_bound, candidate_vars</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;初始化节点</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Args:</span></span><br><span class="line"><span class="string">            model (_type_): gurobi model object</span></span><br><span class="line"><span class="string">            upper_bound (_type_): _description_</span></span><br><span class="line"><span class="string">            lower_bound (_type_): _description_</span></span><br><span class="line"><span class="string">            candidate_vars (_type_): list,NumVars</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        self.upper_bound, self.lower_bound = upper_bound, lower_bound</span><br><span class="line">        self.model = model</span><br><span class="line">        <span class="comment"># print(candidate_vars,upper_bound,lower_bound)</span></span><br><span class="line">        self.candidate_vars = candidate_vars.copy()</span><br><span class="line">        <span class="keyword">assert</span>(upper_bound &gt;= lower_bound), <span class="string">&quot;upper bound is less than lower bound&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">optimize</span>(<span class="params">self, heuristic_solve</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;求解Node</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Args:</span></span><br><span class="line"><span class="string">            heuristic_solve (anotherFuc): 传入函数参数,求解节点的方法</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Returns:</span></span><br><span class="line"><span class="string">            _type_: _description_</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        self.obj_values, self.solution = heuristic_solve(self.model)</span><br><span class="line">        <span class="keyword">if</span> self.obj_values == <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;infeasible&quot;</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;feasible&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">update_upper_bound</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;更新upbound,最小化问题的话,上界无条件更新</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="comment"># if self.upper_bound &gt; self.obj_values:</span></span><br><span class="line">        self.upper_bound = self.obj_values</span><br><span class="line">        <span class="keyword">assert</span>(self.lower_bound &lt;= self.obj_values)</span><br><span class="line">        <span class="keyword">assert</span>(self.lower_bound &lt;= self.upper_bound), <span class="string">&quot;upper bound is less than lower bound&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">update_lower_bound</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;更新lowerbound,最小化问题下界条件更新</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> self.lower_bound &lt; self.obj_values:</span><br><span class="line">            self.lower_bound = self.obj_values</span><br><span class="line">            <span class="keyword">assert</span>(self.lower_bound &lt;= self.obj_values)</span><br><span class="line">            <span class="keyword">assert</span>(self.lower_bound &lt;= self.upper_bound), <span class="string">&quot;upper bound is less than lower bound&quot;</span></span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">is_integer</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;判断解的质量</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Returns:</span></span><br><span class="line"><span class="string">            _type_: True则表示解OK</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">for</span> var <span class="keyword">in</span> self.solution:</span><br><span class="line">            <span class="keyword">if</span> <span class="number">0</span> &lt; var.x <span class="keyword">and</span> var.x &lt; <span class="number">1</span>:</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">is_child_problem</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="comment"># print(self.candidate_vars)</span></span><br><span class="line">        <span class="comment"># print(len(self.candidate_vars))</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(self.candidate_vars) &gt; <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_child_problem</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;_summary_得替换成GRBgetvarbyname,因为不是所有变量都是binary</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Returns:</span></span><br><span class="line"><span class="string">            _type_: _description_</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        self.child_left, self.child_right = self.model.copy(), self.model.copy()</span><br><span class="line">        branch_index, self.condidate_child_vars = self.choice_branch(self.candidate_vars)</span><br><span class="line">        <span class="comment"># 分枝left bound 和 right bound。</span></span><br><span class="line">        <span class="comment"># print(branch_index)</span></span><br><span class="line">        <span class="comment"># print(self.child_left.getVarByName(&#x27;x0&#x27;))</span></span><br><span class="line">        <span class="comment"># for v in self.child_left.getVars():</span></span><br><span class="line">        <span class="comment">#     print(&#x27;%s&#x27; % (v.VarName,))</span></span><br><span class="line">        self.child_left.addConstr(self.child_left.getVarByName(branch_index) == <span class="number">0</span>,<span class="string">&quot;left&quot;</span>)</span><br><span class="line">        self.child_right.addConstr(self.child_right.getVarByName(branch_index) == <span class="number">1</span>,<span class="string">&quot;right&quot;</span>)</span><br><span class="line">        self.child_left.write(<span class="string">&quot;left.lp&quot;</span>)</span><br><span class="line">        self.child_right.write(<span class="string">&quot;right.lp&quot;</span>)</span><br><span class="line">        node_left = Node(self.child_left, self.upper_bound, self.lower_bound, self.condidate_child_vars)</span><br><span class="line">        node_right = Node(self.child_right, self.upper_bound, self.lower_bound, self.condidate_child_vars)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> node_left, node_right</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">choice_branch</span>(<span class="params">self, candidate_vars</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;选择分枝的变量,这里可以加一些优化,但是似乎不太好加   现在是从等待分枝的变量中直接pop0</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Args:</span></span><br><span class="line"><span class="string">            candidate_vars (_type_): 维护一个栈,剩余的需要分枝的binary variables</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Returns:</span></span><br><span class="line"><span class="string">            _type_: _description_</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        self.condidate_child_vars = self.candidate_vars.copy()</span><br><span class="line">        branch_index = self.condidate_child_vars.pop(<span class="number">0</span>)  <span class="comment"># 改为name后应该弹出的是str：varName</span></span><br><span class="line">        <span class="keyword">return</span> branch_index, self.condidate_child_vars</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">write</span>(<span class="params">self</span>):</span><br><span class="line">        self.model.write(<span class="string">&quot;model.lp&quot;</span>)</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">heuristic_solve</span>(<span class="params">problem</span>):</span><br><span class="line">    problem.Params.OutputFlag = <span class="number">0</span></span><br><span class="line">    problem.optimize()</span><br><span class="line">    <span class="keyword">if</span> problem.status == GRB.INFEASIBLE:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span>, <span class="literal">None</span></span><br><span class="line">    <span class="comment"># for v in problem.getVars():</span></span><br><span class="line">    <span class="comment">#     print(&#x27;%s %g&#x27; % (v.VarName, v.X))</span></span><br><span class="line">    <span class="comment"># print(&#x27;Obj: %g&#x27; % problem.ObjVal)</span></span><br><span class="line">    <span class="keyword">return</span> problem.ObjVal, problem.getVars()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">choice_node</span>(<span class="params">condidate_node</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;选择下一个计算的节点 现在也是pop0</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        condidate_node (_type_): 维护的还没计算的节点</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        _type_: _description_</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    node = condidate_node.pop(<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> node, condidate_node</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">solve</span>(<span class="params">model,candidate_vars</span>):</span><br><span class="line">    model.update()</span><br><span class="line">    upper_bound, lower_bound = <span class="built_in">float</span>(<span class="string">&#x27;inf&#x27;</span>), <span class="built_in">float</span>(<span class="string">&#x27;-inf&#x27;</span>)</span><br><span class="line">    model_relax = model.relax()</span><br><span class="line">    root_node = Node(model = model_relax, upper_bound = upper_bound, lower_bound = lower_bound, candidate_vars = candidate_vars)</span><br><span class="line">    candidate_node = [root_node]</span><br><span class="line">    current_optimum = <span class="literal">None</span></span><br><span class="line">    <span class="keyword">while</span> candidate_node:</span><br><span class="line">        <span class="comment"># print(candidate_node)</span></span><br><span class="line">        node, candidate_node = choice_node(candidate_node)</span><br><span class="line">        <span class="keyword">if</span> node.upper_bound &lt;= lower_bound:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;prune by bound&quot;</span>)</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        model_status = node.optimize(heuristic_solve)</span><br><span class="line">        <span class="keyword">if</span> model_status == <span class="string">&#x27;infeasible&#x27;</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;prune by infeasiblity&quot;</span>)</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        node.update_lower_bound()</span><br><span class="line">        <span class="keyword">if</span> node.lower_bound &gt;= upper_bound:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;prune by bound&quot;</span>)</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        <span class="keyword">if</span> node.is_integer():</span><br><span class="line">            <span class="comment"># print(&#x27;yes&#x27;)</span></span><br><span class="line">            <span class="comment"># exit(0)</span></span><br><span class="line">            node.update_upper_bound()</span><br><span class="line">            <span class="comment"># lower bound </span></span><br><span class="line">            <span class="keyword">if</span> node.upper_bound &lt; upper_bound:</span><br><span class="line">                upper_bound = node.upper_bound</span><br><span class="line">                current_optimum = node.solution</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> node.is_child_problem():</span><br><span class="line">            child_node1, child_node2 = node.get_child_problem()</span><br><span class="line">            candidate_node.append(child_node1)</span><br><span class="line">            candidate_node.append(child_node2)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;lower_bound: &#x27;</span>,lower_bound)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;upper_bound: &quot;</span>, upper_bound)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;optimum:&quot;</span>, current_optimum)</span><br><span class="line"></span><br><span class="line">    </span><br></pre></td></tr></table></figure>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" rel="tag">优化算法</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
+  id="post-YARN资源调度"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/08/20/YARN%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6/"
+    >青训营笔记｜YARN资源调度</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/08/20/YARN%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6/" class="article-date">
+  <time datetime="2022-08-20T08:41:24.000Z" itemprop="datePublished">2022-08-20</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h1>走进 YARN 资源管理和调度</h1>
+<h2 id="YARN-概述：从食堂分配座位场景导入，初识调度系统；介绍调度系统发展的背景、解决的问题、目标和范型；Hadoop-YARN-的设计思想和整体架构；">YARN 概述：从食堂分配座位场景导入，初识调度系统；介绍调度系统发展的背景、解决的问题、目标和范型；Hadoop YARN 的设计思想和整体架构；</h2>
+<p>首先考虑如下虚拟场景，如何进行调度在保障就餐公平性的前提下让尽可能多的学生都能够在该餐厅就餐、尽可能多的座位被有效使用？</p>
+<ul>
+<li>学校为改善学生生活新建了一所美食餐厅，餐厅座位有限且只能堂食；</li>
+<li>各个学院需要缴纳一定管理费用后其学生才能在该餐厅用餐，缴纳费用与分配的座位数成正比；</li>
+<li>因餐厅物美价廉、环境干净，来该餐厅就餐的人络绎不绝；</li>
+</ul>
+<p>一种简易的分配模型参考如下：</p>
+<ul>
+<li>学院缴纳费用后获得固定座位数；</li>
+<li>学生按照学院组织，学院内的用餐小组按照预定时间排队，每个小组有一个负责人；</li>
+<li>餐厅经理（两个备用经理）对所有学院按照分配座位满足率由低到高排序，优先选择靠前学院进行餐位派发；</li>
+<li>餐厅经理选择一个学院后，基于餐厅座位情况，以 FIFO 方式选择用餐小组并分配桌号；</li>
+<li>用餐小组在餐厅经理助手引导下到特定位置进行就餐，用餐小组负责人安排组内成员就坐；</li>
+<li>用餐结束后，用餐小组负责人向餐厅助手说明；</li>
+</ul>
+<h3 id="调度系统概述">调度系统概述</h3>
+<p>如今，我们已经由信息科技时代（IT）进化到数据科技时代（DT），数据中蕴藏的海量信息激发我们开发各种计算模型和计算框架进行挖掘，而这些计算模型和计算框架最终都需要落地计算。同时数据计算方式也发生了很大变革，从单机到分布式集群再到大规模数据中心，计算越来越快。对于大型互联网公司而言，为了完成各种对外服务以及对内挖掘等任务，需要的硬件资源数以万计，具有较高的成本。</p>
+<p>当用有限资源解决有限资源无法满足的需求时就需要调度。如何充分挖掘硬件资源潜力、灵活进行资源管理与调度以及提高集群整体利用率成为降本增效的关键问题。资源资源管理与调度主要解决资源请求和可用资源的映射(Mapping) 问题，也就是将负载的资源请求与当前计算集群中的可用物理资源通过一定的调度策略进行匹配(Matching)。</p>
+<h3 id="调度系统设计的基本问题">调度系统设计的基本问题</h3>
+<ol>
+<li>资源异质性与工作负载异质性<br>
+异质性通常指组成元素构成的多元性和相互之间较大的差异性。资源异质性是从系统所拥有的资源角度来看的，对于大型数据中心来说，其采购往往是分批次的，不同批次的机器硬件配置和计算存储资源都存在较大差异，很难保证采用完全相同的配置，目前主要通过将资源分配单位细粒度划分以及虚拟化技术来解决；工作负载异质性是从系统提交的任务角度来看的，负载类型多样化（流处理、批处理、内存计算、在线服务等），任务偏好多样化和动态化（任务的约束条件、运行过程中资源使用动态变化），资源需求多样化（CPU，内存，GPU，IO等），例如对外服务要保证高可用和快速响应，对于批处理任务要保证快速调度等。</li>
+<li>数据局部性<br>
+大数据场景下因为数据传输开销要远大于计算逻辑传输开销，因此往往将计算任务推送到数据存储所在地进行，这种设计哲学一般被称为数据局部性问题。在资源管理与调度语境下一般存在3种类型数据局部性：节点局部性，机架局部性和全局局部性。节点局部性完成计算不需要进行数据传输，机架局部性需要在机架之间进行数据传输存在一定开销，其它情况则属于全局局部性需要跨机架进行网络传输进而产生较大的网络传输开销，因此最优的方式是尽可能保证节点局部性。</li>
+<li>抢占式与非抢占式调度<br>
+在多用户多任务场景下，面对已分配资源，资源管理与调度系统有两种不同类型的调度方式：抢占式调度与非抢占式调度。抢占式调度指的是当系统资源不足或存在资源竞争时高优先级的任务可以抢占低优先级任务的资源；非抢占式调度，每次只允许从空闲资源中分配，空闲资源若不足则须等待其它任务释放资源后才能继续推进，mesos采用非抢占式调度。两种方式各有特点，一般如果强调高优先级任务执行效率的调度策略会采用抢占式调度，强调资源公平分配的调度会采用非抢占式调度。</li>
+<li>资源分配粒度<br>
+大数据场景下的计算任务往往呈现层级结构，例如：作业级（Job）-任务级（Task）-实例级（Instance），从计算任务视角来看，此时资源调度系统就面临资源分配粒度问题，资源分配粒度主要存在三种方式：（1）群体分配策略（Gang Scheduler），即要么全满足要么全不满足，Flink和MPI任务依赖这种方式；（2）增量满足式分配策略，只要分配部分资源就可以启动运行，MR采用这种方式；（3）资源储备策略，资源达到一定量才能启动作业，在未获得足够资源时作业可以先持有目前已经分配的资源并等待其他作业释放资源，调度系统不断获取新资源并进行储备和积累，直到分配到的资源量达到最低标准后开始运行，在作业启动前已经分配的资源处于闲置状态。</li>
+<li>饿死与死锁问题<br>
+饿死是由于调度策略不当而导致计算任务长时间无法获得开始执行所需要的最少资源量，例如支持优先级调度时，如果不断出现高优先级任务，那么低优先级任务可能饿死；死锁是由于资源分配不当而导致整个调度系统无法正常执行，例如在资源储备策略下，如果AB两个作业启动作业需要的最小资源为2/3，那么如果两个任务被分配了1/2的资源时，就导致死锁。调度系统出现死锁必然表现为某些作业处于饿死状态，但计算任务饿死的情景并不一定意味着调度系统处于死锁状态。</li>
+<li>资源隔离方法<br>
+为了减少任务之间的干扰需要进行一定的隔离措施，LXC是一种轻量级的内核虚拟化技术，LXC在资源管理方面依赖于 Linux 内核的 cgroups 子系统，cgroups 子系统是 Linux 内核提供的一个基于进程组的资源管理框架，可以为特定的进程组限定可以使用的资源。其他技术有Intel RDT。</li>
+</ol>
+<h2 id="资源管理与调度系统范型">资源管理与调度系统范型</h2>
+<h3 id="集中式调度系统">集中式调度系统</h3>
+<p>产生背景：该调度系统是大规模数据分析和云计算出现的雏形，主要进行大规模的集群管理以提高数据处理能力。<br>
+基本原理：中心式调度系统融合了资源管理和任务调度，有一个中心式的 JobTracker 负责进行集群资源的合理分配、任务的统一调度、集群计算节点信息的统计维护、任务执行过程中的状态管理等。</p>
+<ul>
+<li>优点：</li>
+</ul>
+<p>JobTracker 能够感知集群中所有资源和任务的执行状态，能够进行全局最优的资源分配和调度，避免任务间的干扰，适当进行任务抢占，保证任务计算效率和服务质量；<br>
+架构模型简单，只有一个全局的管理者负责进行所有管理。</p>
+<ul>
+<li>缺点</li>
+</ul>
+<p>JobTracker 作为集群的中心，存在单点瓶颈问题，不能支持大规模集群；<br>
+内部实现异常复杂，一个调度器中需要实现所有的功能模块，可扩展性差；<br>
+负载变更会导致系统需要进行不断的迭代，这将增加系统的复杂性，不利于后期的维护和扩展；<br>
+只支持单类型的任务，MR 类型的批处理任务</p>
+<h3 id="两层调度系统">两层调度系统</h3>
+<p>产生背景：为了解决集中式调度系统的扩展性问题，系统实现复杂，可扩展性差，不能支持不同类型任务等缺点。</p>
+<p>实现原理：将资源管理和任务调度解耦。集群资源管理器负责维护集群中的资源信息并将资源分配给具体的任务，任务管理器负责申请资源并将申请到的资源根据用户逻辑进行细分和具体的任务调度。</p>
+<ul>
+<li>
+<p>优点：<br>
+资源管理器只负责资源分配，任务调度由应用完成，提高了系统的扩展性；<br>
+任务调度逻辑由具体的任务完成，能够提供对不同类型任务的支持；<br>
+内部实现模块化，利于维护和扩展；</p>
+</li>
+<li>
+<p>缺点：<br>
+任务无法感知全局的资源情况，只能基于request/offer来进行资源获取，无法有效避免异构负载之间的性能干扰问题；<br>
+任务调度和资源管理解耦不利于实现多任务间的优先级抢占；<br>
+所有任务的资源请求都需要资源管理器进行处理，此外其还需要与节点管理器之间维持通信，导致资源管理器存在单点问题；</p>
+</li>
+</ul>
+<p>Mesos 最先将资源管理和任务调度解耦的 offer-based（基于资源供应）方案，其有一个中心的资源管理器，通过分配策略（DRF）将资源分配给不同的计算框架，每个计算框架依据自身的逻辑、资源偏好等采取增量或者 All-or-Nothing 的方式决定接受还是拒绝分配的资源，计算框架根据分配到的资源进行下一步的资源分配和任务执行。</p>
+<h3 id="共享状态调度系统">共享状态调度系统</h3>
+<p>产生背景：前面的调度器存在一个问题就是计算框架在进行资源申请的时候无法获知到集群的全局资源信息，这就导致无法进行全局最优的调度，共享状态调度器就提供了这个问题的一种解决方式。</p>
+<p>基本原理：是一个半分布式的架构，通过共享集群状态为应用提供全局的资源视图，并采用乐观并发机制进行资源申请和释放，来提高系统的并发度。</p>
+<ul>
+<li>优点：</li>
+</ul>
+<p>支持全局最优调度；<br>
+能够一定程度的提高并发度；</p>
+<ul>
+<li>缺点：</li>
+</ul>
+<p>高并发资源请求下会造成频繁的资源竞争；<br>
+不利于资源分配的公平性；<br>
+资源全局副本维护模块存在单点瓶颈；</p>
+<h3 id="分布式调度系统">分布式调度系统</h3>
+<p>产生背景：提高系统吞吐率和并发度</p>
+<p>基本原理：分布式调度器之间没有通讯协作，每个分布式调度器根据自己最少的先验知识进行最快的决策，每个调度器单独响应任务，总体的执行计划与资源分配服从统计意义。</p>
+<p>优点：提高吞吐量和并发度</p>
+<p>缺点：</p>
+<p>调度质量得不到保障；<br>
+资源非公平分配；<br>
+不能支持多租户管理；<br>
+不能避免不同任务之间的性能干扰；</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AD%97%E8%8A%82%E9%9D%92%E8%AE%AD%E8%90%A5/" rel="tag">字节青训营</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
   id="post-HBase-知识点"
   class="article article-type-post"
   itemscope
@@ -368,150 +574,6 @@
 </article>
 
     
-    <article
-  id="post-理解gurobi求解器日志"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/05/21/%E7%90%86%E8%A7%A3gurobi%E6%B1%82%E8%A7%A3%E5%99%A8%E6%97%A5%E5%BF%97/"
-    >理解gurobi求解器日志</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/05/21/%E7%90%86%E8%A7%A3gurobi%E6%B1%82%E8%A7%A3%E5%99%A8%E6%97%A5%E5%BF%97/" class="article-date">
-  <time datetime="2022-05-21T02:19:34.000Z" itemprop="datePublished">2022-05-21</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <p>学习和了解gurobi求解器日志对于理解算法和数学模型有很大帮助，所以加以记录。本文主要记录了simplex和MIP的求解日志。</p>
-<h1>Header</h1>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Optimize a model with 755 rows, 2756 columns and 8937 nonzeros</span><br><span class="line">Model fingerprint: 0x22935346</span><br><span class="line">Variable types: 0 continuous, 2756 integer (0 binary)</span><br></pre></td></tr></table></figure>
-<p>展示了模型的大小以及整数变量数目。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Coefficient statistics:</span><br><span class="line">  Matrix range     [1e+00, 1e+04]</span><br><span class="line">  Objective range  [1e+00, 1e+04]</span><br><span class="line">  Bounds range     [1e+00, 1e+00]</span><br><span class="line">  RHS range        [1e+00, 1e+04]</span><br></pre></td></tr></table></figure>
-<p>这个信息给出了一个非常粗略的指示，说明您在解决模型时是否可以预期数值问题。</p>
-<h1>Simplex Logging</h1>
-<p>单纯形日志有三部分，presolve部分，求解过程和总结部分</p>
-<h2 id="Presolve-Section">Presolve Section</h2>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Presolve removed 2349 rows and 3378 columns</span><br><span class="line">Presolve time: 0.04s</span><br><span class="line">Presolved: 3722 rows, 8852 columns, 30908 nonzeros</span><br></pre></td></tr></table></figure>
-<p>第一步是使用presolve算法简化模型。<br>
-示例输出显示，presolve能够删除2349行和3378列，这需要0.04秒。预解部分的最后一行显示了预解后模型的大小。这是传递给simplex优化器的模型的大小。请注意，为该模型计算的解决方案在simplex完成后会自动转换为原始问题的解决方案(在这个过程中通常称为uncrush)，但这个uncrush步骤是透明的，不会产生日志输出。</p>
-<h2 id="Progress-Section">Progress Section</h2>
-<p><img src="images/gurobi1.png" alt=""></p>
-<p>在每个输出行五列显示单纯形迭代执行的数量,当前的目标函数值,原始的不可行性的程度(计算违反约束的绝对值之和),对偶不可行性的程度(计算违反对偶约束的绝对值之和),和花费的时间(以挂钟时间计算)。Gurobi求解器中默认的单纯形算法是对偶单纯形，它试图在执行单纯形轴心来改进目标的同时保持对偶可行性。</p>
-<h2 id="Summary-Section">Summary Section</h2>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Solved in 20370 iterations and 5.75 seconds</span><br><span class="line">Optimal objective  1.126639304e+07</span><br></pre></td></tr></table></figure>
-<p>字面意思</p>
-<h1>MIP Logging</h1>
-<p>日志也是分为三部分the presolve section, the simplex progress section, and the summary section.</p>
-<h2 id="Presolve-Section-2">Presolve Section</h2>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Presolve removed 0 rows and 3 columns</span><br><span class="line">Presolve time: 0.01s</span><br><span class="line">Presolved: 12 rows, 148 columns, 1615 nonzeros</span><br><span class="line">Variable types: 1 continuous, 147 integer (145 binary)</span><br></pre></td></tr></table></figure>
-<p>在本例中，presolve能够删除3列。最后两行显示了传递给分支切割算法的模型的大小以及剩余变量的类型。</p>
-<h2 id="Progress-Section-2">Progress Section</h2>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Found heuristic solution: objective 157344.61033</span><br></pre></td></tr></table></figure>
-<p>这句话说明gurobi在root relaxation 之前用启发式找到了一个整数可行解<br>
-<img src="images/gurobi2.png" alt=""></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Root relaxation: objective 3.889390e+04, 50 iterations, 0.00 seconds</span><br></pre></td></tr></table></figure>
-<p>第二个是root relaxation，如果这一步耗费时间比较长，会自动将log展开</p>
-<p><img src="images/gurobi3.png" alt=""><br>
-Nodes部分(前两列)提供了关于搜索进展的一般定量信息。第一列显示到目前为止已经探索的分支和剪切节点的数量，而第二列显示搜索树中仍未探索的叶子节点的数量。有时，输出行开头会有一个H或<em>字符。这表明通过MIP启发式(H)或分支(</em>)找到了一个新的可行解。</p>
-<p>Current Node部分提供了在分支和切割树中研究的特定节点的信息。它显示了相关松弛的目标，分支和切割树中节点的深度，以及在相关松弛中具有非整数值的整数变量的数量。（松弛变量的数目）</p>
-<p>Objective Bounds部分提供了一个可行解的最重要的目标值的信息(即，当前可行解的目标值)，以及搜索树的叶子节点提供的当前目标边界。最佳目标值总是在这两个值之间。本节的第三栏(差距)显示了两个客观边界之间的相对差距。当此间隙小于MIPGap参数时，优化终止。</p>
-<p>日志的Work部分提供了到该点为止已经执行了多少工作的信息。第一列显示了分枝和切割树中每个节点执行的单纯形迭代的平均次数。最后一列显示自解算开始以来所经过的时间。</p>
-<p>注意，所研究的节点计数通常在较长一段时间内保持为0。这意味着Gurobi MIP求解器正在处理根节点。Gurobi求解器通常会在根节点上花费大量的精力，生成切割平面并尝试各种启发式方法，以减少后续的分支和切割树的大小。</p>
-<h2 id="Summary-Section-2">Summary Section</h2>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Cutting planes:</span><br><span class="line">  Gomory: 1</span><br><span class="line">  MIR: 17</span><br><span class="line"></span><br><span class="line">Explored 313128 nodes (1741251 simplex iterations) in 4.80 seconds</span><br><span class="line">Thread count was 8 (of 8 available processors)</span><br><span class="line">Solution count 7: 40005.1 40697.1 41203.6 ... 157345</span><br><span class="line"></span><br><span class="line">Optimal solution found (tolerance 1.00e-04)</span><br><span class="line">Best objective 4.000505414200e+04, best bound 4.000505414200e+04, gap 0.0000%</span><br></pre></td></tr></table></figure>
-<p>在这个示例中，Gurobi求解器只需要不到5秒的时间就可以将模型求解到最优，并且它使用了8个线程(线程数可以通过threads参数进行限制)。最佳可行解目标与最佳界之间的差距为0.0%，这产生了一个最优终止状态，因为实现的差距小于默认MIPGap参数值。</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Gurobi/" rel="tag">Gurobi</a></li></ul>
-
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-“勒贝格传“"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/05/18/%E2%80%9C%E5%8B%92%E8%B4%9D%E6%A0%BC%E4%BC%A0%E2%80%9C/"
-    >勒贝格传</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/05/18/%E2%80%9C%E5%8B%92%E8%B4%9D%E6%A0%BC%E4%BC%A0%E2%80%9C/" class="article-date">
-  <time datetime="2022-05-18T12:31:53.000Z" itemprop="datePublished">2022-05-18</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h1>实变函数和泛函分析</h1>
-<p>最近学习实变函数和泛函分析，在翟老师的讲解下学习了之前数学家的工作，翟老师也说，实变函数是上世纪才系统性完善的，是近代的数学，很值得我们学习。而且我们学习的都是这些数学大师一生中最精彩的工作，仔细研读可以学到很多数学思想。</p>
-<p>为了理解翟老师课上的一些知识，我便在淘宝下单了周民强的实变函数论，翻开附录发现竟有一章是勒贝格传，读传记是我学习数学的一大乐趣之一。故做一些记录。</p>
-<p>勒贝格1875年6月28日生于法国的博伟，1941年7月26日卒于巴黎。勒贝格的父亲是一名印刷厂职工，酷爱读书，颇有教养。在父亲的影响下，勒贝格从小勤奋好学，成绩优秀，特别擅长计算。不幸，父亲去世过早。家境衰落，勒贝格在学校老师的帮助下进入中学，后又转入巴黎，1894年考入高等师范学校。大学毕业后，勒贝格在校图书馆工作了两年。在这期间，出版了E.波雷尔关于点集测度的新方法的《函数论讲义》，特别是研究生R.贝尔发表了关于不连续实变函数理论的第一篇论文，这些成功的研究工作说明在上述崭新的领域中进行开拓挥霍的何等重要的成就，因而激发了勒贝格的热情。从1899年到1902年勒贝格在南锡的一所中学任教，虽然工作繁忙，但仍孜孜不倦的研究实变函数，理论，并于1902年发表了博士论文“积分、长度与面积”。在这篇文章中，勒贝格厂里了后来以他的名字命名的积分理论。伺候，他开始在大学任教，并出版了一系列重要著作：《积分法和原函数分析讲义》；《三角级数讲义》。接着，勒贝格又陆续发表了许多关于函数的微分、积分理论的研究成果，勒贝格于1921年获得法兰西血压u呢教授称号，一年作为C.若尔当的后记人被选为巴黎科学院院士。</p>
-<p>勒贝格对数学的主要贡献属于积分论领域，这是实变函数理论的中心课题。19世纪以来，微积分开始进入严密话的阶段。1854年，B.黎曼引入了以他的名字命名的积分，这一理论的应用范围主要是连续函数，随着K.威尔斯特拉斯和G.康托尔工作的温室，在数学中出现了许多奇怪的函数与现象，致使黎曼积分理论暴漏出较大的局限性。几乎与这一理论发展的同时，人就已经广泛的开展了对积分理论的改造工作。当时，关于积分论的工作主要集中于无穷集合的性质的探讨，而无处稠密的集合具有正的外容度性质的发现，使集合的测度概念在积分论的研究中占有重要地位。积分的几何意义是曲线围成的面积，黎曼积分的定义是建立在对区间长度的分割的基础上的。因此，人们自然会考虑如何吧长度、面积等概念扩充到更广泛的点集类上，从而吧积分的概念置于集合测度理论的框架之中。这一思想的重要性在于使人们认识到：几何的测度与可测性的推广将意味着函数的积分与可积性的推广。勒贝格积分正式建立在勒贝格测度理论的基础上，是黎曼积分的扩充。</p>
-<p>勒贝格曾对他的积分思想做过一个生动有趣的描述：“我必须偿还一笔钱。如果我从口袋中随意地摸出来各种不同面值的钞票，逐一的还给债主直到全部还清，这就是黎曼积分法，不过我还有另外一种做法，就是把钱全部拿出来并吧相同棉质的钞票放在一起，然后再付给应还的数目，这就是我的积分法。”</p>
-<p>早在19世纪初期，由J.傅立叶在关于三角级数的工作中提出：当一个有界函数可以表示为一个三角级数时，该级数是它的傅里叶级数吗？这一问题与一个无穷级数是否可以逐项积分有着密切的关系。傅立叶当时曾认为在其和为有界函数时这一运算是正确的，从而给上述问题肯定的答复。然而到了19世纪末，人们认识到逐项积分并不总是可行的，甚至对于黎曼可积函数的一致有界的技术也是这样，因为由该级数所表示的函数不一定是黎曼可积的。这个问题促使勒贝格在新的积分理论中获得了一个十分重要的结果：<strong>控制收敛定理</strong>。作为一个特殊情形他指出，勒贝格可积的一致有界技术都可以逐项进行积分，从而支持了傅里叶的结论。逐项积分在本质上就是积分号下取极限的问题，他是积分理论中经常遇到的最重要的运算之一。从而这一定理的创立显示了勒贝格积分理论的极大优越性。</p>
-<p>勒贝格的一生都献给了数学事业。在1922年被推举为院士的时候，他的著作和论文已经达到90种之多，内容出了积分理论外，还设计集合与函数的构成、变分学、曲面面积以及纬数理论等重要课题，在人生的最后20年中，勒贝格的研究工作仍然十分活跃并反映出广泛的兴趣，不过作品的内容大都涉及教育、历史和初等几何。</p>
-<p>勒贝格的工作是对20世纪科学领域的一个重大贡献，但和科学史上每种新思想的出现一样，并不是没有遇到阻力的。原因就是勒贝格的研究中扮演了重要角色的那些不连续函数和不可微函数被认为是违反了所谓的完美性法则，是数学中的“变态和不健康”部分。因此，他的工作收到了某些数学家的冷淡，甚至有人曾企图阻止他关于一篇讨论不可微曲面的论文的发表。勒贝格曾经感叹：“我被称为是一个没有导数的函数的那种人了。”然而，不论人们的主观愿望如何，这些具有种种奇艺性质的对象都自动地进入了研究者曾企图避开他们都问题之中。勒贝格充满信心地指出：“使得自己在这种研究中变得迟钝了的那些人，是在浪费他们的时间，而不是在从事有用的工作。”</p>
-<p>如果有能力写一些关于泛函分析的知识类博客，推一些自己很欣赏的定理公式，那必然是更好的。可惜能力不允许，时间也不允许，只能记录一些大师的传记来表达自己的敬意了。</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
   </article>
   
 
@@ -529,7 +591,7 @@ Nodes部分(前两列)提供了关于搜索进展的一般定量信息。第一�
     <ul>
       <li>
         Copyrights &copy;
-        2015-2024
+        2015-2025
         <i class="ri-heart-fill heart_icon"></i> galaxy
       </li>
     </ul>

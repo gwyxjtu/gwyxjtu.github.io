@@ -6,7 +6,7 @@
   <link href="http://gwyxjtu.github.io/atom.xml" rel="self"/>
   
   <link href="http://gwyxjtu.github.io/"/>
-  <updated>2024-07-10T09:23:59.069Z</updated>
+  <updated>2025-03-29T12:47:09.960Z</updated>
   <id>http://gwyxjtu.github.io/</id>
   
   <author>
@@ -15,6 +15,54 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>MOE架构解读</title>
+    <link href="http://gwyxjtu.github.io/2025/03/29/MOE%E6%9E%B6%E6%9E%84%E8%A7%A3%E8%AF%BB/"/>
+    <id>http://gwyxjtu.github.io/2025/03/29/MOE%E6%9E%B6%E6%9E%84%E8%A7%A3%E8%AF%BB/</id>
+    <published>2025-03-29T09:20:25.000Z</published>
+    <updated>2025-03-29T12:47:09.960Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="MOE-基本原理">MOE 基本原理</h3><p><img src="/images/MOE-1.jpg" alt=""><br>MOE由两个主要的部件构成：第一个是专家expert，每个专家代表一个就诊网络；第二个是路由router，门控网络，通过开关将输入的token路由到不同的专家。<br>MOE结构里面每一层都有很多专家和路由，每一层的专家和路由数量都可以调整。<br><img src="/images/MOE-2.jpg" alt=""><br>回顾transformer架构，每个输入都是一个token，每个token输入到position embedding，然后通过多层decoder堆叠，最后输出token。<br><img src="/images/MOE-3.jpg" alt=""></p><p>其中每个decoder内部如下所示：<br><img src="/images/MOE-4.jpg" alt=""><br>首先需要数据归一化，随后进入多头注意力机制，然后进入残差连接，最后进入稠密的前馈神经网络。<br>MOE就是把稠密的前馈神经网络变成了稀疏的前馈神经网络，通过门控网络来选择哪些专家来处理输入的token。<br><img src="/images/MOE-5.jpg" alt=""></p><p>每次通过路由选择下一层经过哪一个专家<br><img src="/images/MOE-5.jpg" alt=""></p><p>MOE的核心是把FFNN替换成多个系数的FFN，每一个FFN都是一个专家。</p><h3 id="路由原理">路由原理</h3><p>路由是用来选择专家的，由FFNN和softmax组成，如下图所示。<br><img src="/images/MOE-6.jpg" alt=""><br>softmax会输出每一个专家的概率，最后用一个或多个专家来权和输入的token。</p><h3 id="稀疏架构和稠密架构">稀疏架构和稠密架构</h3><p>Transformer是一个稠密的架构，每个输入都需要经过所有的专家。MOE是一个分为稠密MOE和稀疏MOE的架构。</p><p>稠密MOE是每个输入都需要经过所有的专家。稀疏MOE是每个输入只需要经过一部分的专家。输出时候只激活部分专家<br>MOE的一般输入是具体的矩阵，包括包括(b,s,h)，其中b是batch size，s是sequence length，h是hidden size。<br>输入首先经过FFN路由层，输出到H(x)层在经过softmax，计算得到专家的概率分布。随后通过门控网络选择一部分专家来处理输入的token。<br><img src="/images/MOE-7.jpg" alt=""></p><h3 id="负载均衡-load-balancing">负载均衡 load balancing</h3><p>在deepseek里面专家为256个，在训练时候每个专家的训练速度不一样，pathway会跟倾向于选择算的快的专家，导致算的快的专家学的多，算的慢的专家学的较少，因此引入load balance让每个专家的训练速度一样。</p><ul><li><p>Keep Top-k<br>这里通过 keep Top-k 策略来实现。引入噪声矩阵，来抑制某个专家选择过多时候的得分。<br><img src="/images/MOE-8.jpg" alt=""><br>通过在每一层的时候引入噪声矩阵，实现整个网络的负载均衡。</p></li><li><p>辅助损失<br>为了进一步提升负载均衡能力，引入auxiliary loss。通过将每个token的专家选择分布求和，来计算每个专家的平均选择次数，然后计算每个专家的平均选择次数和平均选择次数的差值，计算辅助损失，并将其加入到总的损失函数中。</p></li><li><p>专家容量<br>专家容量同样是为了解决训练负载均衡问题。<br>每个专家在输进去token之前加入每个专家最大出力的token数量，通过增加容量来提升训练稳定性，让专家之间训练更加寻哼</p></li></ul>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h3 id=&quot;MOE-基本原理&quot;&gt;MOE 基本原理&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;/images/MOE-1.jpg&quot; alt=&quot;&quot;&gt;&lt;br&gt;
+MOE由两个主要的部件构成：第一个是专家expert，每个专家代表一个就诊网络；第二个是路由router，门控网络，通过开关将输</summary>
+      
+    
+    
+    
+    
+    <category term="LLM" scheme="http://gwyxjtu.github.io/tags/LLM/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>优化大模型学习笔记-ORLM</title>
+    <link href="http://gwyxjtu.github.io/2025/03/29/%E4%BC%98%E5%8C%96%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-ORLM/"/>
+    <id>http://gwyxjtu.github.io/2025/03/29/%E4%BC%98%E5%8C%96%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-ORLM/</id>
+    <published>2025-03-29T08:16:16.000Z</published>
+    <updated>2025-04-07T17:21:43.165Z</updated>
+    
+    <content type="html"><![CDATA[<h1>ORLM</h1><h2 id="大模型带来的技术革命下，优化的行业壁垒还能撑多久？">大模型带来的技术革命下，优化的行业壁垒还能撑多久？</h2><p>虽然目前优化技术受限于其高度定制化的建模和强非线性导致的计算复杂度，短时间内大模型难以实现端到端的建模和求解，从而无法取代优化算法。但目前由两方面我认为是当前优化领域需要提前预判的技术风险：</p><h4 id="1-推理大模型-行业知识库的跨领域优化建模方法">1.推理大模型+行业知识库的跨领域优化建模方法</h4><p>系统工程作为自动化的一个二级学科，核心竞争力就在于学科融合，换句话说就是比领域的人更懂优化，比优化的人更懂业务，这一部分融合的能力是很容易被大模型的海量知识库所取代的。目前现有的推理大模型加上行业知识库和案例库，建立的优化模型可以完全媲美人工优化模型（参考我们做的EnergyLLM能源领域垂直大模型），后续靠行业信息差吃饭的系统工程又能有多少生命力呢。</p><h4 id="2-GPU算力-并行启发式的暴力优化求解算法">2.GPU算力+并行启发式的暴力优化求解算法</h4><p>我们再用求解器求解大规模MIP的时候通常可以注意到，第一个可行解的日志的左边通常是H而不是*。这意味着现有的gurobi、COPT甚至SCIP等求解器的初始可行解大部分是从启发式方法得到的，但启发式面临参数问题，不同的参数通常计算的效率差距非常大而且不具备梯度特性无法精准调参。然而随着GPU算力不算增强，显卡最擅长的就是并行计算，现在英伟达推出的cuOPT正是使用多种群并行的启发式大力出奇迹。大规模组合优化问题在未来只能说很难保证不被取代，后续研究优化算法那么多甚至可能还不如几张显卡用启发式暴力求解了。<br><img src="/images/orlm-1.jpg" alt=""></p><h2 id="research-gap">research gap</h2><p>现有的优化领域大模型存在以下缺陷：</p><ol><li>建模能力有限：现有的大模型通常在逻辑约束和非线性约束方面有限，无法应对复杂的优化问题。</li><li>优化模型额训练数据的质量不足：数据的范围和质量与模型的能力密切相关，但目前优化领域缺少高质量建模数据，限制了大模型的高级建模能力。</li><li>数据隐私考虑：基于API成都闭源大模型可能导致数据泄露，尤其是在一些工业应用领域。</li><li>测试集相对同质：目前已有的数据集市2023年的NL4OPT比赛，但是这个数据集只关注简单的线性规划部分，复杂度较低，规模较小，很难与实际中的场景类比。</li></ol><h2 id="主要内容">主要内容</h2><p>为了解决上述问题，ORLM提出了一个生成优化建模数据的半自动框架，可以增强大模型的建模能力：</p><ol><li>OR-Instruct数据生成框架 ：<br>提出了数据集应当满足的四个准则，基于这些准则设计了OR-Instruct框架，该框架可以自动生成优化模型的训练数据。该框架使用迭代增强框架如下图所示。<br>首先手机686个实际工业场景，并把他们放置到训练data pool。根据这些数据使用扩展（expansion）和增强（Augmentation）两种技术生成更多场景的建模问题。最后使用启发式框架来筛选明显的低质量数据，往复循环直至训练数据集达到预期数量。<br><img src="/images/orlm-2.jpg" alt=""></li><li>性能测试：为了验证OR-Instruct的性能，提出了<a href="https://huggingface.co/datasets/CardinalOperations/IndustryOR">Industry Benchmark</a>。该benchmark使用13个不同工业场景，包括5中问题方式和3中难度。</li><li>使用OR-Instruct产生的数据对开源大模型7B级别的模型进行了微调，并把这些模型训练成了 operation research language model（ORLM）。</li></ol><h2 id="OR-Instruct">OR-Instruct</h2><p>优化大模型数据集的四个准则：</p><ol><li>Comprehensive Coverage：数据集应该覆盖优化领域的所有问题，包括供应链、仓库、物流等等行业；不同的问题类型应当满足，包括LP、MIP、QP、NLP、RMP等；不同的问题难度应当满足，包括简单、中等、困难。</li></ol><ul><li>初始化数据集：使用686个实际工业场景作为初始数据集。</li><li>扩展数据集:首先使用 GPT-4生成100个优化模型的实际应用场景。每次迭代使用data pool中的三个案例作为in-context prompt。每一轮迭代中使用两个real-world scenarios和一个data pool的案例。</li><li>增强数据集：增强策略主要是为了提升算法求解的多样性，包括：<ul><li>目标函数和约束条件的变换：增加、删除、替换目标函数和约束。</li><li>重新描述问题：第二种增强方法为了提升LLM应对不同prompt的鲁棒性，将同一个优化问题的不同描述形式。</li><li>融合多重建模技巧：结合包括大M法，辅助变量、等多种建模技巧。</li></ul></li><li>后处理和筛选：纠正和过滤生成的低质量数据。使用一个正则匹配函数来发现语法错误，最后需要消除重复的问题。</li></ul><h2 id="Results">Results</h2><p>结论部分不在多余描述，主要对比了以下几个层面</p><ol><li>Data generation quality。</li><li>Model Finetuning and Inference。主要是一些hyper parameters参数</li><li>Evaluation and Baselines。<ul><li>Evaluation Benchmarks: NL4OPT MAMO两个数据集，</li><li>Baselines：<ul><li>GPT-4</li><li>GPT-3.5</li><li>GPT-3<br>对比不同数据集和不同模型的准确率</li></ul></li></ul></li><li>定制化增强: 针对MILP问题构建定50个基础问题，并将其加入seed data pool。在几轮迭代后生成了2000个训练问题。这两千个数据可以极大的提升ORLM在MILP上的表现。</li></ol><p>更细节的对比包括不同难度数据上不同模型的表现，不同增强方法的表现对比，以及消融实验。最后展示了一些推理参数的设置对结果的影响。</p><h2 id="Future-Direction">Future Direction</h2><h3 id="潜在的应用场景">潜在的应用场景</h3><ol><li>提升优化方法在工业领域的地位：<br>大模型可以避免很多优化方法现有的问题，比如：<ul><li>优化模型在实际场景中不够robust，无法应对额外的约束条件，当环境更换时候模型无法迅速适应。</li><li>优化项目极度依赖专家来定制化目标函数和约束条件。对于某些定制化场景，优化专家与业务的沟通变得非常困难。</li></ul></li><li>运筹学教学</li><li>数学建模竞赛</li><li>减少求解器的学习成本</li></ol><h3 id="未来的研究热点">未来的研究热点</h3><ol><li>结合RLHF来提升模型的泛化能力</li><li>数据集结构重构：数据合成策略对于像 RLHF 这样的强化学习技术来说是不够的，RLHF 需要以偏好列表形式的训练数据。对于每个问题，必须根据偏好对多个响应进行排序。此外，在优化问题的背景下，将实际的最优解纳入训练集将使更多的技术成为可能。构建这样的数据集可能需要用户的反馈或开发新的数据合成方法，以更好地满足这些需求。</li><li>数据精炼和利用：权衡训练开销和模型效果的工作。如果获得一种数据精炼策略，可以用少量的训练开销获得更好的模型效果，这将是一个非常有价值的研究方向。</li></ol>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1&gt;ORLM&lt;/h1&gt;
+&lt;h2 id=&quot;大模型带来的技术革命下，优化的行业壁垒还能撑多久？&quot;&gt;大模型带来的技术革命下，优化的行业壁垒还能撑多久？&lt;/h2&gt;
+&lt;p&gt;虽然目前优化技术受限于其高度定制化的建模和强非线性导致的计算复杂度，短时间内大模型难以实现端到端的建模和求解，从而</summary>
+      
+    
+    
+    
+    
+    <category term="LLM" scheme="http://gwyxjtu.github.io/tags/LLM/"/>
+    
+  </entry>
   
   <entry>
     <title>使用litstudy进行文献自动分析</title>
@@ -444,52 +492,6 @@
     <category term="胡乱搞" scheme="http://gwyxjtu.github.io/tags/%E8%83%A1%E4%B9%B1%E6%90%9E/"/>
     
     <category term="安全" scheme="http://gwyxjtu.github.io/tags/%E5%AE%89%E5%85%A8/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>理解gurobi求解器日志</title>
-    <link href="http://gwyxjtu.github.io/2022/05/21/%E7%90%86%E8%A7%A3gurobi%E6%B1%82%E8%A7%A3%E5%99%A8%E6%97%A5%E5%BF%97/"/>
-    <id>http://gwyxjtu.github.io/2022/05/21/%E7%90%86%E8%A7%A3gurobi%E6%B1%82%E8%A7%A3%E5%99%A8%E6%97%A5%E5%BF%97/</id>
-    <published>2022-05-21T02:19:34.000Z</published>
-    <updated>2023-04-09T12:20:38.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>学习和了解gurobi求解器日志对于理解算法和数学模型有很大帮助，所以加以记录。本文主要记录了simplex和MIP的求解日志。</p><h1>Header</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Optimize a model with 755 rows, 2756 columns and 8937 nonzeros</span><br><span class="line">Model fingerprint: 0x22935346</span><br><span class="line">Variable types: 0 continuous, 2756 integer (0 binary)</span><br></pre></td></tr></table></figure><p>展示了模型的大小以及整数变量数目。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Coefficient statistics:</span><br><span class="line">  Matrix range     [1e+00, 1e+04]</span><br><span class="line">  Objective range  [1e+00, 1e+04]</span><br><span class="line">  Bounds range     [1e+00, 1e+00]</span><br><span class="line">  RHS range        [1e+00, 1e+04]</span><br></pre></td></tr></table></figure><p>这个信息给出了一个非常粗略的指示，说明您在解决模型时是否可以预期数值问题。</p><h1>Simplex Logging</h1><p>单纯形日志有三部分，presolve部分，求解过程和总结部分</p><h2 id="Presolve-Section">Presolve Section</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Presolve removed 2349 rows and 3378 columns</span><br><span class="line">Presolve time: 0.04s</span><br><span class="line">Presolved: 3722 rows, 8852 columns, 30908 nonzeros</span><br></pre></td></tr></table></figure><p>第一步是使用presolve算法简化模型。<br>示例输出显示，presolve能够删除2349行和3378列，这需要0.04秒。预解部分的最后一行显示了预解后模型的大小。这是传递给simplex优化器的模型的大小。请注意，为该模型计算的解决方案在simplex完成后会自动转换为原始问题的解决方案(在这个过程中通常称为uncrush)，但这个uncrush步骤是透明的，不会产生日志输出。</p><h2 id="Progress-Section">Progress Section</h2><p><img src="images/gurobi1.png" alt=""></p><p>在每个输出行五列显示单纯形迭代执行的数量,当前的目标函数值,原始的不可行性的程度(计算违反约束的绝对值之和),对偶不可行性的程度(计算违反对偶约束的绝对值之和),和花费的时间(以挂钟时间计算)。Gurobi求解器中默认的单纯形算法是对偶单纯形，它试图在执行单纯形轴心来改进目标的同时保持对偶可行性。</p><h2 id="Summary-Section">Summary Section</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Solved in 20370 iterations and 5.75 seconds</span><br><span class="line">Optimal objective  1.126639304e+07</span><br></pre></td></tr></table></figure><p>字面意思</p><h1>MIP Logging</h1><p>日志也是分为三部分the presolve section, the simplex progress section, and the summary section.</p><h2 id="Presolve-Section-2">Presolve Section</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Presolve removed 0 rows and 3 columns</span><br><span class="line">Presolve time: 0.01s</span><br><span class="line">Presolved: 12 rows, 148 columns, 1615 nonzeros</span><br><span class="line">Variable types: 1 continuous, 147 integer (145 binary)</span><br></pre></td></tr></table></figure><p>在本例中，presolve能够删除3列。最后两行显示了传递给分支切割算法的模型的大小以及剩余变量的类型。</p><h2 id="Progress-Section-2">Progress Section</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Found heuristic solution: objective 157344.61033</span><br></pre></td></tr></table></figure><p>这句话说明gurobi在root relaxation 之前用启发式找到了一个整数可行解<br><img src="images/gurobi2.png" alt=""></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Root relaxation: objective 3.889390e+04, 50 iterations, 0.00 seconds</span><br></pre></td></tr></table></figure><p>第二个是root relaxation，如果这一步耗费时间比较长，会自动将log展开</p><p><img src="images/gurobi3.png" alt=""><br>Nodes部分(前两列)提供了关于搜索进展的一般定量信息。第一列显示到目前为止已经探索的分支和剪切节点的数量，而第二列显示搜索树中仍未探索的叶子节点的数量。有时，输出行开头会有一个H或<em>字符。这表明通过MIP启发式(H)或分支(</em>)找到了一个新的可行解。</p><p>Current Node部分提供了在分支和切割树中研究的特定节点的信息。它显示了相关松弛的目标，分支和切割树中节点的深度，以及在相关松弛中具有非整数值的整数变量的数量。（松弛变量的数目）</p><p>Objective Bounds部分提供了一个可行解的最重要的目标值的信息(即，当前可行解的目标值)，以及搜索树的叶子节点提供的当前目标边界。最佳目标值总是在这两个值之间。本节的第三栏(差距)显示了两个客观边界之间的相对差距。当此间隙小于MIPGap参数时，优化终止。</p><p>日志的Work部分提供了到该点为止已经执行了多少工作的信息。第一列显示了分枝和切割树中每个节点执行的单纯形迭代的平均次数。最后一列显示自解算开始以来所经过的时间。</p><p>注意，所研究的节点计数通常在较长一段时间内保持为0。这意味着Gurobi MIP求解器正在处理根节点。Gurobi求解器通常会在根节点上花费大量的精力，生成切割平面并尝试各种启发式方法，以减少后续的分支和切割树的大小。</p><h2 id="Summary-Section-2">Summary Section</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Cutting planes:</span><br><span class="line">  Gomory: 1</span><br><span class="line">  MIR: 17</span><br><span class="line"></span><br><span class="line">Explored 313128 nodes (1741251 simplex iterations) in 4.80 seconds</span><br><span class="line">Thread count was 8 (of 8 available processors)</span><br><span class="line">Solution count 7: 40005.1 40697.1 41203.6 ... 157345</span><br><span class="line"></span><br><span class="line">Optimal solution found (tolerance 1.00e-04)</span><br><span class="line">Best objective 4.000505414200e+04, best bound 4.000505414200e+04, gap 0.0000%</span><br></pre></td></tr></table></figure><p>在这个示例中，Gurobi求解器只需要不到5秒的时间就可以将模型求解到最优，并且它使用了8个线程(线程数可以通过threads参数进行限制)。最佳可行解目标与最佳界之间的差距为0.0%，这产生了一个最优终止状态，因为实现的差距小于默认MIPGap参数值。</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;学习和了解gurobi求解器日志对于理解算法和数学模型有很大帮助，所以加以记录。本文主要记录了simplex和MIP的求解日志。&lt;/p&gt;
-&lt;h1&gt;Header&lt;/h1&gt;
-&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td c</summary>
-      
-    
-    
-    
-    
-    <category term="Gurobi" scheme="http://gwyxjtu.github.io/tags/Gurobi/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>勒贝格传</title>
-    <link href="http://gwyxjtu.github.io/2022/05/18/%E2%80%9C%E5%8B%92%E8%B4%9D%E6%A0%BC%E4%BC%A0%E2%80%9C/"/>
-    <id>http://gwyxjtu.github.io/2022/05/18/%E2%80%9C%E5%8B%92%E8%B4%9D%E6%A0%BC%E4%BC%A0%E2%80%9C/</id>
-    <published>2022-05-18T12:31:53.000Z</published>
-    <updated>2022-05-22T07:27:59.488Z</updated>
-    
-    <content type="html"><![CDATA[<h1>实变函数和泛函分析</h1><p>最近学习实变函数和泛函分析，在翟老师的讲解下学习了之前数学家的工作，翟老师也说，实变函数是上世纪才系统性完善的，是近代的数学，很值得我们学习。而且我们学习的都是这些数学大师一生中最精彩的工作，仔细研读可以学到很多数学思想。</p><p>为了理解翟老师课上的一些知识，我便在淘宝下单了周民强的实变函数论，翻开附录发现竟有一章是勒贝格传，读传记是我学习数学的一大乐趣之一。故做一些记录。</p><p>勒贝格1875年6月28日生于法国的博伟，1941年7月26日卒于巴黎。勒贝格的父亲是一名印刷厂职工，酷爱读书，颇有教养。在父亲的影响下，勒贝格从小勤奋好学，成绩优秀，特别擅长计算。不幸，父亲去世过早。家境衰落，勒贝格在学校老师的帮助下进入中学，后又转入巴黎，1894年考入高等师范学校。大学毕业后，勒贝格在校图书馆工作了两年。在这期间，出版了E.波雷尔关于点集测度的新方法的《函数论讲义》，特别是研究生R.贝尔发表了关于不连续实变函数理论的第一篇论文，这些成功的研究工作说明在上述崭新的领域中进行开拓挥霍的何等重要的成就，因而激发了勒贝格的热情。从1899年到1902年勒贝格在南锡的一所中学任教，虽然工作繁忙，但仍孜孜不倦的研究实变函数，理论，并于1902年发表了博士论文“积分、长度与面积”。在这篇文章中，勒贝格厂里了后来以他的名字命名的积分理论。伺候，他开始在大学任教，并出版了一系列重要著作：《积分法和原函数分析讲义》；《三角级数讲义》。接着，勒贝格又陆续发表了许多关于函数的微分、积分理论的研究成果，勒贝格于1921年获得法兰西血压u呢教授称号，一年作为C.若尔当的后记人被选为巴黎科学院院士。</p><p>勒贝格对数学的主要贡献属于积分论领域，这是实变函数理论的中心课题。19世纪以来，微积分开始进入严密话的阶段。1854年，B.黎曼引入了以他的名字命名的积分，这一理论的应用范围主要是连续函数，随着K.威尔斯特拉斯和G.康托尔工作的温室，在数学中出现了许多奇怪的函数与现象，致使黎曼积分理论暴漏出较大的局限性。几乎与这一理论发展的同时，人就已经广泛的开展了对积分理论的改造工作。当时，关于积分论的工作主要集中于无穷集合的性质的探讨，而无处稠密的集合具有正的外容度性质的发现，使集合的测度概念在积分论的研究中占有重要地位。积分的几何意义是曲线围成的面积，黎曼积分的定义是建立在对区间长度的分割的基础上的。因此，人们自然会考虑如何吧长度、面积等概念扩充到更广泛的点集类上，从而吧积分的概念置于集合测度理论的框架之中。这一思想的重要性在于使人们认识到：几何的测度与可测性的推广将意味着函数的积分与可积性的推广。勒贝格积分正式建立在勒贝格测度理论的基础上，是黎曼积分的扩充。</p><p>勒贝格曾对他的积分思想做过一个生动有趣的描述：“我必须偿还一笔钱。如果我从口袋中随意地摸出来各种不同面值的钞票，逐一的还给债主直到全部还清，这就是黎曼积分法，不过我还有另外一种做法，就是把钱全部拿出来并吧相同棉质的钞票放在一起，然后再付给应还的数目，这就是我的积分法。”</p><p>早在19世纪初期，由J.傅立叶在关于三角级数的工作中提出：当一个有界函数可以表示为一个三角级数时，该级数是它的傅里叶级数吗？这一问题与一个无穷级数是否可以逐项积分有着密切的关系。傅立叶当时曾认为在其和为有界函数时这一运算是正确的，从而给上述问题肯定的答复。然而到了19世纪末，人们认识到逐项积分并不总是可行的，甚至对于黎曼可积函数的一致有界的技术也是这样，因为由该级数所表示的函数不一定是黎曼可积的。这个问题促使勒贝格在新的积分理论中获得了一个十分重要的结果：<strong>控制收敛定理</strong>。作为一个特殊情形他指出，勒贝格可积的一致有界技术都可以逐项进行积分，从而支持了傅里叶的结论。逐项积分在本质上就是积分号下取极限的问题，他是积分理论中经常遇到的最重要的运算之一。从而这一定理的创立显示了勒贝格积分理论的极大优越性。</p><p>勒贝格的一生都献给了数学事业。在1922年被推举为院士的时候，他的著作和论文已经达到90种之多，内容出了积分理论外，还设计集合与函数的构成、变分学、曲面面积以及纬数理论等重要课题，在人生的最后20年中，勒贝格的研究工作仍然十分活跃并反映出广泛的兴趣，不过作品的内容大都涉及教育、历史和初等几何。</p><p>勒贝格的工作是对20世纪科学领域的一个重大贡献，但和科学史上每种新思想的出现一样，并不是没有遇到阻力的。原因就是勒贝格的研究中扮演了重要角色的那些不连续函数和不可微函数被认为是违反了所谓的完美性法则，是数学中的“变态和不健康”部分。因此，他的工作收到了某些数学家的冷淡，甚至有人曾企图阻止他关于一篇讨论不可微曲面的论文的发表。勒贝格曾经感叹：“我被称为是一个没有导数的函数的那种人了。”然而，不论人们的主观愿望如何，这些具有种种奇艺性质的对象都自动地进入了研究者曾企图避开他们都问题之中。勒贝格充满信心地指出：“使得自己在这种研究中变得迟钝了的那些人，是在浪费他们的时间，而不是在从事有用的工作。”</p><p>如果有能力写一些关于泛函分析的知识类博客，推一些自己很欣赏的定理公式，那必然是更好的。可惜能力不允许，时间也不允许，只能记录一些大师的传记来表达自己的敬意了。</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1&gt;实变函数和泛函分析&lt;/h1&gt;
-&lt;p&gt;最近学习实变函数和泛函分析，在翟老师的讲解下学习了之前数学家的工作，翟老师也说，实变函数是上世纪才系统性完善的，是近代的数学，很值得我们学习。而且我们学习的都是这些数学大师一生中最精彩的工作，仔细研读可以学到很多数学思想。&lt;/p&gt;
-&lt;p</summary>
-      
-    
-    
-    
     
   </entry>
   
