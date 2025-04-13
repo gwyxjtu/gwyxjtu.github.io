@@ -6,7 +6,7 @@
   <link href="http://gwyxjtu.github.io/atom.xml" rel="self"/>
   
   <link href="http://gwyxjtu.github.io/"/>
-  <updated>2025-03-29T12:47:09.960Z</updated>
+  <updated>2025-04-13T11:13:20.065Z</updated>
   <id>http://gwyxjtu.github.io/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>构建求解能源系统优化问题的mcp server</title>
+    <link href="http://gwyxjtu.github.io/2025/04/13/%E6%9E%84%E5%BB%BA%E6%B1%82%E8%A7%A3%E8%83%BD%E6%BA%90%E7%B3%BB%E7%BB%9F%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98%E7%9A%84mcp-server/"/>
+    <id>http://gwyxjtu.github.io/2025/04/13/%E6%9E%84%E5%BB%BA%E6%B1%82%E8%A7%A3%E8%83%BD%E6%BA%90%E7%B3%BB%E7%BB%9F%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98%E7%9A%84mcp-server/</id>
+    <published>2025-04-13T02:10:41.000Z</published>
+    <updated>2025-04-13T11:13:20.065Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="会说不会做-的大模型">&quot;会说不会做&quot;的大模型</h2><p>LLM虽然能力非常强大，但其应用不应局限在语言或者对话，但是如果需要做更深入细节的相关相关的AI应用除了对<br>MCP全称是 Model Context Protocol，是Anthropic在2024年11月25日提出的一个开源协议标准，用来解决大预言模型处理外部资源以及工具的的问题。即使是目前最先进的LLM，仍受到很多限制，很多数据需要来源于外部工具来实现共享和调用。</p><h3 id="Function-Calling">Function Calling</h3><p>关于外部工具调用，最早的是OpenAI的在gpt-4中引入的Function Calling 功能，该功能通过定义工具的名称、功能、参数、描述等信息，将工具库提供给大模型，大模型会根据业务需求自主判断是否需要以及调用工具库中的工具。下面是一个简单的tools定义和fucntion calling的示例：</p><pre><code>tools = [    &#123;        &quot;type&quot;: &quot;function&quot;,        &quot;function&quot;: &#123;            &quot;name&quot;: &quot;get_current_weather&quot;,            &quot;description&quot;: &quot;Get the current weather in a given location&quot;,            &quot;parameters&quot;: &#123;                &quot;type&quot;: &quot;object&quot;,                &quot;properties&quot;: &#123;                    &quot;location&quot;: &#123;                        &quot;type&quot;: &quot;string&quot;,                        &quot;description&quot;: &quot;The city and state, e.g. San Francisco, CA&quot;,                    &#125;,                    &quot;unit&quot;: &#123;                        &quot;type&quot;: &quot;string&quot;,                         &quot;enum&quot;: [&quot;celsius&quot;, &quot;fahrenheit&quot;]&#125;,                &#125;,                &quot;required&quot;: [&quot;location&quot;],            &#125;,        &#125;,       &#125;]</code></pre><p>调用使用openai的标准库</p><pre><code>def get_completion(messages, model=&quot;gpt-3.5-turbo-1106&quot;, temperature=0, max_tokens=300, tools=None):    response = openai.chat.completions.create(        model=model,        messages=messages,        temperature=temperature,        max_tokens=max_tokens,        tools=tools    )    return response.choices[0].message</code></pre><p>但是最初版的Function Calling 功能存在以下问题：<br>+ 没有统一的行业标准，每个厂商LLM提供的JSON结构和实现方式都不同<br>+ 需要开发者为每个模型编写特定的适配代码<br>+ 不负责执行，无法提供函数管理，通常只生成指令，需要开发者手动完成调用<br>这导致实际AI应用中集成Function calling开发量过大。因此MCP应运而生。</p><h3 id="MCP协议">MCP协议</h3><p>MCP定义了应用程序和大模型之间信息交换的方式，让开发者可以用一致的方式吧数据源、工具和功能连接到大模型中，类似USB-C可以让不同的设备进行连接一样。</p><p><img src="/images/mcp-1.png" alt="图源 https://norahsakal.com/blog/mcp-vs-api-model-context-protocol-explained/"></p><table><thead><tr><th>类别</th><th>MCP（Model Context Protocol）</th><th>Function Calling</th></tr></thead><tbody><tr><td>性质</td><td>协议</td><td>功能</td></tr><tr><td>范围</td><td>通用（多数据源、多功能）</td><td>特定场景（单一数据源或功能）</td></tr><tr><td>目标</td><td>统一接口，实现互操作</td><td>扩展模型能力</td></tr><tr><td>实现</td><td>基于标准协议</td><td>依赖于特定模型实现</td></tr><tr><td>开发复杂度</td><td>低：通过统一协议实现多源兼容</td><td>高：需要为每个任务单独开发函数</td></tr><tr><td>复用性</td><td>高：一次开发，可多场景使用</td><td>低：函数通常为特定任务设计</td></tr><tr><td>灵活性</td><td>高：支持动态适配和扩展</td><td>低：功能扩展需要额外开发</td></tr></tbody></table><p>总的来说MCP和Function Calling一样，都是为了实现大模型和外部资源的集成，解决LLM只能说不能做的问题。</p><h2 id="使用Cline和MCP-Inspector-构建能源系统优化MCP-Server">使用Cline和MCP Inspector 构建能源系统优化MCP Server</h2><h3 id="构建能源系统优化程序">构建能源系统优化程序</h3><p>要使用MCP协议封装一个能源系统优化程序，首先要将能源系统优化问题的代码和资源封装成函数，然后将函数注册到MCP服务器上，最后通过MCP客户端调用函数。</p><pre><code>def opt(ramp_up,pv_osi) -&gt; tuple:    &quot;&quot;&quot;_summary_    Args:        ramp_up (float): fuel cell ramp up rate        pv_osi (int): pv oscillation index     Returns:        tuple: device capacity, operation results    &quot;&quot;&quot;    # optuimize    return device_cap, resdevice_cap,res = opt(1/6,0)</code></pre><p>这里不展开优化函数内部的逻辑，总的来说是根据输入的爬坡速率参数和光伏波动指数计算出设备容量和运行结果。</p><h3 id="注册和构建MCP-Server">注册和构建MCP Server</h3><p>这里使用mcp库构建stdio的mcp server，注册工具函数，然后启动server。具体脚本如下</p><pre><code>from mcp.server.fastmcp import FastMCPfrom model_idc.model import opt# Create an MCP servermcp = FastMCP(&quot;Demo&quot;)# Add an addition tool@mcp.tool()def copt_opt(dict_in) -&gt; int:    &quot;&quot;&quot;计算一组规划问题，考虑不同的燃料电池爬坡速度    Args:        ramp_rate (float): 燃料电池爬坡时间，通常为0.3,0.8,0.1等        pv_osi (int): in [0,1,2],描述波动程度，通产给0即可    Returns:        device_cap: 设备规划容量    &quot;&quot;&quot;    device_cap,_ = opt(float(dict_in[&quot;ramp_rate&quot;]),int(dict_in['pv_osi']))    print(device_cap)if __name__ == &quot;__main__&quot;:    mcp.run(transport=&quot;stdio&quot;)</code></pre><p>值得注意的是这里mcp虽然使用修饰器@mcp.tool()来注册，但是实际上函数的输出应当是print的io形式返回，return是无法给出具具体内容的。</p><h3 id="使用MCP-Inspector-调用MCP-Server">使用MCP Inspector 调用MCP Server</h3><p>MCP Inspector是一个基于MCP协议的客户端，用于调用MCP服务器上的函数。它提供了一个图形化的界面，让用户可以方便地调用MCP服务器上的函数。</p><p>具体安装方法可以参考<a href="https://github.com/modelcontextprotocol/inspector">MCP Inspector</a></p><p>这里使用以下命令启动inspector</p><pre><code>npx @modelcontextprotocol/inspector</code></pre><p>启动后默认端口在6274，在左侧创建新的mcp server，这里使用命令行创建。在创建的时候一定要注意路径的选择，包括server的路径和python的路径。</p><pre><code>PATH_PYTHON\\python.exe PATH_SERVER\\mcp_server.py</code></pre><p>启动后的界面上可以connect到server，然后可以调用工具函数。</p><p><img src="/images/mcp-2.jpg" alt=""></p><p>点击tools中枚举以下识别的，随后设置好测试的输入即可调试输出。这里我们的输出是一组设备的规划容量。</p><p><img src="/images/mcp-3.jpg" alt=""></p><h3 id="使用Cline集成大模型并调用MCP-Server">使用Cline集成大模型并调用MCP Server</h3><p>为了方便使用，使用vscode的cline插件，这里需要使用以下json注册一个mcp server。</p><pre><code>&#123;&quot;mcpServers&quot;: &#123;    &quot;copt&quot;: &#123;    &quot;disabled&quot;: false,    &quot;timeout&quot;: 60000,    &quot;command&quot;: &quot;PAHT_TO_PYTHON\\python.exe&quot;,    &quot;args&quot;: [        &quot;PAHT_TO_SERVER\\optMCP\\server.py&quot;    ],    &quot;transportType&quot;: &quot;stdio&quot;    &#125;&#125;&#125;</code></pre><p>随后使用cline进行测试，如果有绿点和info而没有error则说明成功</p><p><img src="/images/mcp-4.jpg" alt=""></p><p>最后可以每次直接与大模型对话，大模型会自动识别并申请调用。因为MCP消耗的token较大，所以每次需要给用户申请。<br><img src="/images/mcp-5.jpg" alt=""></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;会说不会做-的大模型&quot;&gt;&amp;quot;会说不会做&amp;quot;的大模型&lt;/h2&gt;
+&lt;p&gt;LLM虽然能力非常强大，但其应用不应局限在语言或者对话，但是如果需要做更深入细节的相关相关的AI应用除了对&lt;br&gt;
+MCP全称是 Model Context Protocol，是A</summary>
+      
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>MOE架构解读</title>
@@ -467,31 +489,6 @@ MOE由两个主要的部件构成：第一个是专家expert，每个专家代�
     
     
     
-    
-  </entry>
-  
-  <entry>
-    <title>如何下载xjtu思源学习空间中老师设置仅允许预览的ppt</title>
-    <link href="http://gwyxjtu.github.io/2022/06/07/%E5%A6%82%E4%BD%95%E4%B8%8B%E8%BD%BDxjtu%E6%80%9D%E6%BA%90%E5%AD%A6%E4%B9%A0%E7%A9%BA%E9%97%B4%E4%B8%AD%E8%80%81%E5%B8%88%E8%AE%BE%E7%BD%AE%E4%BB%85%E5%85%81%E8%AE%B8%E9%A2%84%E8%A7%88%E7%9A%84ppt/"/>
-    <id>http://gwyxjtu.github.io/2022/06/07/%E5%A6%82%E4%BD%95%E4%B8%8B%E8%BD%BDxjtu%E6%80%9D%E6%BA%90%E5%AD%A6%E4%B9%A0%E7%A9%BA%E9%97%B4%E4%B8%AD%E8%80%81%E5%B8%88%E8%AE%BE%E7%BD%AE%E4%BB%85%E5%85%81%E8%AE%B8%E9%A2%84%E8%A7%88%E7%9A%84ppt/</id>
-    <published>2022-06-07T08:09:02.000Z</published>
-    <updated>2022-06-07T08:24:19.453Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="下载ispace-xjtu-edu-cn中的仅预览文件">下载ispace.xjtu.edu.cn中的仅预览文件</h2><p>起因很简单，学习课程的时候发现老师上传的讲稿文件没有下载按钮。之前使用ispace的时候是可以下载的，有两个按钮，一个是预览，一个是下载。</p><p><img src="images/ispace1.png" alt=""></p><p>但是现在的文稿不能下载了，然而考试是开卷考试，下载ppt势在必行。<br><img src="images/ispace2.png" alt=""></p><h2 id="启用F12查看network">启用F12查看network</h2><p>本来以为打开此页面的时候ppt就已经加载好，故启用F12，搜索了一圈download和下载等关键字， 无果。</p><p>无意间想到有可能是预览的时候才加载，故network了一下。</p><p><img src="images/ispace3.png" alt=""></p><p>第一段net是打开网页，第二段是点击预览的时候发生的数据包。发现preview关键词。</p><p><img src="images/ispace4.png" alt=""></p><p>pdf链接明文传输，非常开心，复制链接直接下载就行</p><p><img src="images/ispace5.png" alt=""></p><p>看了一下链接，链接的下载有timestamp和token，缺一不可，逻辑还算严谨。但是明文传输实在是对学生太友好了。</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h2 id=&quot;下载ispace-xjtu-edu-cn中的仅预览文件&quot;&gt;下载ispace.xjtu.edu.cn中的仅预览文件&lt;/h2&gt;
-&lt;p&gt;起因很简单，学习课程的时候发现老师上传的讲稿文件没有下载按钮。之前使用ispace的时候是可以下载的，有两个按钮，一个是预览，一个是下</summary>
-      
-    
-    
-    
-    
-    <category term="胡乱搞" scheme="http://gwyxjtu.github.io/tags/%E8%83%A1%E4%B9%B1%E6%90%9E/"/>
-    
-    <category term="安全" scheme="http://gwyxjtu.github.io/tags/%E5%AE%89%E5%85%A8/"/>
     
   </entry>
   

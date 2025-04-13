@@ -183,6 +183,71 @@
     
     
     <article
+  id="post-使用mac的shadowsocks共享局域网"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2022/09/07/%E4%BD%BF%E7%94%A8mac%E7%9A%84shadowsocks%E5%85%B1%E4%BA%AB%E5%B1%80%E5%9F%9F%E7%BD%91/"
+    >使用mac的shadowsocks共享局域网</a> 
+</h2>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/09/07/%E4%BD%BF%E7%94%A8mac%E7%9A%84shadowsocks%E5%85%B1%E4%BA%AB%E5%B1%80%E5%9F%9F%E7%BD%91/" class="article-date">
+  <time datetime="2022-09-07T08:22:55.000Z" itemprop="datePublished">2022-09-07</time>
+</a>    
+    </div>
+      
+    <div class="article-entry" itemprop="articleBody">
+       
+  <h2 id="mac的SSR">mac的SSR</h2>
+<p>忘记了是从哪里装的了，好像是开源的。</p>
+<p><img src="images/vpn1.png" alt=""></p>
+<h2 id="获取mac本机IP">获取mac本机IP</h2>
+<p>在mac上获取一下本机的IP，在手机设置的时候需要配置dialing服务器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifconfig|grep 192</span><br></pre></td></tr></table></figure>
+<p>获得192.168.1.3</p>
+<h2 id="配置http代理">配置http代理</h2>
+<p><img src="images/vpn2.png" alt=""></p>
+<p><img src="images/vpn3.png" alt=""></p>
+<p>将IP配置为mac的局域网IP，端口随意，不冲突就好</p>
+<h2 id="配置手机代理">配置手机代理</h2>
+<p>先点击wifi名字后面的信息按钮，拉到最下方</p>
+<p><img src="images/vpn4.jpeg" alt=""></p>
+<p>选择代理配置，选择手动，配置如下端口即可<br>
+<img src="images/vpn5.jpeg" alt=""></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%83%A1%E4%B9%B1%E6%90%9E/" rel="tag">胡乱搞</a></li></ul>
+
+    </footer>
+  </div>
+
+    
+ 
+    
+</article>
+
+    
+    <article
   id="post-分支定界求解MIP的复现"
   class="article article-type-post"
   itemscope
@@ -502,69 +567,6 @@
     
     <footer class="article-footer">
        
-    </footer>
-  </div>
-
-    
- 
-    
-</article>
-
-    
-    <article
-  id="post-如何下载xjtu思源学习空间中老师设置仅允许预览的ppt"
-  class="article article-type-post"
-  itemscope
-  itemprop="blogPost"
-  data-scroll-reveal
->
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2022/06/07/%E5%A6%82%E4%BD%95%E4%B8%8B%E8%BD%BDxjtu%E6%80%9D%E6%BA%90%E5%AD%A6%E4%B9%A0%E7%A9%BA%E9%97%B4%E4%B8%AD%E8%80%81%E5%B8%88%E8%AE%BE%E7%BD%AE%E4%BB%85%E5%85%81%E8%AE%B8%E9%A2%84%E8%A7%88%E7%9A%84ppt/"
-    >如何下载xjtu思源学习空间中老师设置仅允许预览的ppt</a> 
-</h2>
- 
-
-      
-    </header>
-     
-    <div class="article-meta">
-      <a href="/2022/06/07/%E5%A6%82%E4%BD%95%E4%B8%8B%E8%BD%BDxjtu%E6%80%9D%E6%BA%90%E5%AD%A6%E4%B9%A0%E7%A9%BA%E9%97%B4%E4%B8%AD%E8%80%81%E5%B8%88%E8%AE%BE%E7%BD%AE%E4%BB%85%E5%85%81%E8%AE%B8%E9%A2%84%E8%A7%88%E7%9A%84ppt/" class="article-date">
-  <time datetime="2022-06-07T08:09:02.000Z" itemprop="datePublished">2022-06-07</time>
-</a>    
-    </div>
-      
-    <div class="article-entry" itemprop="articleBody">
-       
-  <h2 id="下载ispace-xjtu-edu-cn中的仅预览文件">下载ispace.xjtu.edu.cn中的仅预览文件</h2>
-<p>起因很简单，学习课程的时候发现老师上传的讲稿文件没有下载按钮。之前使用ispace的时候是可以下载的，有两个按钮，一个是预览，一个是下载。</p>
-<p><img src="images/ispace1.png" alt=""></p>
-<p>但是现在的文稿不能下载了，然而考试是开卷考试，下载ppt势在必行。<br>
-<img src="images/ispace2.png" alt=""></p>
-<h2 id="启用F12查看network">启用F12查看network</h2>
-<p>本来以为打开此页面的时候ppt就已经加载好，故启用F12，搜索了一圈download和下载等关键字， 无果。</p>
-<p>无意间想到有可能是预览的时候才加载，故network了一下。</p>
-<p><img src="images/ispace3.png" alt=""></p>
-<p>第一段net是打开网页，第二段是点击预览的时候发生的数据包。发现preview关键词。</p>
-<p><img src="images/ispace4.png" alt=""></p>
-<p>pdf链接明文传输，非常开心，复制链接直接下载就行</p>
-<p><img src="images/ispace5.png" alt=""></p>
-<p>看了一下链接，链接的下载有timestamp和token，缺一不可，逻辑还算严谨。但是明文传输实在是对学生太友好了。</p>
- 
-      <!-- reward -->
-      
-    </div>
-    
-
-    <!-- copyright -->
-    
-    <footer class="article-footer">
-       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%83%A1%E4%B9%B1%E6%90%9E/" rel="tag">胡乱搞</a></li></ul>
-
     </footer>
   </div>
 

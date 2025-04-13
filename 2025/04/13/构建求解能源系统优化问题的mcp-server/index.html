@@ -15,7 +15,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>MOE架构解读 |  果果的博客</title>
+      <title>构建求解能源系统优化问题的mcp server |  果果的博客</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/ayer.png" />
@@ -65,7 +65,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-MOE架构解读"
+  id="post-构建求解能源系统优化问题的mcp-server"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -76,7 +76,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  MOE架构解读
+  构建求解能源系统优化问题的mcp server
 </h1>
  
 
@@ -84,15 +84,15 @@
     </header>
      
     <div class="article-meta">
-      <a href="/2025/03/29/MOE%E6%9E%B6%E6%9E%84%E8%A7%A3%E8%AF%BB/" class="article-date">
-  <time datetime="2025-03-29T09:20:25.000Z" itemprop="datePublished">2025-03-29</time>
+      <a href="/2025/04/13/%E6%9E%84%E5%BB%BA%E6%B1%82%E8%A7%A3%E8%83%BD%E6%BA%90%E7%B3%BB%E7%BB%9F%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98%E7%9A%84mcp-server/" class="article-date">
+  <time datetime="2025-04-13T02:10:41.000Z" itemprop="datePublished">2025-04-13</time>
 </a>   
 <div class="word_count">
     <span class="post-time">
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">813</span>
+            <span class="post-count">1.5k</span>
         </span>
     </span>
 
@@ -101,7 +101,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">2 min</span>
+            <span class="post-count">6 min</span>
         </span>
     </span>
 </div>
@@ -116,50 +116,179 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <h3 id="MOE-基本原理">MOE 基本原理</h3>
-<p><img src="/images/MOE-1.jpg" alt=""><br>
-MOE由两个主要的部件构成：第一个是专家expert，每个专家代表一个就诊网络；第二个是路由router，门控网络，通过开关将输入的token路由到不同的专家。<br>
-MOE结构里面每一层都有很多专家和路由，每一层的专家和路由数量都可以调整。<br>
-<img src="/images/MOE-2.jpg" alt=""><br>
-回顾transformer架构，每个输入都是一个token，每个token输入到position embedding，然后通过多层decoder堆叠，最后输出token。<br>
-<img src="/images/MOE-3.jpg" alt=""></p>
-<p>其中每个decoder内部如下所示：<br>
-<img src="/images/MOE-4.jpg" alt=""><br>
-首先需要数据归一化，随后进入多头注意力机制，然后进入残差连接，最后进入稠密的前馈神经网络。<br>
-MOE就是把稠密的前馈神经网络变成了稀疏的前馈神经网络，通过门控网络来选择哪些专家来处理输入的token。<br>
-<img src="/images/MOE-5.jpg" alt=""></p>
-<p>每次通过路由选择下一层经过哪一个专家<br>
-<img src="/images/MOE-5.jpg" alt=""></p>
-<p>MOE的核心是把FFNN替换成多个系数的FFN，每一个FFN都是一个专家。</p>
-<h3 id="路由原理">路由原理</h3>
-<p>路由是用来选择专家的，由FFNN和softmax组成，如下图所示。<br>
-<img src="/images/MOE-6.jpg" alt=""><br>
-softmax会输出每一个专家的概率，最后用一个或多个专家来权和输入的token。</p>
-<h3 id="稀疏架构和稠密架构">稀疏架构和稠密架构</h3>
-<p>Transformer是一个稠密的架构，每个输入都需要经过所有的专家。MOE是一个分为稠密MOE和稀疏MOE的架构。</p>
-<p>稠密MOE是每个输入都需要经过所有的专家。稀疏MOE是每个输入只需要经过一部分的专家。输出时候只激活部分专家<br>
-MOE的一般输入是具体的矩阵，包括包括(b,s,h)，其中b是batch size，s是sequence length，h是hidden size。<br>
-输入首先经过FFN路由层，输出到H(x)层在经过softmax，计算得到专家的概率分布。随后通过门控网络选择一部分专家来处理输入的token。<br>
-<img src="/images/MOE-7.jpg" alt=""></p>
-<h3 id="负载均衡-load-balancing">负载均衡 load balancing</h3>
-<p>在deepseek里面专家为256个，在训练时候每个专家的训练速度不一样，pathway会跟倾向于选择算的快的专家，导致算的快的专家学的多，算的慢的专家学的较少，因此引入load balance让每个专家的训练速度一样。</p>
-<ul>
-<li>
-<p>Keep Top-k<br>
-这里通过 keep Top-k 策略来实现。引入噪声矩阵，来抑制某个专家选择过多时候的得分。<br>
-<img src="/images/MOE-8.jpg" alt=""><br>
-通过在每一层的时候引入噪声矩阵，实现整个网络的负载均衡。</p>
-</li>
-<li>
-<p>辅助损失<br>
-为了进一步提升负载均衡能力，引入auxiliary loss。通过将每个token的专家选择分布求和，来计算每个专家的平均选择次数，然后计算每个专家的平均选择次数和平均选择次数的差值，计算辅助损失，并将其加入到总的损失函数中。</p>
-</li>
-<li>
-<p>专家容量<br>
-专家容量同样是为了解决训练负载均衡问题。<br>
-每个专家在输进去token之前加入每个专家最大出力的token数量，通过增加容量来提升训练稳定性，让专家之间训练更加寻哼</p>
-</li>
-</ul>
+  <h2 id="会说不会做-的大模型">&quot;会说不会做&quot;的大模型</h2>
+<p>LLM虽然能力非常强大，但其应用不应局限在语言或者对话，但是如果需要做更深入细节的相关相关的AI应用除了对<br>
+MCP全称是 Model Context Protocol，是Anthropic在2024年11月25日提出的一个开源协议标准，用来解决大预言模型处理外部资源以及工具的的问题。即使是目前最先进的LLM，仍受到很多限制，很多数据需要来源于外部工具来实现共享和调用。</p>
+<h3 id="Function-Calling">Function Calling</h3>
+<p>关于外部工具调用，最早的是OpenAI的在gpt-4中引入的Function Calling 功能，该功能通过定义工具的名称、功能、参数、描述等信息，将工具库提供给大模型，大模型会根据业务需求自主判断是否需要以及调用工具库中的工具。下面是一个简单的tools定义和fucntion calling的示例：</p>
+<pre><code>tools = [
+    &#123;
+        &quot;type&quot;: &quot;function&quot;,
+        &quot;function&quot;: &#123;
+            &quot;name&quot;: &quot;get_current_weather&quot;,
+            &quot;description&quot;: &quot;Get the current weather in a given location&quot;,
+            &quot;parameters&quot;: &#123;
+                &quot;type&quot;: &quot;object&quot;,
+                &quot;properties&quot;: &#123;
+                    &quot;location&quot;: &#123;
+                        &quot;type&quot;: &quot;string&quot;,
+                        &quot;description&quot;: &quot;The city and state, e.g. San Francisco, CA&quot;,
+                    &#125;,
+                    &quot;unit&quot;: &#123;
+                        &quot;type&quot;: &quot;string&quot;, 
+                        &quot;enum&quot;: [&quot;celsius&quot;, &quot;fahrenheit&quot;]&#125;,
+                &#125;,
+                &quot;required&quot;: [&quot;location&quot;],
+            &#125;,
+        &#125;,   
+    &#125;
+]
+</code></pre>
+<p>调用使用openai的标准库</p>
+<pre><code>def get_completion(messages, model=&quot;gpt-3.5-turbo-1106&quot;, temperature=0, max_tokens=300, tools=None):
+    response = openai.chat.completions.create(
+        model=model,
+        messages=messages,
+        temperature=temperature,
+        max_tokens=max_tokens,
+        tools=tools
+    )
+    return response.choices[0].message
+</code></pre>
+<p>但是最初版的Function Calling 功能存在以下问题：<br>
++ 没有统一的行业标准，每个厂商LLM提供的JSON结构和实现方式都不同<br>
++ 需要开发者为每个模型编写特定的适配代码<br>
++ 不负责执行，无法提供函数管理，通常只生成指令，需要开发者手动完成调用<br>
+这导致实际AI应用中集成Function calling开发量过大。因此MCP应运而生。</p>
+<h3 id="MCP协议">MCP协议</h3>
+<p>MCP定义了应用程序和大模型之间信息交换的方式，让开发者可以用一致的方式吧数据源、工具和功能连接到大模型中，类似USB-C可以让不同的设备进行连接一样。</p>
+<p><img src="/images/mcp-1.png" alt="图源 https://norahsakal.com/blog/mcp-vs-api-model-context-protocol-explained/"></p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>MCP（Model Context Protocol）</th>
+<th>Function Calling</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>性质</td>
+<td>协议</td>
+<td>功能</td>
+</tr>
+<tr>
+<td>范围</td>
+<td>通用（多数据源、多功能）</td>
+<td>特定场景（单一数据源或功能）</td>
+</tr>
+<tr>
+<td>目标</td>
+<td>统一接口，实现互操作</td>
+<td>扩展模型能力</td>
+</tr>
+<tr>
+<td>实现</td>
+<td>基于标准协议</td>
+<td>依赖于特定模型实现</td>
+</tr>
+<tr>
+<td>开发复杂度</td>
+<td>低：通过统一协议实现多源兼容</td>
+<td>高：需要为每个任务单独开发函数</td>
+</tr>
+<tr>
+<td>复用性</td>
+<td>高：一次开发，可多场景使用</td>
+<td>低：函数通常为特定任务设计</td>
+</tr>
+<tr>
+<td>灵活性</td>
+<td>高：支持动态适配和扩展</td>
+<td>低：功能扩展需要额外开发</td>
+</tr>
+</tbody>
+</table>
+<p>总的来说MCP和Function Calling一样，都是为了实现大模型和外部资源的集成，解决LLM只能说不能做的问题。</p>
+<h2 id="使用Cline和MCP-Inspector-构建能源系统优化MCP-Server">使用Cline和MCP Inspector 构建能源系统优化MCP Server</h2>
+<h3 id="构建能源系统优化程序">构建能源系统优化程序</h3>
+<p>要使用MCP协议封装一个能源系统优化程序，首先要将能源系统优化问题的代码和资源封装成函数，然后将函数注册到MCP服务器上，最后通过MCP客户端调用函数。</p>
+<pre><code>def opt(ramp_up,pv_osi) -&gt; tuple:
+    &quot;&quot;&quot;_summary_
+
+    Args:
+        ramp_up (float): fuel cell ramp up rate
+        pv_osi (int): pv oscillation index 
+
+    Returns:
+        tuple: device capacity, operation results
+    &quot;&quot;&quot;
+    # optuimize
+    return device_cap, res
+
+device_cap,res = opt(1/6,0)
+</code></pre>
+<p>这里不展开优化函数内部的逻辑，总的来说是根据输入的爬坡速率参数和光伏波动指数计算出设备容量和运行结果。</p>
+<h3 id="注册和构建MCP-Server">注册和构建MCP Server</h3>
+<p>这里使用mcp库构建stdio的mcp server，注册工具函数，然后启动server。具体脚本如下</p>
+<pre><code>from mcp.server.fastmcp import FastMCP
+from model_idc.model import opt
+# Create an MCP server
+mcp = FastMCP(&quot;Demo&quot;)
+
+
+# Add an addition tool
+@mcp.tool()
+def copt_opt(dict_in) -&gt; int:
+    &quot;&quot;&quot;计算一组规划问题，考虑不同的燃料电池爬坡速度
+
+    Args:
+        ramp_rate (float): 燃料电池爬坡时间，通常为0.3,0.8,0.1等
+        pv_osi (int): in [0,1,2],描述波动程度，通产给0即可
+
+    Returns:
+        device_cap: 设备规划容量
+    &quot;&quot;&quot;
+    device_cap,_ = opt(float(dict_in[&quot;ramp_rate&quot;]),int(dict_in['pv_osi']))
+    print(device_cap)
+
+if __name__ == &quot;__main__&quot;:
+    mcp.run(transport=&quot;stdio&quot;)
+</code></pre>
+<p>值得注意的是这里mcp虽然使用修饰器@mcp.tool()来注册，但是实际上函数的输出应当是print的io形式返回，return是无法给出具具体内容的。</p>
+<h3 id="使用MCP-Inspector-调用MCP-Server">使用MCP Inspector 调用MCP Server</h3>
+<p>MCP Inspector是一个基于MCP协议的客户端，用于调用MCP服务器上的函数。它提供了一个图形化的界面，让用户可以方便地调用MCP服务器上的函数。</p>
+<p>具体安装方法可以参考<a target="_blank" rel="noopener" href="https://github.com/modelcontextprotocol/inspector">MCP Inspector</a></p>
+<p>这里使用以下命令启动inspector</p>
+<pre><code>npx @modelcontextprotocol/inspector
+</code></pre>
+<p>启动后默认端口在6274，在左侧创建新的mcp server，这里使用命令行创建。在创建的时候一定要注意路径的选择，包括server的路径和python的路径。</p>
+<pre><code>PATH_PYTHON\\python.exe PATH_SERVER\\mcp_server.py
+</code></pre>
+<p>启动后的界面上可以connect到server，然后可以调用工具函数。</p>
+<p><img src="/images/mcp-2.jpg" alt=""></p>
+<p>点击tools中枚举以下识别的，随后设置好测试的输入即可调试输出。这里我们的输出是一组设备的规划容量。</p>
+<p><img src="/images/mcp-3.jpg" alt=""></p>
+<h3 id="使用Cline集成大模型并调用MCP-Server">使用Cline集成大模型并调用MCP Server</h3>
+<p>为了方便使用，使用vscode的cline插件，这里需要使用以下json注册一个mcp server。</p>
+<pre><code>&#123;
+&quot;mcpServers&quot;: &#123;
+    &quot;copt&quot;: &#123;
+    &quot;disabled&quot;: false,
+    &quot;timeout&quot;: 60000,
+    &quot;command&quot;: &quot;PAHT_TO_PYTHON\\python.exe&quot;,
+    &quot;args&quot;: [
+        &quot;PAHT_TO_SERVER\\optMCP\\server.py&quot;
+    ],
+    &quot;transportType&quot;: &quot;stdio&quot;
+    &#125;
+&#125;
+&#125;
+</code></pre>
+<p>随后使用cline进行测试，如果有绿点和info而没有error则说明成功</p>
+<p><img src="/images/mcp-4.jpg" alt=""></p>
+<p>最后可以每次直接与大模型对话，大模型会自动识别并申请调用。因为MCP消耗的token较大，所以每次需要给用户申请。<br>
+<img src="/images/mcp-5.jpg" alt=""></p>
  
       <!-- reward -->
       
@@ -230,32 +359,21 @@ MOE的一般输入是具体的矩阵，包括包括(b,s,h)，其中b是batch siz
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://gwyxjtu.github.io/2025/03/29/MOE%E6%9E%B6%E6%9E%84%E8%A7%A3%E8%AF%BB/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://gwyxjtu.github.io/2025/04/13/%E6%9E%84%E5%BB%BA%E6%B1%82%E8%A7%A3%E8%83%BD%E6%BA%90%E7%B3%BB%E7%BB%9F%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98%E7%9A%84mcp-server/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li></ul>
-
     </footer>
   </div>
 
    
   <nav class="article-nav">
     
-      <a href="/2025/04/13/%E6%9E%84%E5%BB%BA%E6%B1%82%E8%A7%A3%E8%83%BD%E6%BA%90%E7%B3%BB%E7%BB%9F%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98%E7%9A%84mcp-server/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            构建求解能源系统优化问题的mcp server
-          
-        </div>
-      </a>
     
-    
-      <a href="/2025/03/29/%E4%BC%98%E5%8C%96%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-ORLM/" class="article-nav-link">
+      <a href="/2025/03/29/MOE%E6%9E%B6%E6%9E%84%E8%A7%A3%E8%AF%BB/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">优化大模型学习笔记-ORLM</div>
+        <div class="article-nav-title">MOE架构解读</div>
       </a>
     
   </nav>
